@@ -6,7 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import model.Model;
-import viewModel.Controller;
+import viewModel.ViewModelController;
 
 public class Main extends Application {
 
@@ -26,7 +26,7 @@ public class Main extends Application {
         primaryStage.setTitle("Hello World");
         ControllerView controllerView=fxl.getController();
         Model m=new Model();
-        Controller c =new Controller(m,controllerView);
+        ViewModelController c =new ViewModelController(m);
 
         m.ConnectToServer("127.0.0.1",5402);
 

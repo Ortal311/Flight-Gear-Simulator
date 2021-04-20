@@ -1,6 +1,7 @@
 package model;
 
 import flightSetting.FlightSetting;
+import javafx.stage.FileChooser;
 
 import java.beans.ExceptionListener;
 import java.beans.XMLDecoder;
@@ -33,6 +34,15 @@ public class Model extends Observable implements SimulatorModel {
         } catch (IOException e) { e.printStackTrace();}
 
     }
+    public void openFile(){
+        FileChooser fc=new FileChooser();
+        fc.setTitle("open maze file");
+        fc.setInitialDirectory(new File("./"));
+        File chosen=fc.showOpenDialog(null);
+        if(chosen!=null){
+            System.out.println("the name of the file is:"+chosen.getName());
+        }
+    }
 
     @Override
     public void writeToXML(FlightSetting settings) throws IOException {
@@ -58,6 +68,8 @@ public class Model extends Observable implements SimulatorModel {
         fis.close();
         return decodedSettings;
     }
+    //NOTE:we'll need to add get the result of each functions when needed-
+    // and we'll get them from the update of the viewModelController
 
 }
 

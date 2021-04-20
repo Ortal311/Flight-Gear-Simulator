@@ -10,19 +10,21 @@ import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
 
-public class Controller extends Observable implements Observer {
+public class ViewModelController extends Observable implements Observer {
 
 
     SimulatorModel m;
-    ControllerView cv;
+    //ControllerView cv;
 
-    public Controller(Model m, ControllerView cv) {
+    public ViewModelController(Model m) {
         this.m=m;
         m.addObserver(this);
-        this.cv=cv;
+      //  this.cv=cv;
         //cv.addObserver(this);
     }
-
+    public void openFile(){
+        m.openFile();
+    }
 
 
     @Override
