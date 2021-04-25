@@ -13,36 +13,61 @@ import java.util.Observable;
 public class Model extends Observable implements SimulatorModel {
 
     Socket socket;
-    PrintWriter pr;
+    PrintWriter out;
+
     @Override
     public void ConnectToServer(String ip, double port) {
 
         try {
-            socket=new Socket("127.0.0.1",5402);
+            socket = new Socket("127.0.0.1", 5402);
+            System.out.println("here 1");
+            out = new PrintWriter(socket.getOutputStream());
+            System.out.println("here 2");
+            BufferedReader in = new BufferedReader(new FileReader("reg_flight.csv"));
+            System.out.println("here 3");
+            String line;
 
-            String command1="set /controls/flight/aileron";
-            String command2="set /controls/flight/elevator";
-            String command3="set /controls/flight/rudder";
-            String command4="set /controls/engines/current-engine/throttle";
+            while ((line = in.readLine()) != null) {
 
-            pr=new PrintWriter(socket.getOutputStream());
-            pr.println(command1+" "+1);
-            pr.println(command2+" "+1);
-            pr.println(command3+" "+1);
-            pr.println(command4+" "+1);
+                System.out.println(line);
 
-            pr.flush();
+                out.println(line);
+                out.flush();
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
-        } catch (IOException e) { e.printStackTrace();}
+            }
+            out.close();
+            in.close();
+            socket.close();
+//            String command1="set /controls/flight/aileron";
+//            String command2="set /controls/flight/elevator";
+//            String command3="set /controls/flight/rudder";
+//            String command4="set /controls/engines/current-engine/throttle";
+//
+//            out.println(command1+" "+1);
+//            out.println(command2+" "+1);
+//            out.println(command3+" "+1);
+//            out.println(command4+" "+1);
+
+            out.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
     }
-    public void openFile(){
-        FileChooser fc=new FileChooser();
+
+    public void openFile() {
+        FileChooser fc = new FileChooser();
         fc.setTitle("open maze file");
         fc.setInitialDirectory(new File("./"));
-        File chosen=fc.showOpenDialog(null);
-        if(chosen!=null){
-            System.out.println("the name of the file is:"+chosen.getName());
+        File chosen = fc.showOpenDialog(null);
+        if (chosen != null) {
+            System.out.println("the name of the file is:" + chosen.getName());
         }
     }
 
@@ -52,7 +77,7 @@ public class Model extends Observable implements SimulatorModel {
         XMLEncoder encoder = new XMLEncoder(fos);
         encoder.setExceptionListener(new ExceptionListener() {
             public void exceptionThrown(Exception e) {
-                System.out.println("Exception! :"+e.toString());
+                System.out.println("Exception! :" + e.toString());
             }
         });
         encoder.writeObject(settings);
@@ -61,7 +86,7 @@ public class Model extends Observable implements SimulatorModel {
     }
 
     @Override
-    public FlightSetting readFromXML() throws IOException{
+    public FlightSetting readFromXML() throws IOException {
 
         FileInputStream fis = new FileInputStream("settings.xml");
         XMLDecoder decoder = new XMLDecoder(fis);

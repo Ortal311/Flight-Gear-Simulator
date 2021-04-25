@@ -19,7 +19,7 @@ public class ViewModelController extends Observable implements Observer {
     public ViewModelController(Model m) {
         this.m=m;
         m.addObserver(this);
-      //  this.cv=cv;
+        //  this.cv=cv;
         //cv.addObserver(this);
     }
     public void openFile(){
