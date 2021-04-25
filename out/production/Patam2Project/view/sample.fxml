@@ -10,5 +10,6 @@
       <Slider layoutX="51.0" layoutY="229.0" prefHeight="14.0" prefWidth="348.0" />
       <Button layoutX="14.0" layoutY="189.0" mnemonicParsing="false" onAction="#onOpen" text="Open" />
       <ListView layoutY="53.0" prefHeight="55.0" prefWidth="124.0" />
+      <Button layoutX="98.0" layoutY="189.0" mnemonicParsing="false" text="Button" />
    </children>
 </Pane>

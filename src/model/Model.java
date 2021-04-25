@@ -14,6 +14,7 @@ public class Model extends Observable implements SimulatorModel {
 
     Socket socket;
     PrintWriter out;
+    TimeSeries ts;// = new TimeSeries("reg_flight.csv");
 
     @Override
     public void ConnectToServer(String ip, double port) {
@@ -22,26 +23,22 @@ public class Model extends Observable implements SimulatorModel {
             socket = new Socket("127.0.0.1", 5402);
             System.out.println("here 1");
             out = new PrintWriter(socket.getOutputStream());
+
             System.out.println("here 2");
-            BufferedReader in = new BufferedReader(new FileReader("reg_flight.csv"));
-            System.out.println("here 3");
-            String line;
-
-            while ((line = in.readLine()) != null) {
-
-                System.out.println(line);
-
-                out.println(line);
+            for (int i = 0; i < ts.rows.size(); i++) {
+                //System.out.println("here 3");
+                System.out.println(ts.rows.get(i));
+                out.println(ts.rows.get(i));
                 out.flush();
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(50);//speed of display
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-
             }
+
             out.close();
-            in.close();
+            // in.close();
             socket.close();
 //            String command1="set /controls/flight/aileron";
 //            String command2="set /controls/flight/elevator";
@@ -62,13 +59,16 @@ public class Model extends Observable implements SimulatorModel {
     }
 
     public void openFile() {
+        System.out.printf("3");
         FileChooser fc = new FileChooser();
-        fc.setTitle("open maze file");
+        fc.setTitle("open CSV file");
         fc.setInitialDirectory(new File("./"));
         File chosen = fc.showOpenDialog(null);
         if (chosen != null) {
             System.out.println("the name of the file is:" + chosen.getName());
         }
+        ts = new TimeSeries(chosen.getName());
+        ConnectToServer("127.0.0.1",5402);
     }
 
     @Override

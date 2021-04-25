@@ -26,13 +26,13 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         primaryStage.setTitle("Hello World");
         ControllerView controllerView=fxl.getController();
-        Model m=new Model();
-        ViewModelController c =new ViewModelController(m);
+//        Model m=new Model();
+//        ViewModelController c =new ViewModelController(m);
 
-        m.ConnectToServer("127.0.0.1",5402);
-
+        //m.ConnectToServer("127.0.0.1",5402);
         primaryStage.setScene(new Scene(root, 300, 275));
         primaryStage.show();
+
     }
 
 
