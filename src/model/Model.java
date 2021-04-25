@@ -19,6 +19,7 @@ public class Model extends Observable implements SimulatorModel {
 
         try {
             socket=new Socket("127.0.0.1",5402);
+
             String command1="set /controls/flight/aileron";
             String command2="set /controls/flight/elevator";
             String command3="set /controls/flight/rudder";
@@ -31,6 +32,7 @@ public class Model extends Observable implements SimulatorModel {
             pr.println(command4+" "+1);
 
             pr.flush();
+
         } catch (IOException e) { e.printStackTrace();}
 
     }

@@ -1,6 +1,14 @@
 package flightSetting;
 
 import java.io.IOException;
+/*
+צריך להוסיף:
+מכיוון ששמות העמודות יכולים להשתנות בין הקלטות של כלי טיס שונים
+אז רצוי שבקובץ הגדרות זה תהיה לכם הגדרה לשמה של כל עמודה.
+
+אולי נוכל ליצור עוד קובץ הגדרות של כל ההגדרות אבל נקצה כל מחרוזרת (הגדרה) ע"י שימוש ב set חיצוני
+אפשר גם להוסיף אותם לכאן ולהתחל את השם הספציפי רק ב set עבור כל מה ששונה ואז כשנשלח אובייקט XML שונה נצטרך לעשות את זה ביצירה
+ */
 
 public class FlightSetting {
     private String location="location";
@@ -32,6 +40,7 @@ public class FlightSetting {
 
     private String Y="Y";
     private int minY,maxY;
+
 
     private String SteeringWheel="SteeringWheel";
     private int minSteeringWheel,maxSteeringWheel;
