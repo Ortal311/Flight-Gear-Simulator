@@ -12,7 +12,7 @@
       <ListView layoutY="53.0" prefHeight="55.0" prefWidth="124.0" />
       <Button layoutX="105.0" layoutY="189.0" mnemonicParsing="false" onAction="#onPlay" text="Play" />
       <Button layoutX="152.0" layoutY="189.0" mnemonicParsing="false" text="Pause" />
-      <Button layoutX="218.0" layoutY="189.0" mnemonicParsing="false" text="Stop" />
+      <Button layoutX="218.0" layoutY="189.0" mnemonicParsing="false" onAction="#onStop" text="Stop" />
       <Button layoutX="271.0" layoutY="189.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="38.0" text="&lt;&lt;" />
       <Button layoutX="316.0" layoutY="189.0" mnemonicParsing="false" text="&gt;&gt;" />
       <Button layoutX="356.0" layoutY="189.0" mnemonicParsing="false" text="-5s" />

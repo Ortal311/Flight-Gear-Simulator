@@ -15,40 +15,36 @@ public class Model extends Observable implements SimulatorModel {
     Socket socket;
     PrintWriter out;
     TimeSeries ts;// = new TimeSeries("reg_flight.csv");
+    private boolean stop = false;
+
+    public void close() {
+        this.stop = true;
+    }
 
     @Override
     public void ConnectToServer(String ip, double port) {
 
+        //System.out.println("thread worked");
         try {
             socket = new Socket("127.0.0.1", 5402);
             out = new PrintWriter(socket.getOutputStream());
 
-            for (int i = 0; i < ts.rows.size(); i++) {
-                System.out.println(ts.rows.get(i));
-                out.println(ts.rows.get(i));
-                out.flush();
-                try {
-                    Thread.sleep(50);//responsible for the speed of the display
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            for (int i = 0; i < ts.rows.size() && !stop; i++)
+            {
+                    System.out.println(ts.rows.get(i));
+                    out.println(ts.rows.get(i));
+                    out.flush();
+                    try {
+                        Thread.sleep(50);//responsible for the speed of the display
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
             }
             out.close();
             socket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
-//            String command1="set /controls/flight/aileron";
-//            String command2="set /controls/flight/elevator";
-//            String command3="set /controls/flight/rudder";
-//            String command4="set /controls/engines/current-engine/throttle";
-//            out.println(command1+" "+1);
-//            out.println(command2+" "+1);
-//            out.println(command3+" "+1);
-//            out.println(command4+" "+1);
-        // out.flush();
 
     }
 
@@ -74,14 +70,18 @@ public class Model extends Observable implements SimulatorModel {
 
     public void playFile() {
         System.out.printf("arrived 3");
-       // Thread playThread=new Thread(()->ConnectToServer("127.0.0.1", 5402));
-       ConnectToServer("127.0.0.1", 5402);
+
+        new Thread(() -> ConnectToServer("127.0.0.1", 5402)).start();
+        //ConnectToServer("127.0.0.1", 5402);
     }
+
     public void PauseFile() {
-
+    //need to implements
     }
-    public void StopFile() {
 
+    public void StopFile() {
+        new Thread(() -> close()).start();
+        //this.close();
     }
 
     @Override
@@ -108,8 +108,6 @@ public class Model extends Observable implements SimulatorModel {
         fis.close();
         return decodedSettings;
     }
-
-
 
 
     //NOTE:we'll need to add get the result of each functions when needed-

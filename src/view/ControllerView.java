@@ -5,8 +5,14 @@ import model.Model;
 import viewModel.ViewModelController;
 
 import java.io.File;
+import java.net.URL;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.ResourceBundle;
+//for implements Initializable
+import javafx.fxml.Initializable;
+
+
 
 public class ControllerView implements Observer {
 
@@ -40,4 +46,6 @@ public class ControllerView implements Observer {
     public void update(Observable o, Object arg) {
 
     }
+
+
 }
