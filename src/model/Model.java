@@ -21,40 +21,34 @@ public class Model extends Observable implements SimulatorModel {
 
         try {
             socket = new Socket("127.0.0.1", 5402);
-            System.out.println("here 1");
             out = new PrintWriter(socket.getOutputStream());
 
-            System.out.println("here 2");
             for (int i = 0; i < ts.rows.size(); i++) {
-                //System.out.println("here 3");
                 System.out.println(ts.rows.get(i));
                 out.println(ts.rows.get(i));
                 out.flush();
                 try {
-                    Thread.sleep(50);//speed of display
+                    Thread.sleep(50);//responsible for the speed of the display
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-
             out.close();
-            // in.close();
             socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
 //            String command1="set /controls/flight/aileron";
 //            String command2="set /controls/flight/elevator";
 //            String command3="set /controls/flight/rudder";
 //            String command4="set /controls/engines/current-engine/throttle";
-//
 //            out.println(command1+" "+1);
 //            out.println(command2+" "+1);
 //            out.println(command3+" "+1);
 //            out.println(command4+" "+1);
-
-            out.flush();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // out.flush();
 
     }
 
@@ -67,8 +61,27 @@ public class Model extends Observable implements SimulatorModel {
         if (chosen != null) {
             System.out.println("the name of the file is:" + chosen.getName());
         }
-        ts = new TimeSeries(chosen.getName());
-        ConnectToServer("127.0.0.1",5402);
+
+        if (chosen.getName().contains(".csv"))  //checking the file
+        {
+            ts = new TimeSeries(chosen.getName());
+            //System.out.println(ts.cols.size());
+            if (ts.cols.size() != 42)
+                System.err.println("wrong amount of columns - should be 42");
+        } else
+            System.err.println("wrong file, choose csv file");
+    }
+
+    public void playFile() {
+        System.out.printf("arrived 3");
+       // Thread playThread=new Thread(()->ConnectToServer("127.0.0.1", 5402));
+       ConnectToServer("127.0.0.1", 5402);
+    }
+    public void PauseFile() {
+
+    }
+    public void StopFile() {
+
     }
 
     @Override
@@ -95,6 +108,10 @@ public class Model extends Observable implements SimulatorModel {
         fis.close();
         return decodedSettings;
     }
+
+
+
+
     //NOTE:we'll need to add get the result of each functions when needed-
     // and we'll get them from the update of the viewModelController
 

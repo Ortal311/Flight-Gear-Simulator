@@ -27,16 +27,28 @@ public class ViewModelController extends Observable implements Observer {
         //cv.addObserver(this);
     }
 
+        //Basic Functions- Buttons
     public void openFile() {
-        System.out.println("2");
         this.m.openFile();
     }
 
+    public void Play(){
+        System.out.printf("arrived 2");
+
+        this.m.playFile();
+    }
+    public void Pause() {
+        this.m.PauseFile();
+    }
+    public void Stop() {
+        this.m.StopFile();
+    }
 
     @Override
     public void update(Observable o, Object arg) {
 
     }
+
 
 
 }

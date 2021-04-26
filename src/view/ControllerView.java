@@ -17,13 +17,23 @@ public class ControllerView implements Observer {
     public void onOpen() {
 
         System.out.println("1");
-        if (this.vmc == null) System.out.println("null");
+        if (this.vmc == null)
+            System.out.println("null");
         this.vmc.openFile();
         // vmc.openFile();
     }
 
-    public void click() {
-        System.out.println("new button");
+    public void onPlay() {
+        if (this.vmc == null)
+            System.out.println("null");
+        //System.out.printf("arrived 1");
+        this.vmc.Play();
+    }
+    public void onPause(){
+        this.vmc.Pause();
+    }
+    public void onStop(){
+        this.vmc.Stop();
     }
 
     @Override
