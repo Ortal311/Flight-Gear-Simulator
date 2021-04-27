@@ -1,5 +1,12 @@
 package view;
 
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.fxml.FXML;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Slider;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import model.Model;
 import viewModel.ViewModelController;
@@ -16,9 +23,59 @@ import javafx.fxml.Initializable;
 
 public class ControllerView implements Observer {
 
-    //ViewModelController vmc;
-    Model m = new Model();
-    ViewModelController vmc = new ViewModelController(m);
+    @FXML
+    Canvas joystick;
+    @FXML
+    Slider throttle;
+    @FXML
+    Slider rudder;
+    @FXML
+    Slider sliderTime;
+
+    ViewModelController vmc;
+    DoubleProperty aileron,elevators;
+
+    boolean mousePushed;
+    double jx,jy;
+    double mx,my;
+
+    public ControllerView() {
+
+        mousePushed= false;
+        jx=0;
+        jy=0;
+        aileron=new SimpleDoubleProperty();
+        elevators=new SimpleDoubleProperty();
+    }
+
+    void init(ViewModelController vmc)
+    {
+        this.vmc=vmc;
+        throttle.valueProperty().bind(vmc.throttle);
+        rudder.valueProperty().bind(vmc.rudder);
+        aileron.bind(vmc.aileron);
+        elevators.bind(vmc.elevators);
+        vmc.sliderTime.bind(sliderTime.valueProperty());
+
+        aileron.addListener((o,ov,nv)->{
+            System.out.println("aileron update ------ " + nv);
+            jx = (double)nv;
+            paint();
+        });
+        elevators.addListener((o,ov,nv)-> {jy = (double)nv; paint();});
+
+        //new Thread(() -> vmc.updateDisplayVariables()).start();
+    }
+
+
+    public void paint()
+    {
+        GraphicsContext gc= joystick.getGraphicsContext2D();
+        mx=joystick.getWidth()/2;
+        my=joystick.getHeight()/2;
+        gc.clearRect(0,0,joystick.getWidth(),joystick.getHeight());
+        gc.strokeOval(jx-10,jy-10,100,100);
+    }
 
     public void onOpen() {
 
@@ -29,23 +86,34 @@ public class ControllerView implements Observer {
         // vmc.openFile();
     }
 
+
     public void onPlay() {
         if (this.vmc == null)
             System.out.println("null");
         //System.out.printf("arrived 1");
-        this.vmc.Play();
+        this.vmc.play();
     }
     public void onPause(){
-        this.vmc.Pause();
+        this.vmc.pause();
     }
     public void onStop(){
-        this.vmc.Stop();
+        this.vmc.stop();
+    }
+    public void onRewind(){
+        this.vmc.rewind();
+    }
+    public void onForward(){
+        this.vmc.forward();
+    }
+    public void onPlus15(){
+        this.vmc.plus15();
+    }
+    public void onMinus15(){
+        this.vmc.minus15();
     }
 
     @Override
     public void update(Observable o, Object arg) {
 
     }
-
-
 }
