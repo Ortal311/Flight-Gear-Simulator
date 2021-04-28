@@ -36,7 +36,7 @@ public class Main extends Application {
 
 
         //m.ConnectToServer("127.0.0.1",5402);
-        primaryStage.setScene(new Scene(root, 550, 350));
+        primaryStage.setScene(new Scene(root, 680, 400));
         primaryStage.show();
 
     }
