@@ -20,22 +20,24 @@ public class ViewModelController extends Observable implements Observer {
 
     // SimulatorModel m;
     Model m;
-    public DoubleProperty throttle, rudder,aileron,elevators,sliderTime;
-  //  TimeSeries ts;
+    public DoubleProperty throttle, rudder, aileron, elevators, sliderTime;
+
+    //TimeSeries ts=new TimeSeries("name");
+
     //ControllerView cv;
 
     public ViewModelController(Model m) {
         this.m = m;
         m.addObserver(this);
-        aileron= new SimpleDoubleProperty();
-        elevators= new SimpleDoubleProperty();
-        rudder= new SimpleDoubleProperty();
-        throttle= new SimpleDoubleProperty();
-        sliderTime= new SimpleDoubleProperty();
+        aileron = new SimpleDoubleProperty();
+        elevators = new SimpleDoubleProperty();
+        rudder = new SimpleDoubleProperty();
+        throttle = new SimpleDoubleProperty();
+        sliderTime = new SimpleDoubleProperty();
 
-        sliderTime.addListener((o,ov,nv)->m.setTime((double)nv));
-       //  this.cv=cv;
-       //cv.addObserver(this);
+        sliderTime.addListener((o, ov, nv) -> m.setTime((double) nv));
+        //  this.cv=cv;
+        //cv.addObserver(this);
 
     }
 
@@ -53,32 +55,45 @@ public class ViewModelController extends Observable implements Observer {
 //    }
 
 
-        //Basic Functions- Buttons
+    //Basic Functions- Buttons
     public void openFile() {
         this.m.openFile();
     }
 
-    public void play(){
+    public void play() {
         System.out.printf("arrived 2");
 
         this.m.playFile();
     }
+
     public void pause() {
         this.m.pauseFile();
     }
+
     public void stop() {
         this.m.stopFile();
     }
-    public void rewind(){this.m.rewindFile();}
-    public void forward(){this.m.forwardFile();}
-    public void plus15(){this.m.plus151File();}
-    public void minus15(){this.m.minus15File();}
+
+    public void rewind() {
+        this.m.rewindFile();
+    }
+
+    public void forward() {
+        this.m.forwardFile();
+    }
+
+    public void plus15() {
+        this.m.plus151File();
+    }
+
+    public void minus15() {
+        this.m.minus15File();
+    }
 
     @Override
     public void update(Observable o, Object arg) {
 
     }
-
 
 
 }

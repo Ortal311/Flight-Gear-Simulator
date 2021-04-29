@@ -10,6 +10,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import model.Model;
 import viewModel.ViewModelController;
+import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.net.URL;
@@ -35,13 +36,11 @@ public class ControllerView implements Observer {
     ViewModelController vmc;
     DoubleProperty aileron,elevators;
 
-    boolean mousePushed;
     double jx,jy;
     double mx,my;
 
     public ControllerView() {
 
-        mousePushed= false;
         jx=0;
         jy=0;
         aileron=new SimpleDoubleProperty();
@@ -52,17 +51,19 @@ public class ControllerView implements Observer {
     {
         this.vmc=vmc;
         throttle.valueProperty().bind(vmc.throttle);
+        //throttle.valueProperty().bindBidirectional(vmc.throttle); for the oposite side
+
         rudder.valueProperty().bind(vmc.rudder);
         aileron.bind(vmc.aileron);
         elevators.bind(vmc.elevators);
         vmc.sliderTime.bind(sliderTime.valueProperty());
 
-        aileron.addListener((o,ov,nv)->{
+        /*aileron.addListener((o,ov,nv)->{
             System.out.println("aileron update ------ " + nv);
             jx = (double)nv;
             paint();
         });
-        elevators.addListener((o,ov,nv)-> {jy = (double)nv; paint();});
+        elevators.addListener((o,ov,nv)-> {jy = (double)nv; paint();});*/
 
         //new Thread(() -> vmc.updateDisplayVariables()).start();
     }

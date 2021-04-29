@@ -1,6 +1,8 @@
 package model;
 
 import flightSetting.FlightSetting;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.stage.FileChooser;
 
 import java.beans.ExceptionListener;
@@ -16,7 +18,7 @@ public class Model extends Observable implements SimulatorModel {
     public Socket socket;
     public PrintWriter out;
     public TimeSeries ts;// = new TimeSeries("reg_flight.csv");
-    double time=0;
+    double time = 0;
     //int ms=100;//millisecond
     Options op = new Options();
 
@@ -28,7 +30,7 @@ public class Model extends Observable implements SimulatorModel {
     }
 
     public void close() {
-        time=0;
+        time = 0;
         this.stop = true;
     }
 
@@ -51,35 +53,32 @@ public class Model extends Observable implements SimulatorModel {
 
     }
 
-    public void displayFlight()
-    {
-        int i=0 ;//= time;
+    public void displayFlight() {
+        int i = 0;//= time;
         boolean condition = op.rewind ? i >= 0 : i < ts.rows.size();
         op.setPlaySpeed(op.forward ? op.playSpeed / 2 : 100);
-        time = op.plus15 ? time+15 : time;
-        time = op.minus15 ? time-15 : time;
+        time = op.plus15 ? time + 15 : time;
+        time = op.minus15 ? time - 15 : time;
 
-        for ( i = (int)time; condition && !stop ;)
-        {
-            while(pause || op.scroll); //pause needs to be replaced with thread( works only one time now)
+        for (i = (int) time; condition && !stop; ) {
+            while (pause || op.scroll) ; //pause needs to be replaced with thread( works only one time now)
             System.out.println(ts.rows.get(i));
             out.println(ts.rows.get(i));
             out.flush();
             time = i;
             try {
-                Thread.sleep((long)op.playSpeed);//responsible for the speed of the display
+                Thread.sleep((long) op.playSpeed);//responsible for the speed of the display
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
 
-            i = op.rewind ? i-1 : i+1;
+            i = op.rewind ? i - 1 : i + 1;
         }
     }
 
-    public void setTime(double time)
-    {
-        this.time=time;
-        new Thread(()->displayFlight()).start();
+    public void setTime(double time) {
+        this.time = time;
+        new Thread(() -> displayFlight()).start();
     }
 
     public void openFile() {
@@ -97,22 +96,27 @@ public class Model extends Observable implements SimulatorModel {
             ts = new TimeSeries(chosen.getName());
             //System.out.println(ts.cols.size());
             if (ts.cols.size() != 42)
-               System.err.println("wrong amount of columns - should be 42");
-        } else
-            System.err.println("wrong file, choose csv file");
+                System.err.println("wrong amount of columns - should be 42");
+        } else {
+            //System.err.println("wrong file, choose csv file");
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Wrong file chosen");
+            alert.setContentText("please choose a csv file");
+            alert.showAndWait();
+        }
+
     }
 
-    public void playFile()  {
-       System.out.printf("arrived 3");
-       if(!stop && pause) {
-           pause = false;
-           displayFlight();
-       }
-       else {
+    public void playFile() {
+        System.out.printf("arrived 3");
+        if (!stop && pause) {
+            pause = false;
+            displayFlight();
+        } else {
+            new Thread(() -> ConnectToServer("127.0.0.1", 5402)).start();
 
-           new Thread(() -> ConnectToServer("127.0.0.1", 5402)).start();
-
-       }
+        }
         //ConnectToServer("127.0.0.1", 5402);
     }
 
@@ -120,9 +124,8 @@ public class Model extends Observable implements SimulatorModel {
         new Thread(() -> pause()).start();
     }
 
-    public void pause()
-    {
-      pause=true;
+    public void pause() {
+        pause = true;
     }
 
     public void stopFile() {
@@ -130,27 +133,23 @@ public class Model extends Observable implements SimulatorModel {
         //this.close();
     }
 
-    public void rewindFile()
-    {
+    public void rewindFile() {
         op.rewind = true;
         new Thread(() -> displayFlight()).start();
     }
 
-    public void forwardFile()
-    {
-        op.forward=true;
+    public void forwardFile() {
+        op.forward = true;
         new Thread(() -> displayFlight()).start();
     }
 
-    public void plus151File()
-    {
-        op.plus15=true;
+    public void plus151File() {
+        op.plus15 = true;
         new Thread(() -> displayFlight()).start();
     }
 
-    public void minus15File()
-    {
-        op.minus15=true;
+    public void minus15File() {
+        op.minus15 = true;
         new Thread(() -> displayFlight()).start();
     }
 
@@ -184,5 +183,3 @@ public class Model extends Observable implements SimulatorModel {
     // and we'll get them from the update of the viewModelController
 
 }
-
-
