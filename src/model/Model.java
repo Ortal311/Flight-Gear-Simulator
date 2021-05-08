@@ -108,11 +108,12 @@ public class Model extends Observable implements SimulatorModel {
 
     }
 
-    public void playFile() {
+    synchronized public void playFile() {
         System.out.printf("arrived 3");
         if (!stop && pause) {
             pause = false;
-            displayFlight();
+//            displayFlight();
+            this.notify();
         } else {
             new Thread(() -> ConnectToServer("127.0.0.1", 5402)).start();
 
@@ -120,13 +121,19 @@ public class Model extends Observable implements SimulatorModel {
         //ConnectToServer("127.0.0.1", 5402);
     }
 
-    public void pauseFile() {
-        new Thread(() -> pause()).start();
+    synchronized public void pauseFile() {
+//        new Thread(() -> pause()).start();
+        try {
+            pause = true;
+            this.wait();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
-    public void pause() {
-        pause = true;
-    }
+//    public void pause() {
+//        pause = true;
+//    }
 
     public void stopFile() {
         new Thread(() -> close()).start();
