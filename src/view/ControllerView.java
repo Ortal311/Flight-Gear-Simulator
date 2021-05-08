@@ -86,6 +86,14 @@ public class ControllerView implements Observer {
         this.vmc.openFile();
         // vmc.openFile();
     }
+    public void onOpenXML() {
+
+        System.out.println("1");
+        if (this.vmc == null)
+            System.out.println("null");
+        this.vmc.openXMLFile();
+        // vmc.openFile();
+    }
 
 
     public void onPlay() {
@@ -95,6 +103,7 @@ public class ControllerView implements Observer {
         this.vmc.play();
     }
     public void onPause(){
+        System.out.println("pause 1");
         this.vmc.pause();
     }
     public void onStop(){

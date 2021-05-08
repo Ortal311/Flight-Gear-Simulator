@@ -59,6 +59,9 @@ public class ViewModelController extends Observable implements Observer {
     public void openFile() {
         this.m.openFile();
     }
+    public void openXMLFile() {
+        this.m.openXML();
+    }
 
     public void play() {
         System.out.printf("arrived 2");
@@ -67,6 +70,7 @@ public class ViewModelController extends Observable implements Observer {
     }
 
     public void pause() {
+        System.out.println("pause 2");
         this.m.pauseFile();
     }
 

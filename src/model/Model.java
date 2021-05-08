@@ -107,6 +107,23 @@ public class Model extends Observable implements SimulatorModel {
         }
 
     }
+    public void openXML() {
+        FileChooser fc = new FileChooser();
+        fc.setTitle("open XML file");
+        fc.setInitialDirectory(new File("./"));
+        File chosen = fc.showOpenDialog(null);
+        if (chosen != null) {
+            System.out.println("the name of the file is:" + chosen.getName());
+        }
+        if (!chosen.getName().contains(".xml"))  //checking the file
+        {
+            //System.err.println("wrong file, choose xml file");
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Wrong file chosen");
+            alert.setContentText("please choose a csv file");
+            alert.showAndWait();
+        }}
 
     synchronized public void playFile() {
         System.out.printf("arrived 3");
@@ -124,6 +141,7 @@ public class Model extends Observable implements SimulatorModel {
     synchronized public void pauseFile() {
 //        new Thread(() -> pause()).start();
         try {
+            System.out.println("did wait");
             pause = true;
             this.wait();
         } catch (InterruptedException e) {
@@ -186,7 +204,9 @@ public class Model extends Observable implements SimulatorModel {
     }
 
 
-    //NOTE:we'll need to add get the result of each functions when needed-
+
+
+        //NOTE:we'll need to add get the result of each functions when needed-
     // and we'll get them from the update of the viewModelController
 
 }
