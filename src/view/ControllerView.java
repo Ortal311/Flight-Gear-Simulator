@@ -7,6 +7,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import model.Model;
 import viewModel.ViewModelController;
@@ -24,6 +25,8 @@ import javafx.fxml.Initializable;
 
 public class ControllerView implements Observer {
 
+    @FXML
+    Pane board;
     @FXML
     Canvas joystick;
     @FXML
@@ -52,7 +55,7 @@ public class ControllerView implements Observer {
         this.vmc=vmc;
         throttle.valueProperty().bind(vmc.throttle);
         //throttle.valueProperty().bindBidirectional(vmc.throttle); for the oposite side
-
+        board.getChildren().add(new PlayerButtons());
         rudder.valueProperty().bind(vmc.rudder);
         aileron.bind(vmc.aileron);
         elevators.bind(vmc.elevators);

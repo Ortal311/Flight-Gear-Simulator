@@ -26,6 +26,10 @@ public class PlayerButtons extends Pane {
 
     }
 
+    public void set() {
+        List<Node> lst = new ArrayList<>();
+    }
+
 }
 
 
