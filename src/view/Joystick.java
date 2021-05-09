@@ -11,33 +11,31 @@ import java.util.List;
 
 public class Joystick extends Pane {
 
-    Slider throttle, rudder;
-    Canvas canvas;
+    public Slider throttle, rudder;
+    public Canvas canvas;
+//    public Circle outerCircle, innerCircle;
 
     public List<Node> set() {
         List<Node> lst = new ArrayList<>();
 
-
-
         this.throttle = new Slider();
         throttle.setOrientation(Orientation.VERTICAL);
-        throttle.setLayoutX(400);
-        throttle.setLayoutY(100);
-        throttle.setPrefHeight(170);
+        throttle.setLayoutX(530);
+        throttle.setLayoutY(25);
+        throttle.setPrefHeight(230);
         lst.add(throttle);
 
         this.rudder = new Slider();
-        rudder.setLayoutX(350);
-        rudder.setLayoutY(50);
-        rudder.setPrefWidth(180);
+        rudder.setLayoutX(545);
+        rudder.setLayoutY(255);
+        rudder.setPrefWidth(230);
         lst.add(rudder);
 
         this.canvas = new Canvas();
-//        canvas.setLayoutX(300);
-//        canvas.setLayoutY(70);
-        canvas.setHeight(50);
-        canvas.setWidth(50);
-        canvas.setStyle("-fx-background-color: black");
+        canvas.setLayoutX(555);
+        canvas.setLayoutY(25);
+        canvas.setHeight(230);
+        canvas.setWidth(215);
         lst.add(canvas);
 
         return lst;

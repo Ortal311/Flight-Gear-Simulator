@@ -22,21 +22,19 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         //added
-        Model m=new Model();
+        Model m = new Model();
         ViewModelController vmc = new ViewModelController(m);
 
         FXMLLoader fxl=new FXMLLoader();
-        //Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         Parent root = fxl.load(getClass().getResource("sample.fxml").openStream());
         primaryStage.setTitle("Hello World");
         ControllerView controllerView=fxl.getController();
-
         controllerView.init(vmc);
         controllerView.paint();
 
 
         //m.ConnectToServer("127.0.0.1",5402);
-        primaryStage.setScene(new Scene(root, 680, 400));
+        primaryStage.setScene(new Scene(root, 800, 550));
         primaryStage.show();
 
     }

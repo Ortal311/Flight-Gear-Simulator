@@ -4,6 +4,10 @@ package viewModel;
 //import java.util.ArrayList;
 //import java.util.List;
 
+import javafx.beans.InvalidationListener;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -62,6 +66,8 @@ public class TimeSeries {
         }
     }
 
-
+    public List<String> getAttributes() {
+        return new LinkedList<>(this.map.keySet());
+    }
 
 }
