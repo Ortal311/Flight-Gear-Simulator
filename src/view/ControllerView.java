@@ -3,6 +3,7 @@ package view;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Slider;
@@ -23,18 +24,26 @@ import javafx.fxml.Initializable;
 
 
 
-public class ControllerView implements Observer {
+public class ControllerView extends Pane implements Observer, Initializable {
 
     @FXML
     Pane board;
+
     @FXML
-    Canvas joystick;
+    PlayerButtons playerButtons;
+
     @FXML
-    Slider throttle;
-    @FXML
-    Slider rudder;
-    @FXML
-    Slider sliderTime;
+    Joystick joystick;
+
+//    @FXML
+//    Canvas joystick;
+//    @FXML
+//    Slider throttle;
+//    @FXML
+//    Slider rudder;
+//    @FXML
+//    Slider sliderTime;
+
 
     ViewModelController vmc;
     DoubleProperty aileron,elevators;
@@ -43,23 +52,28 @@ public class ControllerView implements Observer {
     double mx,my;
 
     public ControllerView() {
-
         jx=0;
         jy=0;
         aileron=new SimpleDoubleProperty();
         elevators=new SimpleDoubleProperty();
     }
 
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        board.getChildren().addAll(joystick.set());
+        board.getChildren().addAll(playerButtons.set());
+    }
+
     void init(ViewModelController vmc)
     {
         this.vmc=vmc;
-        throttle.valueProperty().bind(vmc.throttle);
-        //throttle.valueProperty().bindBidirectional(vmc.throttle); for the oposite side
-        board.getChildren().add(new PlayerButtons());
-        rudder.valueProperty().bind(vmc.rudder);
-        aileron.bind(vmc.aileron);
-        elevators.bind(vmc.elevators);
-        vmc.sliderTime.bind(sliderTime.valueProperty());
+//        throttle.valueProperty().bind(vmc.throttle);
+//        //throttle.valueProperty().bindBidirectional(vmc.throttle); for the oposite side
+//        board.getChildren().add(new PlayerButtons());
+//        rudder.valueProperty().bind(vmc.rudder);
+//        aileron.bind(vmc.aileron);
+//        elevators.bind(vmc.elevators);
+//        vmc.sliderTime.bind(sliderTime.valueProperty());
 
         /*aileron.addListener((o,ov,nv)->{
             System.out.println("aileron update ------ " + nv);
@@ -71,14 +85,13 @@ public class ControllerView implements Observer {
         //new Thread(() -> vmc.updateDisplayVariables()).start();
     }
 
-
     public void paint()
     {
-        GraphicsContext gc= joystick.getGraphicsContext2D();
-        mx=joystick.getWidth()/2;
-        my=joystick.getHeight()/2;
-        gc.clearRect(0,0,joystick.getWidth(),joystick.getHeight());
-        gc.strokeOval(jx-10,jy-10,100,100);
+//        GraphicsContext gc= joystick.getGraphicsContext2D();
+//        mx=joystick.getWidth()/2;
+//        my=joystick.getHeight()/2;
+//        gc.clearRect(0,0,joystick.getWidth(),joystick.getHeight());
+//        gc.strokeOval(jx-10,jy-10,100,100);
     }
 
     public void onOpen() {
@@ -105,22 +118,28 @@ public class ControllerView implements Observer {
         //System.out.printf("arrived 1");
         this.vmc.play();
     }
+
     public void onPause(){
         System.out.println("pause 1");
         this.vmc.pause();
     }
+
     public void onStop(){
         this.vmc.stop();
     }
+
     public void onRewind(){
         this.vmc.rewind();
     }
+
     public void onForward(){
         this.vmc.forward();
     }
+
     public void onPlus15(){
         this.vmc.plus15();
     }
+
     public void onMinus15(){
         this.vmc.minus15();
     }
