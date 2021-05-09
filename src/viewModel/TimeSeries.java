@@ -1,4 +1,4 @@
-package model;
+package viewModel;
 
 //import java.io.FileInputStream;
 //import java.util.ArrayList;

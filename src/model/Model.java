@@ -2,15 +2,14 @@ package model;
 
 import flightSetting.FlightSetting;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.stage.FileChooser;
+import viewModel.TimeSeries;
 
 import java.beans.ExceptionListener;
 import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.*;
 import java.net.Socket;
-import java.sql.SQLOutput;
 import java.util.Observable;
 
 public class Model extends Observable implements SimulatorModel {
@@ -53,6 +52,11 @@ public class Model extends Observable implements SimulatorModel {
 
     }
 
+    public void setTimeSeries(TimeSeries ts)
+    {
+        this.ts=ts;
+    }
+
     public void displayFlight() {
         int i = 0;//= time;
         boolean condition = op.rewind ? i >= 0 : i < ts.rows.size();
@@ -81,32 +85,7 @@ public class Model extends Observable implements SimulatorModel {
         new Thread(() -> displayFlight()).start();
     }
 
-    public void openFile() {
-        System.out.printf("3");
-        FileChooser fc = new FileChooser();
-        fc.setTitle("open CSV file");
-        fc.setInitialDirectory(new File("./"));
-        File chosen = fc.showOpenDialog(null);
-        if (chosen != null) {
-            System.out.println("the name of the file is:" + chosen.getName());
-        }
 
-        if (chosen.getName().contains(".csv"))  //checking the file
-        {
-            ts = new TimeSeries(chosen.getName());
-            //System.out.println(ts.cols.size());
-            if (ts.cols.size() != 42)
-                System.err.println("wrong amount of columns - should be 42");
-        } else {
-            //System.err.println("wrong file, choose csv file");
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Wrong file chosen");
-            alert.setContentText("please choose a csv file");
-            alert.showAndWait();
-        }
-
-    }
     public void openXML() {
         FileChooser fc = new FileChooser();
         fc.setTitle("open XML file");
@@ -123,7 +102,8 @@ public class Model extends Observable implements SimulatorModel {
             alert.setHeaderText("Wrong file chosen");
             alert.setContentText("please choose a csv file");
             alert.showAndWait();
-        }}
+        }
+    }
 
     synchronized public void playFile() {
         System.out.printf("arrived 3");
@@ -203,10 +183,13 @@ public class Model extends Observable implements SimulatorModel {
         return decodedSettings;
     }
 
+    @Override
+    public void openFile() {
+
+    }
 
 
-
-        //NOTE:we'll need to add get the result of each functions when needed-
+    //NOTE:we'll need to add get the result of each functions when needed-
     // and we'll get them from the update of the viewModelController
 
 }

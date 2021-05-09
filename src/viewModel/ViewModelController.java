@@ -1,15 +1,11 @@
 package viewModel;
 
-import com.sun.scenario.effect.impl.sw.java.JSWBlend_SRC_OUTPeer;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 import model.Model;
-import model.SimulatorModel;
-import model.TimeSeries;
-import org.w3c.dom.ls.LSOutput;
-import view.ControllerView;
+import viewModel.TimeSeries;
 
 import java.io.File;
 import java.util.Observable;
@@ -21,6 +17,7 @@ public class ViewModelController extends Observable implements Observer {
     // SimulatorModel m;
     Model m;
     public DoubleProperty throttle, rudder, aileron, elevators, sliderTime;
+    public TimeSeries ts;
 
     //TimeSeries ts=new TimeSeries("name");
 
@@ -57,10 +54,36 @@ public class ViewModelController extends Observable implements Observer {
 
     //Basic Functions- Buttons
     public void openFile() {
-        this.m.openFile();
+        System.out.printf("3");
+        FileChooser fc = new FileChooser();
+        fc.setTitle("open CSV file");
+        fc.setInitialDirectory(new File("./"));
+        File chosen = fc.showOpenDialog(null);
+        if (chosen != null) {
+            System.out.println("the name of the file is:" + chosen.getName());
+        }
+
+        if (chosen.getName().contains(".csv"))  //checking the file
+        {
+            ts = new TimeSeries(chosen.getName());
+            //System.out.println(ts.cols.size());
+            if (ts.cols.size() != 42)
+                System.err.println("wrong amount of columns - should be 42");
+            else
+                m.setTimeSeries(ts);
+        } else {
+            //System.err.println("wrong file, choose csv file");
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Wrong file chosen");
+            alert.setContentText("please choose a csv file");
+            alert.showAndWait();
+        }
     }
-    public void openXMLFile() {
-        this.m.openXML();
+
+    public void openXMLFile()
+    {
+        m.openXML();
     }
 
     public void play() {
