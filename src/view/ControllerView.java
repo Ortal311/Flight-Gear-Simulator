@@ -62,6 +62,16 @@ public class ControllerView extends Pane implements Observer, Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         board.getChildren().addAll(joystick.set());
         board.getChildren().addAll(playerButtons.set());
+
+
+        playerButtons.openCSV.setOnAction((e) -> onOpen());
+        playerButtons.play.setOnAction((e) -> onPlay());
+        playerButtons.pause.setOnAction((e) -> onPause());
+        playerButtons.stop.setOnAction((e) -> onStop());
+        playerButtons.forward.setOnAction((e) -> onForward());
+        playerButtons.rewind.setOnAction((e) -> onRewind());
+        playerButtons.minus.setOnAction((e) -> onMinus15());
+        playerButtons.plus.setOnAction((e) -> onPlus15());
     }
 
     void init(ViewModelController vmc)
