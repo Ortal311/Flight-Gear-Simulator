@@ -1,15 +1,19 @@
 package view;
 
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.shape.Circle;
+import org.w3c.dom.Node;
 
 import java.awt.*;
+import java.util.ArrayList;
 
-public class PlayerButtons extends AnchorPane {
+public class PlayerButtons extends Pane {
 
-    Button play, stop, pause, minus, plus, rewind, forward,openCSV,openXML;
+   public Button play, stop, pause, minus, plus, rewind, forward,openCSV,openXML;
 
-    public PlayerButtons() {
+    public  PlayerButtons() {
+
         this.play = new Button("Play");
         this.stop = new Button("Stop");
         this.pause = new Button("Pause");
