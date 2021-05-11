@@ -43,10 +43,12 @@ public class ControllerView extends Pane implements Observer{
 
 
         this.vmc=vmc;
-        vmc.throttle.bind(myJoystick.throttle);
+        playerButtons.setVmc(vmc);
+        attributesList.set(vmc);
+     /*   vmc.throttle.bind(myJoystick.throttle);
         vmc.rudder.bind(myJoystick.rudder);
         vmc.aileron.bind(myJoystick.aileron);
-        vmc.elevators.bind(myJoystick.elevators);
+        vmc.elevators.bind(myJoystick.elevators);*/
 
         myJoystick.throttle.bind(vmc.throttle);
         myJoystick.rudder.bind(vmc.rudder);

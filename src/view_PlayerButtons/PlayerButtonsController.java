@@ -13,7 +13,6 @@ public class PlayerButtonsController {
     @FXML
     Slider sliderTime;
 
-
     ViewModelController vmc;
 
     public void init(ViewModelController vmc) {
