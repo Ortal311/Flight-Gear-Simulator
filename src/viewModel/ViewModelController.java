@@ -18,7 +18,7 @@ public class ViewModelController extends Observable implements Observer {
     Model m;
     public DoubleProperty throttle, rudder, aileron, elevators, sliderTime;
     public TimeSeries ts;
-
+    public DoubleProperty flag;
     //TimeSeries ts=new TimeSeries("name");
 
     //ControllerView cv;
@@ -31,7 +31,7 @@ public class ViewModelController extends Observable implements Observer {
         rudder = new SimpleDoubleProperty();
         throttle = new SimpleDoubleProperty();
         sliderTime = new SimpleDoubleProperty();
-
+        flag= new SimpleDoubleProperty();
         sliderTime.addListener((o, ov, nv) -> m.setTime((double) nv));
         //  this.cv=cv;
         //cv.addObserver(this);
@@ -79,6 +79,7 @@ public class ViewModelController extends Observable implements Observer {
             alert.setContentText("please choose a csv file");
             alert.showAndWait();
         }
+        flag.set(1);
     }
 
     public void openXMLFile()
