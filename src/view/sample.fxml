@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.layout.*?>
-<?import view.PlayerButtons?>
-<?import view.Joystick?>
-<?import view.AttributesList?>
+<?import view_PlayerButtons.PlayerButtons?>
+<?import view_joystick.MyJoystick?>
+<?import view_AttributesList.AttributesList?>
 
 <Pane fx:id="board" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="393.0" prefWidth="676.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.ControllerView">
    <children>
-      <AttributesList fx:id="list" />
-      <Joystick fx:id="joystick" />
+      <AttributesList fx:id="attributesList" />
+      <MyJoystick fx:id="myJoystick" />
       <PlayerButtons fx:id="playerButtons"/>
    </children>
 </Pane>

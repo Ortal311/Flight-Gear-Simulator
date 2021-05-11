@@ -77,6 +77,14 @@ public class Model extends Observable implements SimulatorModel {
             }
 
             i = op.rewind ? i - 1 : i + 1;
+
+            if(pause)
+            {
+                try {
+                    this.wait();
+                } catch (InterruptedException e) {}
+
+            }
         }
     }
 
@@ -109,8 +117,8 @@ public class Model extends Observable implements SimulatorModel {
         System.out.printf("arrived 3");
         if (!stop && pause) {
             pause = false;
-//            displayFlight();
             this.notify();
+            displayFlight();
         } else {
             new Thread(() -> ConnectToServer("127.0.0.1", 5402)).start();
 

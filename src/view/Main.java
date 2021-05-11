@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import model.Model;
 import viewModel.ViewModelController;
+import view_PlayerButtons.PlayerButtonsController;
+import view_joystick.MyJoystickController;
 
 public class Main extends Application {
 
@@ -30,12 +32,17 @@ public class Main extends Application {
         primaryStage.setTitle("Hello World");
         ControllerView controllerView=fxl.getController();
         controllerView.init(vmc);
-        controllerView.paint();
+        MyJoystickController mjc = new MyJoystickController();
+       // PlayerButtonsController pbc= new PlayerButtonsController();
+       // pbc.init(vmc);
 
+
+        //mjc.paint();
 
         //m.ConnectToServer("127.0.0.1",5402);
         primaryStage.setScene(new Scene(root, 800, 550));
         primaryStage.show();
+
 
     }
 
