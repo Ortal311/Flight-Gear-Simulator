@@ -20,9 +20,11 @@ public class Model extends Observable implements SimulatorModel {
     double time = 0;
     //int ms=100;//millisecond
     Options op = new Options();
+    Thread displaySetting;
 
     private volatile boolean pause = false;
     private boolean stop = false;
+    public static boolean afterPause=false;
 
     public boolean isStop() {
         return stop;
@@ -34,13 +36,15 @@ public class Model extends Observable implements SimulatorModel {
     }
 
     @Override
-    public void ConnectToServer(String ip, double port) {
+     public void ConnectToServer(String ip, double port) {
         //System.out.println("thread worked");
         try {
             socket = new Socket("127.0.0.1", 5402);
             out = new PrintWriter(socket.getOutputStream());
+            System.out.println("inside connectedToserver  "+ Thread.currentThread().getName());
 
-            new Thread(() -> displayFlight()).start();
+            // new Thread(() -> displayFlight()).start();
+
 
             if (stop == true) {// needs to be replaced with join!!
                 out.close();
@@ -56,8 +60,54 @@ public class Model extends Observable implements SimulatorModel {
     {
         this.ts=ts;
     }
+   /* public class PlayDisplay implements Runnable {
+        @Override
+        synchronized public void run() {
+            int i = 0;//= time;
+            boolean condition = op.rewind ? i >= 0 : i < ts.rows.size();
+            op.setPlaySpeed(op.forward ? op.playSpeed / 2 : 100);
+            time = op.plus15 ? time + 15 : time;
+            time = op.minus15 ? time - 15 : time;
 
-    public void displayFlight() {
+            for (i = (int) time; condition && !stop; ) {
+                while (pause || op.scroll)  //pause needs to be replaced with thread( works only one time now)
+                {
+//                    System.out.println(displaySetting.getName());
+//                    System.out.println(displaySetting.isAlive());
+//                    try {
+//                        //this.wait();
+//                        System.out.println("inside Runnalbe"+ Thread.currentThread().getName());
+//                        displaySetting.wait();
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                    System.out.println(displaySetting.isAlive());
+
+                }
+                System.out.println(ts.rows.get(i));
+                out.println(ts.rows.get(i));
+                out.flush();
+                time = i;
+                try {
+                    Thread.sleep((long) op.playSpeed);//responsible for the speed of the display
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                i = op.rewind ? i - 1 : i + 1;
+
+//            if(pause)
+//            {
+//                try {
+//                    this.wait();
+//                } catch (InterruptedException e) {}
+//
+//            }
+            }
+        }
+    }
+*/
+        synchronized public void displayFlight() {
         int i = 0;//= time;
         boolean condition = op.rewind ? i >= 0 : i < ts.rows.size();
         op.setPlaySpeed(op.forward ? op.playSpeed / 2 : 100);
@@ -65,8 +115,29 @@ public class Model extends Observable implements SimulatorModel {
         time = op.minus15 ? time - 15 : time;
 
         for (i = (int) time; condition && !stop; ) {
-            while (pause || op.scroll) ; //pause needs to be replaced with thread( works only one time now)
+            while (pause || op.scroll)  //pause needs to be replaced with thread( works only one time now)
+            {
+                System.out.println(displaySetting.getName());
+                System.out.println("inside display_whileCon  "+ Thread.currentThread().getName());
+
+                try {
+                    System.out.println(Thread.currentThread().getName());
+                    //Thread.currentThread().wait();
+                    System.out.println(this.toString());
+                    System.out.println(this);
+                    System.out.println(this.displaySetting.isAlive());
+
+                    this.wait();// it works because it close all the process (Model)!!!
+                  //  Thread.currentThread().wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(displaySetting.isAlive());
+
+            }
             System.out.println(ts.rows.get(i));
+            System.out.println("inside displaySendData  "+ Thread.currentThread().getName());
+
             out.println(ts.rows.get(i));
             out.flush();
             time = i;
@@ -78,13 +149,13 @@ public class Model extends Observable implements SimulatorModel {
 
             i = op.rewind ? i - 1 : i + 1;
 
-            if(pause)
-            {
-                try {
-                    this.wait();
-                } catch (InterruptedException e) {}
-
-            }
+//            if(pause)
+//            {
+//                try {
+//                    this.wait();
+//                } catch (InterruptedException e) {}
+//
+//            }
         }
     }
 
@@ -114,27 +185,48 @@ public class Model extends Observable implements SimulatorModel {
     }
 
     synchronized public void playFile() {
-        System.out.printf("arrived 3");
-        if (!stop && pause) {
-            pause = false;
+        System.out.println("inside playFile function "+ Thread.currentThread().getName());
+        if(afterPause){
             this.notify();
-            displayFlight();
+            pause=false;
+        }
+        if (!stop && pause) {
+            System.out.println("lkafjldafasjdflasdfal");
+            pause = false;
+            //this.notify();
+            //displayFlight();
         } else {
-            new Thread(() -> ConnectToServer("127.0.0.1", 5402)).start();
+       //     new Thread(() -> ConnectToServer("127.0.0.1", 5402)).start();
+            if(!afterPause)
+            {
+
+                ConnectToServer("127.0.0.1", 5402);
+
+                System.out.println("connected to server again after play");
+            }
+            //here we operate displayFlight with Thread here
+            displaySetting=new Thread(()->displayFlight(),"Thread of displaySetting function");
+            displaySetting.start();
+
+
+
+            //here operate displayFlight that is inside Runnable
+           /* PlayDisplay p=new PlayDisplay();
+            displaySetting=new Thread(p);
+            displaySetting.start();*/
+            System.out.println("inside playFile  "+ Thread.currentThread().getName());
 
         }
-        //ConnectToServer("127.0.0.1", 5402);
     }
 
-    synchronized public void pauseFile() {
+     public void pauseFile() {
 //        new Thread(() -> pause()).start();
-        try {
-            System.out.println("did wait");
-            pause = true;
-            this.wait();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        System.out.println("inside puaseFile  "+ Thread.currentThread().getName());
+         System.out.println(this);
+        pause = true;
+
+         afterPause=true;
+
     }
 
 //    public void pause() {
