@@ -26,6 +26,8 @@ public class Model extends Observable implements SimulatorModel {
     private boolean stop = false;
     public static boolean afterPause = false;
     public static boolean afterStop = false;
+    public static boolean afterRewind = false;
+    public static boolean afterForward = false;
 
     public boolean isStop() {
         return stop;
@@ -34,12 +36,6 @@ public class Model extends Observable implements SimulatorModel {
     public void close() {
         time = 0;
         this.stop = true;
-//        out.close();
-//        try {
-//            socket.close();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
 
     }
 
@@ -51,10 +47,7 @@ public class Model extends Observable implements SimulatorModel {
             out = new PrintWriter(socket.getOutputStream());
             System.out.println("inside connectedToserver  " + Thread.currentThread().getName());
 
-//            if (stop == true) {// needs to be replaced with join!!
-//                out.close();
-//                socket.close();
-//            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -67,29 +60,35 @@ public class Model extends Observable implements SimulatorModel {
 
 
     synchronized public void displayFlight() {
-        int i = 0;//= time;
-        boolean condition = op.rewind ? i >= 0 : i < ts.rows.size();
+        int i = 0;
+        boolean condition = op.rewind ? i >= 0 : i < ts.rows.size();//if rewind go while>0 else (regula) go while <ts.size
         op.setPlaySpeed(op.forward ? op.playSpeed / 2 : 100);
-        time = op.plus15 ? time + 15 : time;
+        time = op.plus15 ? time + 150 : time;
         time = op.minus15 ? time - 15 : time;
 
         for (i = (int) time; condition && !stop; ) {
-            while (pause || op.scroll || afterStop)  //pause needs to be replaced with thread( works only one time now)
+            while (pause || op.scroll || afterStop||op.forward)  //pause needs to be replaced with thread( works only one time now)
             {
                 //  System.out.println(displaySetting.getName());
                 // System.out.println("inside display_whileCon  " + Thread.currentThread().getName());
-                System.out.println("get here after pause,afterStop:"+pause+" "+afterStop);
+                System.out.println("get here after pause,afterStop:" + pause + " " + afterStop);
                 try {
                     System.out.println(Thread.currentThread().getName());
                     System.out.println(this);
-                        //this.wait();// it works because it close all the process (Model)!!!
+                    //this.wait();// it works because it close all the process (Model)!!!
 
-                    if(afterStop){
-                       // this.wait();
+                    if (afterStop) {
+                        // this.wait();
                         displaySetting.stop();
                     }
-                    if(afterPause){
+                    if (afterPause) {
                         this.wait();
+                    }
+                    if(op.forward){
+                        op.setPlaySpeed(50);
+                        System.out.println("chnged forward to 50");
+                        op.forward=false;
+                        this.afterForward = true;
                     }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -107,6 +106,15 @@ public class Model extends Observable implements SimulatorModel {
                 e.printStackTrace();
             }
             i = op.rewind ? i - 1 : i + 1;
+
+//            if(op.forward){
+//                op.setPlaySpeed(50);
+//                System.out.println("chnged forward to 50");
+//                op.forward=false;
+//                this.afterForward = true;
+//            }
+
+
         }
     }
 
@@ -136,24 +144,32 @@ public class Model extends Observable implements SimulatorModel {
     }
 
     synchronized public void playFile() {
-        System.out.println("inside playFile function " + Thread.currentThread().getName());
+      //  System.out.println("inside playFile function " + Thread.currentThread().getName());
+        System.out.println("afterForward in Play    "+ afterForward);
+        if (afterForward) {
+            afterForward=false;
+            System.out.println("blablalalal");
+            op.setPlaySpeed(100);
 
-        if (afterPause) {
-           this.notify();
-            pause = false;
-            afterPause=false;
+            //  this.notify();
         }
-        else if(afterStop){
+        else if (afterPause) {
+            this.notify();
+            pause = false;
+            afterPause = false;
+        }
+        else if (afterStop) {
             displaySetting = new Thread(() -> displayFlight(), "Thread of displaySetting function");
             displaySetting.start();
-            afterStop=false;
+            afterStop = false;
         }
-
         else {
-            if (!afterPause) {
+           /* if (!afterPause) {
                 ConnectToServer("127.0.0.1", 5402);
                 System.out.println("connected to server again after play");
-            }
+            }*/
+            ConnectToServer("127.0.0.1", 5402);
+            System.out.println("connected to server again after play");
             //here we operate displayFlight with Thread here
             displaySetting = new Thread(() -> displayFlight(), "Thread of displaySetting function");
             displaySetting.start();
@@ -163,38 +179,30 @@ public class Model extends Observable implements SimulatorModel {
     }
 
     public void pauseFile() {
-//        new Thread(() -> pause()).start();
-        //System.out.println("inside puaseFile  " + Thread.currentThread().getName());
-        //System.out.println(this);
         pause = true;
         afterPause = true;
     }
 
 
     public void stopFile() {
-
-        //stop = true;
-
         afterStop = true;
-        this.time=0;
-        //close();
-        //new Thread(() -> close()).start();
-        //this.close();
+        this.time = 0;
+
     }
 
     public void rewindFile() {
         op.rewind = true;
-        new Thread(() -> displayFlight()).start();
+        //new Thread(() -> displayFlight()).start();
     }
 
     public void forwardFile() {
         op.forward = true;
-        new Thread(() -> displayFlight()).start();
+        // new Thread(() -> displayFlight()).start();
     }
 
     public void plus151File() {
         op.plus15 = true;
-        new Thread(() -> displayFlight()).start();
+        //   new Thread(() -> displayFlight()).start();
     }
 
     public void minus15File() {
