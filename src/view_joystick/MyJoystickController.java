@@ -1,15 +1,11 @@
 package view_joystick;
 
-import javafx.beans.InvalidationListener;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Slider;
 import javafx.scene.shape.Circle;
+import viewModel.ViewModelController;
 
 public class MyJoystickController {
 
@@ -22,6 +18,7 @@ public class MyJoystickController {
     @FXML
     Circle joystick;
 
+    ViewModelController vmc;
     public DoubleProperty aileron, elevators;
     private double jx,jy;
     private double mx,my;
@@ -30,7 +27,12 @@ public class MyJoystickController {
         jx=70; jy=80;
         aileron=new SimpleDoubleProperty();
         elevators= new SimpleDoubleProperty();
+    }
 
+    public void init(ViewModelController vmc) {
+        this.vmc=vmc;
+        rudder.valueProperty().bind(vmc.rudder);
+        throttle.valueProperty().bind(vmc.throttle);
     }
 /*
     public void paint()
@@ -40,8 +42,6 @@ public class MyJoystickController {
         my=joystick.getHeight()/2;
         gc.clearRect(0,0,joystick.getWidth(),joystick.getHeight());
         gc.strokeOval(jx-50, jy-50, 100,100);
-
     }
-
  */
 }

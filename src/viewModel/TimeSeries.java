@@ -1,19 +1,10 @@
 package viewModel;
 
-//import java.io.FileInputStream;
-//import java.util.ArrayList;
-//import java.util.List;
-
-import javafx.beans.InvalidationListener;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-//import java.io.*;
+
 import java.util.*;
-//import java.util.Iterator;
 
 public class TimeSeries {
     public Map<String, Vector<Float>> map = new HashMap<String, Vector<Float>>();
@@ -56,7 +47,7 @@ public class TimeSeries {
                 Vector<Float> colF = new Vector<Float>();
                 for (int j = 1; j < cols.firstElement().size(); j++) //length of column
                     colF.add(Float.parseFloat(cols.elementAt(i).elementAt(j))); //convert each string to float
-                //colsFloat.add(colF);
+                colsFloat.add(colF);
                 map.put(cols.elementAt(i).elementAt(0), colF); //add the converted col to the map
             }
             reader.close(); //close the reading file
@@ -66,8 +57,16 @@ public class TimeSeries {
         }
     }
 
+    public int getSize() {
+        return this.rows.size();
+    }
+
     public List<String> getAttributes() {
         return new LinkedList<>(this.map.keySet());
+    }
+
+    public float getValueByTime(int index, int time) {
+        return this.colsFloat.get(index).get(time);
     }
 
 }

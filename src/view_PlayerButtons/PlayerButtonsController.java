@@ -1,12 +1,8 @@
 package view_PlayerButtons;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Slider;
 import viewModel.ViewModelController;
-
-import java.awt.*;
 
 public class PlayerButtonsController {
 
@@ -16,16 +12,14 @@ public class PlayerButtonsController {
     ViewModelController vmc;
 
     public void init(ViewModelController vmc) {
-
         this.vmc=vmc;
+        sliderTime.valueProperty().bind(vmc.sliderTime);
     }
 
     public void onOpen() {
         if (this.vmc == null)
             System.out.println("vmc is null");
         this.vmc.openFile();
-
-
     }
 
     public void onOpenXML() {

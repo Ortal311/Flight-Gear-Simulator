@@ -3,13 +3,16 @@ package view_joystick;
 import javafx.beans.property.DoubleProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.BorderPane;
+import viewModel.ViewModelController;
+
 import java.io.IOException;
 
 
 public class MyJoystick extends BorderPane {
 
 
-    public DoubleProperty aileron, elevators, rudder, throttle;
+    public DoubleProperty aileron, elevators;
+    MyJoystickController mjc;
 
     public MyJoystick() {
 
@@ -17,14 +20,16 @@ public class MyJoystick extends BorderPane {
         FXMLLoader fxl = new FXMLLoader();
         try {
             BorderPane joy= fxl.load(getClass().getResource("MyJoystick.fxml").openStream());
-            MyJoystickController mjc= fxl.getController();
+            mjc= fxl.getController();
 
             aileron=mjc.aileron;
             elevators=mjc.elevators;
-            rudder=mjc.rudder.valueProperty();
-            throttle=mjc.throttle.valueProperty();
             this.getChildren().add(joy);
         } catch (IOException e) {}
 
+    }
+
+    public void setVmc(ViewModelController vmc) {
+        mjc.init(vmc);
     }
 }

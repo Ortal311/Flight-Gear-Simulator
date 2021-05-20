@@ -30,6 +30,6 @@
             <Font size="18.0" />
          </font>
       </Text>
-      <Slider layoutX="10.0" layoutY="84.0" prefHeight="14.0" prefWidth="763.0" />
+      <Slider fx:id="sliderTime" layoutX="10.0" layoutY="84.0" max="2174.0" prefHeight="14.0" prefWidth="763.0" />
    </children>
 </AnchorPane>

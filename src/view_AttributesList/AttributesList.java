@@ -25,13 +25,12 @@ public class AttributesList extends AnchorPane {
         try {
             AnchorPane list = fxl.load(getClass().getResource("AttributesList.fxml").openStream());
             alc = fxl.getController();
-           // lst = alc.lv.getItems();
 
             this.getChildren().add(list);
         } catch (IOException e) {
         }
     }
-        public void set(ViewModelController vmc)
+        public void setVmc(ViewModelController vmc)
         {
             alc.init(vmc);
         }

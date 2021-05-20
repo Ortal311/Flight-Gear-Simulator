@@ -5,7 +5,6 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 import model.Model;
-import viewModel.TimeSeries;
 
 import java.io.File;
 import java.util.Observable;
@@ -13,48 +12,41 @@ import java.util.Observer;
 
 public class ViewModelController extends Observable implements Observer {
 
-
-    // SimulatorModel m;
     Model m;
-    public DoubleProperty throttle, rudder, aileron, elevators, sliderTime;
+    public DoubleProperty timeStamp, throttle, rudder, aileron,
+            elevators, sliderTime, flagAttributes;
     public TimeSeries ts;
-    public DoubleProperty flag;
-    //TimeSeries ts=new TimeSeries("name");
-
-    //ControllerView cv;
 
     public ViewModelController(Model m) {
         this.m = m;
         m.addObserver(this);
+
+        timeStamp = new SimpleDoubleProperty();
         aileron = new SimpleDoubleProperty();
         elevators = new SimpleDoubleProperty();
         rudder = new SimpleDoubleProperty();
         throttle = new SimpleDoubleProperty();
         sliderTime = new SimpleDoubleProperty();
-        flag= new SimpleDoubleProperty();
-        sliderTime.addListener((o, ov, nv) -> m.setTime((double) nv));
-        //  this.cv=cv;
-        //cv.addObserver(this);
+        flagAttributes= new SimpleDoubleProperty();
 
+        timeStamp.addListener((o, ov, nv) -> {
+            updateDisplayVariables(nv.intValue());
+            //m.displayFlight(nv.intValue());
+        });
+//        sliderTime.addListener((o, ov, nv) -> m.setTime((double) nv));
     }
 
-//    public void updateDisplayVariables()
-//    {
-//       while(m.isStop())
-//       {
-//           System.out.println("im in update !! ------");
-//           m.ts.map.get("aileron").forEach(val -> aileron.setValue(val));
-//           m.ts.map.get("elevators").forEach(val -> aileron.setValue(val));
-//           m.ts.map.get("throttle").forEach(val -> aileron.setValue(val)); // there are 2 throtteles in csv file???
-//           m.ts.map.get("rudder").forEach(val -> aileron.setValue(val));
-//
-//       }
-//    }
+    public void updateDisplayVariables(int value) {
+//        aileron.setValue(ts.getValueByTime("aileron", value));
+//        elevators.setValue(ts.getValueByTime("elevators", value));
+        rudder.setValue(ts.getValueByTime(2, value));
+        throttle.setValue(ts.getValueByTime(6, value));
+        sliderTime.setValue(value);
+    }
 
 
     //Basic Functions- Buttons
     public void openFile() {
-        System.out.printf("3");
         FileChooser fc = new FileChooser();
         fc.setTitle("open CSV file");
         fc.setInitialDirectory(new File("./"));
@@ -66,7 +58,6 @@ public class ViewModelController extends Observable implements Observer {
         if (chosen.getName().contains(".csv"))  //checking the file
         {
             ts = new TimeSeries(chosen.getName());
-            //System.out.println(ts.cols.size());
             if (ts.cols.size() != 42)
                 System.err.println("wrong amount of columns - should be 42");
             else
@@ -79,7 +70,7 @@ public class ViewModelController extends Observable implements Observer {
             alert.setContentText("please choose a csv file");
             alert.showAndWait();
         }
-        flag.set(1);
+        flagAttributes.set(1);
     }
 
     public void openXMLFile()
@@ -88,9 +79,18 @@ public class ViewModelController extends Observable implements Observer {
     }
 
     public void play() {
-        System.out.printf("arrived 2");
-
-        this.m.playFile();
+        new Thread(() -> {
+            for(int i = 1; i < ts.getSize() - 1; i++) {
+                this.timeStamp.setValue(i);
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            System.out.println("DONE");
+        }).start();
+        //this.m.playFile();
     }
 
     public void pause() {
