@@ -55,6 +55,11 @@ public class Options {
     }
 
     public void setPlaySpeed(double playSpeed) {
+        if(playSpeed==0.5)playSpeed=150;
+        else if(playSpeed==1.5)playSpeed=75;
+        else if(playSpeed==2)playSpeed=50;
+        else if(playSpeed==0.5)playSpeed=25;
+        else playSpeed=100;
         this.playSpeed = playSpeed;
     }
 

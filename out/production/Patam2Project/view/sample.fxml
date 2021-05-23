@@ -5,10 +5,12 @@
 <?import view_joystick.MyJoystick?>
 <?import view_AttributesList.AttributesList?>
 
+<?import view_TimeBoard.TimeBoard?>
 <Pane fx:id="board" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="393.0" prefWidth="676.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.ControllerView">
    <children>
       <AttributesList fx:id="attributesList" />
       <MyJoystick fx:id="myJoystick" />
+    <!--  <TimeBoard fx:id="timeBoard" />-->
       <PlayerButtons fx:id="playerButtons"/>
    </children>
 </Pane>

@@ -2,6 +2,8 @@ package viewModel;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 import model.Model;
@@ -17,17 +19,37 @@ public class ViewModelController extends Observable implements Observer {
             elevators, sliderTime, flagAttributes;
     public TimeSeries ts;
 
+    public DoubleProperty rate;
+    public StringProperty timeFlight;
+
+    //from timeBoard
+    public StringProperty altimeter,airSpeed,fd,pitch,roll,yaw;
+
     public ViewModelController(Model m) {
         this.m = m;
         m.addObserver(this);
-
         timeStamp = new SimpleDoubleProperty();
         aileron = new SimpleDoubleProperty();
         elevators = new SimpleDoubleProperty();
         rudder = new SimpleDoubleProperty();
         throttle = new SimpleDoubleProperty();
         sliderTime = new SimpleDoubleProperty();
-        flagAttributes= new SimpleDoubleProperty();
+        flagAttributes = new SimpleDoubleProperty();
+
+        rate = new SimpleDoubleProperty();
+        timeFlight=new SimpleStringProperty();
+
+        altimeter=new SimpleStringProperty();
+        airSpeed=new SimpleStringProperty();
+        fd=new SimpleStringProperty();
+        pitch=new SimpleStringProperty();
+        roll=new SimpleStringProperty();
+        yaw=new SimpleStringProperty();
+//        rate.addListener((o, ov, nv) -> m.op.setPlaySpeed((double) nv));
+
+
+
+
 
         timeStamp.addListener((o, ov, nv) -> {
             updateDisplayVariables(nv.intValue());
@@ -42,6 +64,7 @@ public class ViewModelController extends Observable implements Observer {
         rudder.setValue(ts.getValueByTime(2, value));
         throttle.setValue(ts.getValueByTime(6, value));
         sliderTime.setValue(value);
+        timeFlight.setValue(String.valueOf(value));
     }
 
 
@@ -73,17 +96,23 @@ public class ViewModelController extends Observable implements Observer {
         flagAttributes.set(1);
     }
 
-    public void openXMLFile()
-    {
+    public void openXMLFile() {
         m.openXML();
     }
 
     public void play() {
+        //need to convert it, because in the choice list is come as small numbers
+        if(rate.doubleValue()==0.5)rate.setValue(150);
+        else if(rate.doubleValue()==1.5)rate.setValue(75);
+        else if(rate.doubleValue()==2)rate.setValue(50);
+        else if(rate.doubleValue()==0.5)rate.setValue(20);
+        else rate.setValue(100);
+
         new Thread(() -> {
-            for(int i = 1; i < ts.getSize() - 1; i++) {
+            for (int i = 1; i < ts.getSize() - 1; i++) {
                 this.timeStamp.setValue(i);
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep((long) rate.doubleValue());
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -116,6 +145,11 @@ public class ViewModelController extends Observable implements Observer {
 
     public void minus15() {
         this.m.minus15File();
+    }
+
+    public void speedPlay() {
+       rate.addListener((o, ov, nv) -> m.op.setPlaySpeed((double) nv));
+
     }
 
     @Override

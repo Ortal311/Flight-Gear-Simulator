@@ -22,6 +22,7 @@ public class AttributesListController {
 
     public void init(ViewModelController vmc)
     {
+
        dp.bind(vmc.flagAttributes);
        dp.addListener((u)->{
                     ObservableList<String> lst = FXCollections.observableArrayList();
