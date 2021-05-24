@@ -24,7 +24,5 @@ public class TimeBoardController {
         roll.textProperty().bind(vmc.roll);
         yaw.textProperty().bind(vmc.yaw);
 
-
-
     }
 }

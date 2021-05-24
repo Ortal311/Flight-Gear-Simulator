@@ -19,7 +19,7 @@
       <Button layoutX="285.0" layoutY="45.0" mnemonicParsing="false" onAction="#onForward" prefHeight="30.0" prefWidth="50.0" text="&gt;&gt;" />
       <Button layoutX="230.0" layoutY="45.0" mnemonicParsing="false" onAction="#onRewind" prefHeight="30.0" prefWidth="50.0" text="&lt;&lt;" />
       <Button layoutX="340.0" layoutY="45.0" mnemonicParsing="false" onAction="#onPlus15" prefHeight="30.0" prefWidth="50.0" text="+15" />
-      <Label layoutX="419.0" layoutY="45.0" text="PlaySpeed">
+      <Label layoutX="349.0" layoutY="7.0" text="PlaySpeed:">
          <font>
             <Font size="18.0" />
          </font>
@@ -31,6 +31,11 @@
          </font>
       </Text>
       <Slider fx:id="sliderTime" layoutX="10.0" layoutY="84.0" max="2174.0" prefHeight="14.0" prefWidth="763.0" />
-      <ChoiceBox fx:id="choiceSpeed" layoutX="430.0" layoutY="8.0" prefWidth="150.0" />
+      <ChoiceBox fx:id="choiceSpeed" layoutX="439.0" layoutY="8.0" prefHeight="25.0" prefWidth="50.0" />
+      <Text layoutX="526.0" layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Time :" wrappingWidth="50.0">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Text>
    </children>
 </AnchorPane>

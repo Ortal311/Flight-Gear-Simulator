@@ -8,6 +8,7 @@ import java.util.Observable;
 import java.util.Observer;
 import view_AttributesList.AttributesList;
 import view_PlayerButtons.PlayerButtons;
+import view_TimeBoard.TimeBoard;
 import view_joystick.MyJoystick;
 
 public class ControllerView extends Pane implements Observer{
@@ -21,6 +22,8 @@ public class ControllerView extends Pane implements Observer{
     @FXML
     AttributesList attributesList;
 
+    @FXML
+    TimeBoard timeBoard;
     ViewModelController vmc;
 
     void init(ViewModelController vmc)
@@ -29,6 +32,7 @@ public class ControllerView extends Pane implements Observer{
         playerButtons.setVmc(vmc);
         attributesList.setVmc(vmc);
         myJoystick.setVmc(vmc);
+        timeBoard.setVmc(vmc);
 
         myJoystick.setLayoutX(540);
         myJoystick.setLayoutY(25);
@@ -36,9 +40,14 @@ public class ControllerView extends Pane implements Observer{
         attributesList.setLayoutY(25);
         playerButtons.setLayoutY(435);
         playerButtons.setLayoutX(5);
+        timeBoard.setLayoutX(540);
+        timeBoard.setLayoutY(250);
 
         myJoystick.aileron.bind(vmc.aileron);
         myJoystick.elevators.bind(vmc.elevators);
+
+
+
     }
 
     @Override

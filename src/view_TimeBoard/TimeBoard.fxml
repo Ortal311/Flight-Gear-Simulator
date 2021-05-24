@@ -3,7 +3,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="230.0" prefWidth="230.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view_TimeBoard.TimeBoard">
+<AnchorPane prefHeight="230.0" prefWidth="230.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view_TimeBoard.TimeBoardController">
    <children>
       <Text layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Altimeter" wrappingWidth="68.0775146484375" />
       <Text layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="AirSpeed :" wrappingWidth="68.07751464843739" />

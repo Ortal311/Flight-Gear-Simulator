@@ -8,6 +8,7 @@ import java.io.IOException;
 
 public class TimeBoard extends AnchorPane {
     TimeBoardController tbc;
+
     public TimeBoard() {
         super();
         FXMLLoader fxl = new FXMLLoader();

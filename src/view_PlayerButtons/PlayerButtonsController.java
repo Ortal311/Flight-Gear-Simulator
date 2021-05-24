@@ -32,12 +32,11 @@ public class PlayerButtonsController {
 
         timeFlight.textProperty().bind(vmc.timeFlight);
 
-        // vmc.rate.bind(choiceSpeed.valueProperty());
-        choiceSpeed.valueProperty().bind(vmc.rate);
         ObservableList<String> speedList = FXCollections.observableArrayList("0.5", "1.0", "1.5", "2.0", "2.5");
-
-
         choiceSpeed.setItems(speedList);
+
+        choiceSpeed.valueProperty().bind(vmc.choiceSpeed);
+
 
     }
 

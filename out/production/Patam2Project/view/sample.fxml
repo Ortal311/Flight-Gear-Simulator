@@ -10,7 +10,7 @@
    <children>
       <AttributesList fx:id="attributesList" />
       <MyJoystick fx:id="myJoystick" />
-    <!--  <TimeBoard fx:id="timeBoard" />-->
+      <TimeBoard fx:id="timeBoard" />
       <PlayerButtons fx:id="playerButtons"/>
    </children>
 </Pane>
