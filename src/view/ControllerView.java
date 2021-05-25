@@ -4,7 +4,6 @@ import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 import viewModel.ViewModelController;
-
 import java.util.Observable;
 import java.util.Observer;
 import view_AttributesList.AttributesList;
@@ -42,11 +41,16 @@ public class ControllerView extends Pane implements Observer{
 
         myJoystick.aileron.bind(vmc.aileron);
         myJoystick.elevators.bind(vmc.elevators);
-        playerButtons.timeFlight.bind(vmc.timeFlight);
-        vmc.choiceSpeed.bind(playerButtons.choiceSpeed);
-        playerButtons.sliderTime.bind(vmc.sliderTime);
         myJoystick.rudder.bind(vmc.rudder);
         myJoystick.throttle.bind(vmc.throttle);
+
+        playerButtons.timeFlight.bind(vmc.timeFlight);
+        playerButtons.miliSec.bind(vmc.clock.miliSec.asString());
+        playerButtons.seconds.bind(vmc.clock.seconds.asString());
+        playerButtons.minutes.bind(vmc.clock.minutes.asString());
+        playerButtons.sliderTime.bind(vmc.sliderTime);
+        vmc.choiceSpeed.bind(playerButtons.choiceSpeed);
+
         timeBoard.airSpeed.bind(vmc.airSpeed);
         timeBoard.altimeter.bind(vmc.altimeter);
         timeBoard.fd.bind(vmc.fd);
@@ -54,19 +58,18 @@ public class ControllerView extends Pane implements Observer{
         timeBoard.roll.bind(vmc.roll);
         timeBoard.yaw.bind(vmc.yaw);
 
-        vmc.attributeList.addListener((ListChangeListener) change -> attributesList.lst.addAll(change.getList()));
         playerButtons.onOpen.addListener(nv->vmc.openFile());
         playerButtons.onOpenXML.addListener(nv->vmc.openXMLFile());
         playerButtons.onPlay.addListener(nv->vmc.play());
         playerButtons.onPause.addListener(nv->vmc.pause());
-      //  playerButtons.onSpeed.addListener(nv->vmc.speedPlay());
+//        playerButtons.onSpeed.addListener(nv->vmc.speedPlay());
         playerButtons.onStop.addListener(nv->vmc.stop());
         playerButtons.onRewind.addListener(nv->vmc.rewind());
         playerButtons.onForward.addListener(nv->vmc.forward());
         playerButtons.onPlus15.addListener(nv->vmc.plus15());
         playerButtons.onMinus15.addListener(nv->vmc.minus15());
 
-
+        vmc.attributeList.addListener((ListChangeListener) change -> attributesList.lst.addAll(change.getList()));
     }
 
     @Override

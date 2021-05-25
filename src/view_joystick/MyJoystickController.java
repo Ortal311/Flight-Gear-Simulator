@@ -6,8 +6,6 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Slider;
-import javafx.scene.shape.Circle;
-import viewModel.ViewModelController;
 
 public class MyJoystickController {
 
@@ -35,7 +33,6 @@ public class MyJoystickController {
 
     public void paint()
     {
-        System.out.println("paint");
         GraphicsContext gc= joystick.getGraphicsContext2D();
         mx= joystick.getWidth()/2;
         my=joystick.getHeight()/2;

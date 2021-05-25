@@ -13,38 +13,37 @@ import model.Model;
 import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Timer;
 
 public class ViewModelController extends Observable implements Observer {
 
     Model m;
     public DoubleProperty timeStamp, throttle, rudder, aileron,
-            elevators, sliderTime, flagAttributes, choiceSpeed;
+            elevators, sliderTime, choiceSpeed;
     public TimeSeries ts;
 
     public double rate;
     public StringProperty timeFlight;
 
     public ObservableList<String> attributeList;
-
+    public Clock clock;
     //from timeBoard
     public StringProperty altimeter, airSpeed, fd, pitch, roll, yaw;
 
     public ViewModelController(Model m) {
         this.m = m;
+        clock = new Clock();
+        rate = 100;
         m.addObserver(this);
+
         timeStamp = new SimpleDoubleProperty();
         aileron = new SimpleDoubleProperty();
         elevators = new SimpleDoubleProperty();
         rudder = new SimpleDoubleProperty();
         throttle = new SimpleDoubleProperty();
         sliderTime = new SimpleDoubleProperty();
-        flagAttributes = new SimpleDoubleProperty();
-
-        rate = 100;
         choiceSpeed = new SimpleDoubleProperty();
-        timeFlight = new SimpleStringProperty();
 
+        timeFlight = new SimpleStringProperty();
         altimeter = new SimpleStringProperty();
         airSpeed = new SimpleStringProperty();
         fd = new SimpleStringProperty();
@@ -53,9 +52,6 @@ public class ViewModelController extends Observable implements Observer {
         yaw = new SimpleStringProperty();
 
         attributeList= FXCollections.observableArrayList();
-
-
-//        rate.addListener((o, ov, nv) -> m.op.setPlaySpeed((double) nv));
 
         choiceSpeed.addListener((o, ov, nv) -> {
             rate = nv.doubleValue();
@@ -68,10 +64,6 @@ public class ViewModelController extends Observable implements Observer {
         });
 //        sliderTime.addListener((o, ov, nv) -> m.setTime((double) nv));
     }
-
-//    public void retspeed(double val) {
-//        rate.setValue(val);
-//    }
 
     public void updateDisplayVariables(int value) {
         aileron.setValue(ts.getValueByTime(0, value));
@@ -114,7 +106,6 @@ public class ViewModelController extends Observable implements Observer {
                 alert.setContentText("please choose a csv file");
                 alert.showAndWait();
             }
-            // flagAttributes.set(1);
             attributeList.addAll(ts.getAttributes());
         }
     }
@@ -125,10 +116,11 @@ public class ViewModelController extends Observable implements Observer {
 
     public void play() {
         //need to convert it, because in the choice list is come as small numbers
-        long start = System.nanoTime();
         new Thread(() -> {
             for (int i = 1; i < ts.getSize() - 1; i++) {
                 this.timeStamp.setValue(i);
+                clock.increcment();
+
                 try {
                     if (choiceSpeed.doubleValue() == 0.5) rate = 150;
                     else if (choiceSpeed.doubleValue() == 1.5) rate = 75;
@@ -140,8 +132,6 @@ public class ViewModelController extends Observable implements Observer {
                     e.printStackTrace();
                 }
             }
-            long end = System.nanoTime();
-            System.out.println((end - start) / 1000000000);
             System.out.println("DONE");
         }).start();
 

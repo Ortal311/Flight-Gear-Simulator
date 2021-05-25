@@ -1,26 +1,26 @@
 package view_PlayerButtons;
 
-import javafx.beans.Observable;
 import javafx.beans.property.*;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.*;
-import viewModel.ViewModelController;
 
 import java.io.IOException;
 
 public class PlayerButtons extends AnchorPane {
     public DoubleProperty sliderTime, choiceSpeed;
-    public  StringProperty timeFlight;
+    public  StringProperty timeFlight, miliSec, seconds, minutes;
     public BooleanProperty onOpen, onOpenXML, onPlay, onPause, onSpeed, onStop,
             onRewind, onForward, onPlus15, onMinus15;
-
 
     public PlayerButtons() {
         super();
         FXMLLoader fxl = new FXMLLoader();
         sliderTime= new SimpleDoubleProperty();
         choiceSpeed=new SimpleDoubleProperty();
+
+        miliSec = new SimpleStringProperty();
+        seconds = new SimpleStringProperty();
+        minutes = new SimpleStringProperty();
         timeFlight=new SimpleStringProperty();
 
         onOpen= new SimpleBooleanProperty();
@@ -50,9 +50,13 @@ public class PlayerButtons extends AnchorPane {
             PlayerButtonsController pbc= fxl.getController();
             pbc.init();
 
+            pbc.miliSec.textProperty().bind(miliSec);
+            pbc.seconds.textProperty().bind(seconds);
+            pbc.minutes.textProperty().bind(minutes);
+
             pbc.sliderTime.valueProperty().bind(sliderTime);
             choiceSpeed.bind((pbc.choiceSpeed.valueProperty()));
-            pbc.timeFlight.textProperty().bind(timeFlight);
+
             onOpen.bind(pbc.onOpen);
             onOpenXML.bind(pbc.onOpenXML);
             onPlay.bind(pbc.onPlay);
@@ -68,7 +72,6 @@ public class PlayerButtons extends AnchorPane {
 
         } catch (IOException e) {}
     }
-
 }
 
 

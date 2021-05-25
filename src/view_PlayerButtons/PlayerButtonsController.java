@@ -1,15 +1,11 @@
 package view_PlayerButtons;
 
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.ComboBoxListCell;
-import javafx.scene.text.Text;
-import viewModel.ViewModelController;
 
 public class PlayerButtonsController {
 
@@ -20,7 +16,13 @@ public class PlayerButtonsController {
     ChoiceBox choiceSpeed;
 
     @FXML
-    TextField timeFlight;
+    TextField miliSec;
+
+    @FXML
+    TextField seconds;
+
+    @FXML
+    TextField minutes;
 
     // public DoubleProperty rate;
     public BooleanProperty onOpen, onOpenXML, onPlay, onPause, onSpeed, onStop,
@@ -53,13 +55,11 @@ public class PlayerButtonsController {
     public void init() {
         ObservableList<Double> speedList = FXCollections.observableArrayList(0.5, 1.0, 1.5, 2.0, 2.5);
         choiceSpeed.setItems(speedList);
-
-
     }
 
     public void onOpen() {
         System.out.println(onOpen.getValue());
-        if(onOpen.getValue() == true){
+        if(onOpen.getValue()){
             onOpen.setValue(false);
         }
         else {

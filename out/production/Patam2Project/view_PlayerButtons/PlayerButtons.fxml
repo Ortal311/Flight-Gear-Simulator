@@ -27,15 +27,18 @@
       </Label>
       <Slider fx:id="sliderTime" layoutX="10.0" layoutY="84.0" max="2174.0" prefHeight="14.0" prefWidth="763.0" />
       <ChoiceBox fx:id="choiceSpeed" layoutX="495.0" layoutY="47.0" prefHeight="25.0" prefWidth="50.0" />
-      <Text layoutX="565.0" layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Time :" wrappingWidth="50.0">
+      <TextField fx:id="minutes" layoutX="595.0" layoutY="48.0" prefHeight="25.0" prefWidth="38.0" promptText="00" />
+      <TextField fx:id="miliSec" layoutX="693.0" layoutY="48.0" prefHeight="25.0" prefWidth="38.0" promptText="00" />
+      <TextField fx:id="seconds" layoutX="644.0" layoutY="48.0" prefHeight="25.0" prefWidth="38.0" promptText="00" />
+      <Text layoutX="636.0" layoutY="65.0" strokeType="OUTSIDE" strokeWidth="0.0" text=":">
          <font>
             <Font size="18.0" />
          </font>
       </Text>
-      <TextField fx:id="timeFlight" layoutX="625.0" layoutY="45.0" prefHeight="29.0" prefWidth="76.0" promptText="00:00:00">
+      <Text layoutX="685.0" layoutY="65.0" strokeType="OUTSIDE" strokeWidth="0.0" text=":">
          <font>
-            <Font size="14.0" />
+            <Font size="18.0" />
          </font>
-      </TextField>
+      </Text>
    </children>
 </AnchorPane>
