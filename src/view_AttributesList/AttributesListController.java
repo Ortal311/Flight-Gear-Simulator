@@ -14,21 +14,8 @@ public class AttributesListController {
     ListView lv;
 
     DoubleProperty dp;
-    ViewModelController vmc;
 
     public AttributesListController() {
         dp= new SimpleDoubleProperty();
-    }
-
-    public void init(ViewModelController vmc)
-    {
-
-       dp.bind(vmc.flagAttributes);
-       dp.addListener((u)->{
-                    ObservableList<String> lst = FXCollections.observableArrayList();
-                    lst.addAll(vmc.ts.getAttributes());
-                    lv.setItems(lst);
-                }
-        );
     }
 }

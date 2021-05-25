@@ -18,22 +18,13 @@ public class MyJoystickController {
     @FXML
     Circle joystick;
 
-    ViewModelController vmc;
-    public DoubleProperty aileron, elevators;
     private double jx,jy;
     private double mx,my;
 
     public MyJoystickController() {
         jx=70; jy=80;
-        aileron=new SimpleDoubleProperty();
-        elevators= new SimpleDoubleProperty();
     }
 
-    public void init(ViewModelController vmc) {
-        this.vmc=vmc;
-        rudder.valueProperty().bind(vmc.rudder);
-        throttle.valueProperty().bind(vmc.throttle);
-    }
 /*
     public void paint()
     {

@@ -1,5 +1,6 @@
 package view;
 
+import javafx.collections.ListChangeListener;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 import viewModel.ViewModelController;
@@ -29,10 +30,6 @@ public class ControllerView extends Pane implements Observer{
     void init(ViewModelController vmc)
     {
         this.vmc=vmc;
-        playerButtons.setVmc(vmc);
-        attributesList.setVmc(vmc);
-        myJoystick.setVmc(vmc);
-        timeBoard.setVmc(vmc);
 
         myJoystick.setLayoutX(540);
         myJoystick.setLayoutY(25);
@@ -45,7 +42,29 @@ public class ControllerView extends Pane implements Observer{
 
         myJoystick.aileron.bind(vmc.aileron);
         myJoystick.elevators.bind(vmc.elevators);
+        playerButtons.timeFlight.bind(vmc.timeFlight);
+        vmc.choiceSpeed.bind(playerButtons.choiceSpeed);
+        playerButtons.sliderTime.bind(vmc.sliderTime);
+        myJoystick.rudder.bind(vmc.rudder);
+        myJoystick.throttle.bind(vmc.throttle);
+        timeBoard.airSpeed.bind(vmc.airSpeed);
+        timeBoard.altimeter.bind(vmc.altimeter);
+        timeBoard.fd.bind(vmc.fd);
+        timeBoard.pitch.bind(vmc.pitch);
+        timeBoard.roll.bind(vmc.roll);
+        timeBoard.yaw.bind(vmc.yaw);
 
+        vmc.attributeList.addListener((ListChangeListener) change -> attributesList.lst.addAll(change.getList()));
+        playerButtons.onOpen.addListener(nv->vmc.openFile());
+        playerButtons.onOpenXML.addListener(nv->vmc.openXMLFile());
+        playerButtons.onPlay.addListener(nv->vmc.play());
+        playerButtons.onPause.addListener(nv->vmc.pause());
+      //  playerButtons.onSpeed.addListener(nv->vmc.speedPlay());
+        playerButtons.onStop.addListener(nv->vmc.stop());
+        playerButtons.onRewind.addListener(nv->vmc.rewind());
+        playerButtons.onForward.addListener(nv->vmc.forward());
+        playerButtons.onPlus15.addListener(nv->vmc.plus15());
+        playerButtons.onMinus15.addListener(nv->vmc.minus15());
 
 
     }

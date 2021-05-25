@@ -3,7 +3,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="230.0" prefWidth="230.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view_TimeBoard.TimeBoard">
+<AnchorPane prefHeight="230.0" prefWidth="230.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view_TimeBoard.TimeBoardController">
    <children>
       <Text layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Altimeter" wrappingWidth="68.0775146484375" />
       <Text layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="AirSpeed :" wrappingWidth="68.07751464843739" />
@@ -11,11 +11,11 @@
       <Text layoutY="120.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pitch :" wrappingWidth="68.07751464843739" />
       <Text layoutX="1.0" layoutY="145.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Roll :" wrappingWidth="38.80340385437012" />
       <Text layoutY="170.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Yaw :" wrappingWidth="51.470027923583984" />
-      <Text fx:id="altimeter" layoutX="88.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" text="1" wrappingWidth="111.47003936767578" />
-      <Text fx:id="airSpeed" layoutX="87.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="111.47003936767578" />
-      <Text fx:id="fd" layoutX="89.0" layoutY="81.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="111.47003936767578" />
-      <Text fx:id="pitch" layoutX="57.0" layoutY="120.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="111.47003936767578" />
-      <Text fx:id="roll" layoutX="57.0" layoutY="145.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="111.47003936767578" />
-      <Text fx:id="yaw" layoutX="57.0" layoutY="170.0" strokeType="OUTSIDE" strokeWidth="0.0" text="6" wrappingWidth="111.47003936767578" />
+      <Text fx:id="altimeter" layoutX="88.0" layoutY="33.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" wrappingWidth="111.47003936767578" />
+      <Text fx:id="airSpeed" layoutX="87.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" wrappingWidth="111.47003936767578" />
+      <Text fx:id="fd" layoutX="89.0" layoutY="81.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" wrappingWidth="111.47003936767578" />
+      <Text fx:id="pitch" layoutX="57.0" layoutY="120.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" wrappingWidth="111.47003936767578" />
+      <Text fx:id="roll" layoutX="57.0" layoutY="145.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" wrappingWidth="111.47003936767578" />
+      <Text fx:id="yaw" layoutX="57.0" layoutY="170.0" strokeType="OUTSIDE" strokeWidth="0.0" text="0" wrappingWidth="111.47003936767578" />
    </children>
 </AnchorPane>

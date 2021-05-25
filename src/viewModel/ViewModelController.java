@@ -4,6 +4,8 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 import model.Model;
@@ -16,11 +18,13 @@ public class ViewModelController extends Observable implements Observer {
 
     Model m;
     public DoubleProperty timeStamp, throttle, rudder, aileron,
-            elevators, sliderTime, flagAttributes;
+            elevators, sliderTime, flagAttributes, choiceSpeed;
     public TimeSeries ts;
 
-    public DoubleProperty rate, choiceSpeed;
+    public double rate;
     public StringProperty timeFlight;
+
+    public ObservableList<String> attributeList;
 
     //from timeBoard
     public StringProperty altimeter, airSpeed, fd, pitch, roll, yaw;
@@ -36,7 +40,7 @@ public class ViewModelController extends Observable implements Observer {
         sliderTime = new SimpleDoubleProperty();
         flagAttributes = new SimpleDoubleProperty();
 
-        rate = new SimpleDoubleProperty();
+        rate = 100;
         choiceSpeed = new SimpleDoubleProperty();
         timeFlight = new SimpleStringProperty();
 
@@ -47,10 +51,14 @@ public class ViewModelController extends Observable implements Observer {
         roll = new SimpleStringProperty();
         yaw = new SimpleStringProperty();
 
+        attributeList= FXCollections.observableArrayList();
+
+
 //        rate.addListener((o, ov, nv) -> m.op.setPlaySpeed((double) nv));
 
         choiceSpeed.addListener((o, ov, nv) -> {
-            retspeed(nv.doubleValue());
+            rate = nv.doubleValue();
+            speedPlay(rate);
         });
 
         timeStamp.addListener((o, ov, nv) -> {
@@ -60,9 +68,9 @@ public class ViewModelController extends Observable implements Observer {
 //        sliderTime.addListener((o, ov, nv) -> m.setTime((double) nv));
     }
 
-    public void retspeed(double val) {
-        rate.setValue(val);
-    }
+//    public void retspeed(double val) {
+//        rate.setValue(val);
+//    }
 
     public void updateDisplayVariables(int value) {
 //        aileron.setValue(ts.getValueByTime("aileron", value));
@@ -73,11 +81,11 @@ public class ViewModelController extends Observable implements Observer {
         timeFlight.setValue(String.valueOf(value));
 
         altimeter.setValue(String.valueOf(ts.getValueByTime(25, value)));
-        airSpeed.setValue(String.valueOf(ts.getValueByTime(21, value)));
-        // fd.set(ts.); //direction?
-        pitch.setValue(String.valueOf(ts.getValueByTime(18, value)));
+        airSpeed.setValue(String.valueOf(ts.getValueByTime(24, value)));
+        fd.setValue(String.valueOf(ts.getValueByTime(36, value)));
+        pitch.setValue(String.valueOf(ts.getValueByTime(29, value)));//18
         roll.setValue(String.valueOf(ts.getValueByTime(17, value)));
-        //yaw.setValue(ts.getValueByTime()); //?
+        yaw.setValue(String.valueOf(ts.getValueByTime(20,value)));
     }
 
 
@@ -89,24 +97,25 @@ public class ViewModelController extends Observable implements Observer {
         File chosen = fc.showOpenDialog(null);
         if (chosen != null) {
             System.out.println("the name of the file is:" + chosen.getName());
-        }
 
-        if (chosen.getName().contains(".csv"))  //checking the file
-        {
-            ts = new TimeSeries(chosen.getName());
-            if (ts.cols.size() != 42)
-                System.err.println("wrong amount of columns - should be 42");
-            else
-                m.setTimeSeries(ts);
-        } else {
-            //System.err.println("wrong file, choose csv file");
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Wrong file chosen");
-            alert.setContentText("please choose a csv file");
-            alert.showAndWait();
+            if (chosen.getName().contains(".csv"))  //checking the file
+            {
+                ts = new TimeSeries(chosen.getName());
+                if (ts.cols.size() != 42)
+                    System.err.println("wrong amount of columns - should be 42");
+                else
+                    m.setTimeSeries(ts);
+            } else {
+                //System.err.println("wrong file, choose csv file");
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Wrong file chosen");
+                alert.setContentText("please choose a csv file");
+                alert.showAndWait();
+            }
+            // flagAttributes.set(1);
+            attributeList.addAll(ts.getAttributes());
         }
-        flagAttributes.set(1);
     }
 
     public void openXMLFile() {
@@ -115,18 +124,17 @@ public class ViewModelController extends Observable implements Observer {
 
     public void play() {
         //need to convert it, because in the choice list is come as small numbers
-        if (rate.doubleValue() == 0.5) rate.setValue(150);
-        else if (rate.doubleValue() == 1.5) rate.setValue(75);
-        else if (rate.doubleValue() == 2) rate.setValue(50);
-        else if (rate.doubleValue() == 0.5) rate.setValue(20);
-        else rate.setValue(100);
 
         new Thread(() -> {
             for (int i = 1; i < ts.getSize() - 1; i++) {
                 this.timeStamp.setValue(i);
                 try {
-                    System.out.println(rate);
-                    Thread.sleep((long) rate.doubleValue());
+                    if (choiceSpeed.doubleValue() == 0.5) rate = 150;
+                    else if (choiceSpeed.doubleValue() == 1.5) rate = 75;
+                    else if (choiceSpeed.doubleValue() == 2) rate = 50;
+                    else if (choiceSpeed.doubleValue() == 2.5) rate = 20;
+                    else rate = 100;
+                    Thread.sleep((long) rate);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -161,9 +169,9 @@ public class ViewModelController extends Observable implements Observer {
         this.m.minus15File();
     }
 
-    public void speedPlay() {
-        rate.addListener((o, ov, nv) -> m.op.setPlaySpeed((double) nv));
-
+    public void speedPlay(double rate) {
+//        rate.addListener((o, ov, nv) -> m.op.setPlaySpeed((double) nv));
+        m.op.setPlaySpeed(rate);
     }
 
     @Override
