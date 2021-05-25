@@ -36,8 +36,7 @@ public class Main extends Application {
        // PlayerButtonsController pbc= new PlayerButtonsController();
        // pbc.init(vmc);
 
-
-        //mjc.paint();
+       // mjc.paint();
 
         //m.ConnectToServer("127.0.0.1",5402);
         primaryStage.setScene(new Scene(root, 800, 550));

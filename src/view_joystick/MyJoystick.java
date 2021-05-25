@@ -29,9 +29,16 @@ public class MyJoystick extends BorderPane {
             mjc.rudder.valueProperty().bind(rudder);
             mjc.throttle.valueProperty().bind(throttle);
             //add aileron and elevators
+            mjc.jx.bind(aileron);
+            mjc.jy.bind(throttle);
+            //aileron.bind(mjc.jx);
+           // throttle.bind(mjc.jy);
 
             this.getChildren().add(joy);
+           // mjc.paint();
         } catch (IOException e) {}
+
+
 
     }
 }

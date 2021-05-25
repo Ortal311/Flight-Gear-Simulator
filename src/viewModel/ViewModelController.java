@@ -13,6 +13,7 @@ import model.Model;
 import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Timer;
 
 public class ViewModelController extends Observable implements Observer {
 
@@ -73,8 +74,8 @@ public class ViewModelController extends Observable implements Observer {
 //    }
 
     public void updateDisplayVariables(int value) {
-//        aileron.setValue(ts.getValueByTime("aileron", value));
-//        elevators.setValue(ts.getValueByTime("elevators", value));
+        aileron.setValue(ts.getValueByTime(0, value));
+        elevators.setValue(ts.getValueByTime(1, value));
         rudder.setValue(ts.getValueByTime(2, value));
         throttle.setValue(ts.getValueByTime(6, value));
         sliderTime.setValue(value);
@@ -124,7 +125,7 @@ public class ViewModelController extends Observable implements Observer {
 
     public void play() {
         //need to convert it, because in the choice list is come as small numbers
-
+        long start = System.nanoTime();
         new Thread(() -> {
             for (int i = 1; i < ts.getSize() - 1; i++) {
                 this.timeStamp.setValue(i);
@@ -139,8 +140,11 @@ public class ViewModelController extends Observable implements Observer {
                     e.printStackTrace();
                 }
             }
+            long end = System.nanoTime();
+            System.out.println((end - start) / 1000000000);
             System.out.println("DONE");
         }).start();
+
         //this.m.playFile();
     }
 
