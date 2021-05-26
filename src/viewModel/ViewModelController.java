@@ -33,7 +33,7 @@ public class ViewModelController extends Observable implements Observer {
         this.m = m;
         clock = new Clock();
         rate = 100;
-        m.addObserver(this);
+        m.addObserver(this);//add Model as Observable
 
         timeStamp = new SimpleDoubleProperty();
         aileron = new SimpleDoubleProperty();
@@ -56,6 +56,7 @@ public class ViewModelController extends Observable implements Observer {
         choiceSpeed.addListener((o, ov, nv) -> {
             rate = nv.doubleValue();
             speedPlay(rate);
+
         });
 
         timeStamp.addListener((o, ov, nv) -> {
@@ -116,26 +117,27 @@ public class ViewModelController extends Observable implements Observer {
 
     public void play() {
         //need to convert it, because in the choice list is come as small numbers
-        new Thread(() -> {
-            for (int i = 1; i < ts.getSize() - 1; i++) {
-                this.timeStamp.setValue(i);
-                clock.increcment();
 
-                try {
-                    if (choiceSpeed.doubleValue() == 0.5) rate = 150;
-                    else if (choiceSpeed.doubleValue() == 1.5) rate = 75;
-                    else if (choiceSpeed.doubleValue() == 2) rate = 50;
-                    else if (choiceSpeed.doubleValue() == 2.5) rate = 20;
-                    else rate = 100;
-                    Thread.sleep((long) rate);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            System.out.println("DONE");
-        }).start();
+//        new Thread(() -> {
+//            for (int i = 1; i < ts.getSize() - 1; i++) {
+//                this.timeStamp.setValue(i);
+//                clock.increcment();
+//
+//                try {
+//                    if (choiceSpeed.doubleValue() == 0.5) rate = 150;
+//                    else if (choiceSpeed.doubleValue() == 1.5) rate = 75;
+//                    else if (choiceSpeed.doubleValue() == 2) rate = 50;
+//                    else if (choiceSpeed.doubleValue() == 2.5) rate = 20;
+//                    else rate = 100;
+//                    Thread.sleep((long) rate);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            System.out.println("DONE");
+//        }).start();
 
-        //this.m.playFile();
+        this.m.playFile();
     }
 
     public void pause() {
@@ -164,12 +166,25 @@ public class ViewModelController extends Observable implements Observer {
     }
 
     public void speedPlay(double rate) {
-//        rate.addListener((o, ov, nv) -> m.op.setPlaySpeed((double) nv));
-        m.op.setPlaySpeed(rate);
+       //rate.addListener((o, ov, nv) -> m.op.setPlaySpeed((double) nv));
+       // m.op.setPlaySpeed(rate);
+        if (choiceSpeed.doubleValue() == 0.5) rate = 150;
+        else if (choiceSpeed.doubleValue() == 1.5) rate = 75;
+        else if (choiceSpeed.doubleValue() == 2) rate = 50;
+        else if (choiceSpeed.doubleValue() == 2.5) rate = 20;
+        else rate = 100;
+
+        m.setPlaySpeed(rate);
     }
 
     @Override
     public void update(Observable o, Object arg) {
+        if(o==m)
+        {
+        //    System.out.println(1);
+        this.timeStamp.setValue(m.getTime());
+        clock.increcment();
+        }
 
     }
 

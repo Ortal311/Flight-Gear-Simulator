@@ -57,6 +57,7 @@ public class PlayerButtons extends AnchorPane {
             pbc.sliderTime.valueProperty().bind(sliderTime);
             choiceSpeed.bind((pbc.choiceSpeed.valueProperty()));
 
+
             onOpen.bind(pbc.onOpen);
             onOpenXML.bind(pbc.onOpenXML);
             onPlay.bind(pbc.onPlay);

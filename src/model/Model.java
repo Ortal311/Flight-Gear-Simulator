@@ -21,9 +21,9 @@ public class Model extends Observable implements SimulatorModel {
     public Options op = new Options();
     Thread displaySetting;
 
-    static double time = 0;
-
-
+   // static double time = 0;
+    private double playSpeed=100;
+    private double time =1;
     private volatile boolean pause = false;
     private boolean stop = false;
     public static boolean afterPause = false;
@@ -40,6 +40,18 @@ public class Model extends Observable implements SimulatorModel {
         time = 0;
         this.stop = true;
 
+    }
+
+    public double getTime() {
+        return this.time;
+    }
+
+    public double getPlaySpeed() {
+        return playSpeed;
+    }
+
+    public void setPlaySpeed(double playSpeed) {
+        this.playSpeed = playSpeed;
     }
 
     @Override
@@ -78,6 +90,7 @@ public class Model extends Observable implements SimulatorModel {
                     System.out.println(Thread.currentThread().getName());
                     System.out.println(this);
 
+
                     if (afterStop) {
                         displaySetting.stop();
                     }
@@ -104,9 +117,10 @@ public class Model extends Observable implements SimulatorModel {
             out.println(ts.rows.get(i));
             out.flush();
             time = i;
-
+            setChanged();
+            notifyObservers();
             try {
-                Thread.sleep((long) op.playSpeed);//responsible for the speed of the display
+                Thread.sleep((long) getPlaySpeed());//responsible for the speed of the display
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
