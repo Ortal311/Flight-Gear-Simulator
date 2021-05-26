@@ -7,6 +7,7 @@ import viewModel.ViewModelController;
 import java.util.Observable;
 import java.util.Observer;
 import view_AttributesList.AttributesList;
+import view_Graphs.Graphs;
 import view_PlayerButtons.PlayerButtons;
 import view_TimeBoard.TimeBoard;
 import view_joystick.MyJoystick;
@@ -26,6 +27,9 @@ public class ControllerView extends Pane implements Observer{
     TimeBoard timeBoard;
     ViewModelController vmc;
 
+    @FXML
+    Graphs graphs;
+
     void init(ViewModelController vmc)
     {
         this.vmc=vmc;
@@ -38,6 +42,9 @@ public class ControllerView extends Pane implements Observer{
         playerButtons.setLayoutX(5);
         timeBoard.setLayoutX(540);
         timeBoard.setLayoutY(250);
+        graphs.setLayoutX(230);
+        graphs.setLayoutY(25);
+
 
         myJoystick.aileron.bind(vmc.aileron);
         myJoystick.elevators.bind(vmc.elevators);
@@ -57,6 +64,8 @@ public class ControllerView extends Pane implements Observer{
         timeBoard.pitch.bind(vmc.pitch);
         timeBoard.roll.bind(vmc.roll);
         timeBoard.yaw.bind(vmc.yaw);
+
+
 
         playerButtons.onOpen.addListener(nv->vmc.openFile());
         playerButtons.onOpenXML.addListener(nv->vmc.openXMLFile());

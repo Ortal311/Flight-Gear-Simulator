@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="284.0" prefWidth="270.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view_Graphs.GraphsController">
+   <children>
+      <LineChart layoutX="1.0" layoutY="97.0" prefHeight="187.0" prefWidth="253.0">
+        <xAxis>
+          <CategoryAxis side="BOTTOM" />
+        </xAxis>
+        <yAxis>
+          <NumberAxis side="LEFT" />
+        </yAxis>
+      </LineChart>
+      <LineChart fx:id="lineChart" layoutY="5.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="112.0" prefWidth="138.0">
+         <xAxis>
+            <CategoryAxis side="BOTTOM" fx:id="x" />
+         </xAxis>
+         <yAxis>
+            <NumberAxis fx:id="y" side="LEFT" />
+         </yAxis>
+      </LineChart>
+      <LineChart layoutX="128.0" layoutY="5.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="112.0" prefWidth="138.0">
+         <xAxis>
+            <CategoryAxis side="BOTTOM" />
+         </xAxis>
+         <yAxis>
+            <NumberAxis side="LEFT" />
+         </yAxis>
+      </LineChart>
+   </children>
+</AnchorPane>
