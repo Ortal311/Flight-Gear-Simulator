@@ -38,7 +38,6 @@ public class Model extends Observable implements SimulatorModel {
     public void close() {
         time = 0;
         this.stop = true;
-
     }
 
     public double getTime() {
@@ -73,23 +72,41 @@ public class Model extends Observable implements SimulatorModel {
 
     synchronized public void displayFlight(boolean conncetServer) {
         int i = 0;
-        boolean condition = op.rewind ? i >= 0 : i < ts.rows.size();//if rewind go while>0 else (regula) go while <ts.size
-        op.setPlaySpeed(op.forward ? op.playSpeed / 2 : 100);
-//        time = op.plus15 ? time + 150 : time;
-//        time = op.minus15 ? time - 15 : time;
+        int sizeTS = ts.rows.size();
+     //   boolean condition = op.rewind ? i >= 0 : i < ts.rows.size();//if rewind go while>0 else (regula) go while <ts.size
 
-        for (i = (int) time; condition && !stop; ) {
-            while (pause || op.scroll || afterStop || op.forward)  //pause needs to be replaced with thread( works only one time now)
+        for (i = (int) time; i<sizeTS;i++ ) {
+            while (pause || op.scroll || afterStop || op.forward|| op.rewind)  //pause needs to be replaced with thread( works only one time now)
             {
-                System.out.println("get here after pause,afterStop:" + pause + " " + afterStop);
                 try {
-                    System.out.println(Thread.currentThread().getName());
-                    System.out.println(this);
+                    // System.out.println(Thread.currentThread().getName());
+                    //System.out.println(this);
+
                     if (afterStop) {
                         displaySetting.stop();
                     }
+
                     if (afterPause) {
                         this.wait();
+                    }
+
+                    if (op.forward) {
+                        System.out.println("blabla after forward");
+                        if (i < sizeTS - 151)
+                            i += 150;
+                        else
+                            i = sizeTS;
+                        op.forward = false;
+                        break;
+                    }
+                    if (op.rewind) {
+                        System.out.println("blabla after rewind");
+                        if ((i - 150) > 0)
+                            i -= 150;
+                         else
+                            i = 1;
+                        op.rewind = false;
+                        break;
                     }
 
                 } catch (InterruptedException e) {
@@ -109,7 +126,7 @@ public class Model extends Observable implements SimulatorModel {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            i = op.rewind ? i - 1 : i + 1;
+          //  i++;
         }
     }
 
@@ -141,14 +158,11 @@ public class Model extends Observable implements SimulatorModel {
 
         if (afterForward) {//somehow it does not responded to it and cannot go back to normal rate
             afterForward = false;
-            System.out.println("blablalalal");
             op.setPlaySpeed(100);
-
         } else if (afterRewind) {
-            System.out.println("was in after rewind");
             op.rewind = false;
         } else if (afterPause) {
-            System.out.println("afterPause in display");
+            //  System.out.println("afterPause in display");
             this.notify();
             pause = false;
             afterPause = false;
@@ -167,20 +181,17 @@ public class Model extends Observable implements SimulatorModel {
 
             isConnect = ConnectToServer("127.0.0.1", 5402);
             if (isConnect) {
-
                 displaySetting = new Thread(() -> displayFlight(true), "Thread of displaySetting function");
                 displaySetting.start();
             } else {//if not connectToFG
                 displaySetting = new Thread(() -> displayFlight(false), "Thread of displaySetting function");
                 displaySetting.start();
             }
-
-            System.out.println("inside playFile  " + Thread.currentThread().getName());
         }
     }
 
     public void pauseFile() {
-        System.out.println("afterPause is true");
+        //System.out.println("afterPause is true");
         pause = true;
         afterPause = true;
     }
@@ -193,6 +204,7 @@ public class Model extends Observable implements SimulatorModel {
     }
 
     public void rewindFile() {
+
         op.rewind = true;
         //new Thread(() -> displayFlight()).start();
     }
