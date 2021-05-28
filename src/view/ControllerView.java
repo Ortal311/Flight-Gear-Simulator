@@ -67,16 +67,16 @@ public class ControllerView extends Pane implements Observer{
 
 
 
-        playerButtons.onOpen.addListener(nv->vmc.openFile());
-        playerButtons.onOpenXML.addListener(nv->vmc.openXMLFile());
-        playerButtons.onPlay.addListener(nv->vmc.play());
-        playerButtons.onPause.addListener(nv->vmc.pause());
+        playerButtons.onOpen.addListener((o, ov, nv)->vmc.openFile());
+        playerButtons.onOpenXML.addListener((o, ov, nv)->vmc.openXMLFile());
+        playerButtons.onPlay.addListener((o, ov, nv)->vmc.play());
+        playerButtons.onPause.addListener((o, ov, nv)->vmc.pause());
 //        playerButtons.onSpeed.addListener(nv->vmc.speedPlay());
-        playerButtons.onStop.addListener(nv->vmc.stop());
-        playerButtons.onRewind.addListener(nv->vmc.rewind());
-        playerButtons.onForward.addListener(nv->vmc.forward());
-        playerButtons.onPlus15.addListener(nv->vmc.plus15());
-        playerButtons.onMinus15.addListener(nv->vmc.minus15());
+        playerButtons.onStop.addListener((o, ov, nv)->vmc.stop());
+        playerButtons.onRewind.addListener((o, ov, nv)->vmc.rewind());
+        playerButtons.onForward.addListener((o, ov, nv)->vmc.forward());
+        playerButtons.onPlus15.addListener((o, ov, nv)->vmc.plus15());
+        playerButtons.onMinus15.addListener((o, ov, nv)->vmc.minus15());
 
         vmc.attributeList.addListener((ListChangeListener) change -> attributesList.lst.addAll(change.getList()));
     }
