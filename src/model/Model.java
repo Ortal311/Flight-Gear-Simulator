@@ -218,26 +218,17 @@ public class Model extends Observable implements SimulatorModel {
     }
 
     public void rewindFile() {
-
         op.rewind = true;
+        //there is no need to open a new thread for it, we can use the current working thread
         //new Thread(() -> displayFlight()).start();
     }
 
     public void forwardFile() {
-
         op.forward = true;
         // new Thread(() -> displayFlight()).start();
     }
 
-    public void plus151File() {
-        op.plus15 = true;
-        //   new Thread(() -> displayFlight()).start();
-    }
 
-    public void minus15File() {
-        op.minus15 = true;
-        //  new Thread(() -> displayFlight()).start();
-    }
 
     @Override
     public void writeToXML(FlightSetting settings) throws IOException {

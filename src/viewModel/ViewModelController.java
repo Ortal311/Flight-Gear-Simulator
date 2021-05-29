@@ -68,7 +68,6 @@ public class ViewModelController extends Observable implements Observer {
             updateDisplayVariables(nv.intValue());
             //m.displayFlight(nv.intValue());
         });
-//        sliderTime.addListener((o, ov, nv) -> m.setTime((double) nv));
     }
 
     public void updateDisplayVariables(int value) {
@@ -141,13 +140,7 @@ public class ViewModelController extends Observable implements Observer {
         this.m.forwardFile();
     }
 
-    public void plus15() {
-        this.m.plus151File();
-    }
-
-    public void minus15() {
-        this.m.minus15File();
-    }
+//
 
     public void speedPlay(double rate) {
         //rate.addListener((o, ov, nv) -> m.op.setPlaySpeed((double) nv));

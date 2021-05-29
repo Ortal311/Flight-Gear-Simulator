@@ -76,8 +76,6 @@ public class ControllerView extends Pane implements Observer{
         playerButtons.onStop.addListener((o, ov, nv)->vmc.stop());
         playerButtons.onRewind.addListener((o, ov, nv)->vmc.rewind());
         playerButtons.onForward.addListener((o, ov, nv)->vmc.forward());
-        playerButtons.onPlus15.addListener((o, ov, nv)->vmc.plus15());
-        playerButtons.onMinus15.addListener((o, ov, nv)->vmc.minus15());
 
         vmc.attributeList.addListener((ListChangeListener) change -> attributesList.lst.addAll(change.getList()));
     }

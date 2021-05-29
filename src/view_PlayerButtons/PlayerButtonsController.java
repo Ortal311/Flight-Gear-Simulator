@@ -26,7 +26,7 @@ public class PlayerButtonsController {
 
     // public DoubleProperty rate;
     public BooleanProperty onOpen, onOpenXML, onPlay, onPause, onSpeed, onStop,
-            onRewind, onForward, onPlus15, onMinus15;
+            onRewind, onForward;//, onPlus15, onMinus15;
 
     public PlayerButtonsController() {
         onOpen= new SimpleBooleanProperty();
@@ -37,8 +37,8 @@ public class PlayerButtonsController {
         onStop= new SimpleBooleanProperty();
         onRewind= new SimpleBooleanProperty();
         onForward= new SimpleBooleanProperty();
-        onPlus15= new SimpleBooleanProperty();
-        onMinus15= new SimpleBooleanProperty();
+        //onPlus15= new SimpleBooleanProperty();
+      //  onMinus15= new SimpleBooleanProperty();
 
         onOpen.setValue(false);
         onOpenXML.setValue(false);
@@ -48,8 +48,8 @@ public class PlayerButtonsController {
         onStop.setValue(false);
         onRewind.setValue(false);
         onForward.setValue(false);
-        onPlus15.setValue(false);
-        onMinus15.setValue(false);
+       // onPlus15.setValue(false);
+      //  onMinus15.setValue(false);
     }
 
     public void init() {
@@ -132,21 +132,4 @@ public class PlayerButtonsController {
         }
     }
 
-    public void onPlus15() {
-        if(onPlus15.getValue()){
-            onPlus15.setValue(false);
-        }
-        else {
-            onPlus15.setValue(true);
-        }
-    }
-
-    public void onMinus15() {
-        if(onMinus15.getValue()){
-            onMinus15.setValue(false);
-        }
-        else {
-            onMinus15.setValue(true);
-        }
-    }
 }

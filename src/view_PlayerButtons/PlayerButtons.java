@@ -10,7 +10,7 @@ public class PlayerButtons extends AnchorPane {
     public DoubleProperty sliderTime, choiceSpeed;
     public  StringProperty timeFlight, miliSec, seconds, minutes;
     public BooleanProperty onOpen, onOpenXML, onPlay, onPause, onSpeed, onStop,
-            onRewind, onForward, onPlus15, onMinus15;
+            onRewind, onForward;
 
     public PlayerButtons() {
         super();
@@ -31,8 +31,7 @@ public class PlayerButtons extends AnchorPane {
         onStop= new SimpleBooleanProperty();
         onRewind= new SimpleBooleanProperty();
         onForward= new SimpleBooleanProperty();
-        onPlus15= new SimpleBooleanProperty();
-        onMinus15= new SimpleBooleanProperty();
+
 
         onOpen.setValue(false);
         onOpenXML.setValue(false);
@@ -42,8 +41,6 @@ public class PlayerButtons extends AnchorPane {
         onStop.setValue(false);
         onRewind.setValue(false);
         onForward.setValue(false);
-        onPlus15.setValue(false);
-        onMinus15.setValue(false);
 
         try {
             AnchorPane buttons= fxl.load(getClass().getResource("PlayerButtons.fxml").openStream());
@@ -67,8 +64,6 @@ public class PlayerButtons extends AnchorPane {
             onStop.bind(pbc.onStop);
             onRewind.bind(pbc.onRewind);
             onForward.bind(pbc.onForward);
-            onPlus15.bind(pbc.onPlus15);
-            onMinus15.bind(pbc.onMinus15);
 
             this.getChildren().add(buttons);
 
