@@ -18,7 +18,7 @@ public class ViewModelController extends Observable implements Observer {
 
     Model m;
     public DoubleProperty timeStamp, throttle, rudder, aileron,
-            elevators, sliderTime, choiceSpeed, airSpeed1, pitch1, roll1, yaw1;
+            elevators, sliderTime, choiceSpeed;
     public TimeSeries ts;
 
     public double rate;
@@ -43,11 +43,6 @@ public class ViewModelController extends Observable implements Observer {
         sliderTime = new SimpleDoubleProperty();
         choiceSpeed = new SimpleDoubleProperty();
 
-//        airSpeed1 = new SimpleDoubleProperty();
-        pitch1 = new SimpleDoubleProperty();
-        roll1 = new SimpleDoubleProperty();
-        yaw1 = new SimpleDoubleProperty();
-
         timeFlight = new SimpleStringProperty();
         altimeter = new SimpleStringProperty();
         airSpeed = new SimpleStringProperty();
@@ -56,40 +51,39 @@ public class ViewModelController extends Observable implements Observer {
         roll = new SimpleStringProperty();
         yaw = new SimpleStringProperty();
 
-        attributeList= FXCollections.observableArrayList();
+        attributeList = FXCollections.observableArrayList();
 
         choiceSpeed.addListener((o, ov, nv) -> {
             rate = nv.doubleValue();
             speedPlay(rate);
 
         });
+        sliderTime.addListener((o, ov, nv) -> {
+            // updateDisplayVariables(nv.intValue());
+            timeStamp.setValue(nv.doubleValue());
+            m.setTime(nv.doubleValue());
+        });
 
         timeStamp.addListener((o, ov, nv) -> {
             updateDisplayVariables(nv.intValue());
             //m.displayFlight(nv.intValue());
         });
-//        sliderTime.addListener((o, ov, nv) -> m.setTime((double) nv));
     }
 
-    public void updateDisplayVariables(int time) {
-        aileron.setValue(ts.getValueByTime(0, time));
-        elevators.setValue(ts.getValueByTime(1, time));
-        rudder.setValue(ts.getValueByTime(2, time));
-        throttle.setValue(ts.getValueByTime(6, time));
-        sliderTime.setValue(time);
-        timeFlight.setValue(String.valueOf(time));
+    public void updateDisplayVariables(int value) {
+        aileron.setValue(ts.getValueByTime(0, value));
+        elevators.setValue(ts.getValueByTime(1, value));
+        rudder.setValue(ts.getValueByTime(2, value));
+        throttle.setValue(ts.getValueByTime(6, value));
+        sliderTime.setValue(value);
+        timeFlight.setValue(String.valueOf(value));
 
-        altimeter.setValue(String.valueOf(ts.getValueByTime(25, time)));
-        airSpeed.setValue(String.valueOf(ts.getValueByTime(24, time)));
-        fd.setValue(String.valueOf(ts.getValueByTime(36, time)));
-        pitch.setValue(String.valueOf(ts.getValueByTime(29, time)));   //18
-        roll.setValue(String.valueOf(ts.getValueByTime(17, time)));
-        yaw.setValue(String.valueOf(ts.getValueByTime(20,time)));
-
-//        airSpeed1.setValue(ts.getValueByTime(24, time));
-        pitch1.setValue(ts.getValueByTime(29, time));
-        roll1.setValue(ts.getValueByTime(17, time));
-        yaw1.setValue(ts.getValueByTime(20, time));
+        altimeter.setValue(String.valueOf(ts.getValueByTime(25, value)));
+        airSpeed.setValue(String.valueOf(ts.getValueByTime(24, value)));
+        fd.setValue(String.valueOf(ts.getValueByTime(36, value)));
+        pitch.setValue(String.valueOf(ts.getValueByTime(29, value)));//18
+        roll.setValue(String.valueOf(ts.getValueByTime(17, value)));
+        yaw.setValue(String.valueOf(ts.getValueByTime(20, value)));
     }
 
 
@@ -118,9 +112,6 @@ public class ViewModelController extends Observable implements Observer {
                 alert.showAndWait();
             }
             attributeList.addAll(ts.getAttributes());
-            altimeter.setValue("0");
-            airSpeed.setValue("0");
-            fd.setValue("0");
         }
     }
 
@@ -129,27 +120,6 @@ public class ViewModelController extends Observable implements Observer {
     }
 
     public void play() {
-        //need to convert it, because in the choice list is come as small numbers
-
-//        new Thread(() -> {
-//            for (int i = 1; i < ts.getSize() - 1; i++) {
-//                this.timeStamp.setValue(i);
-//                clock.increcment();
-//
-//                try {
-//                    if (choiceSpeed.doubleValue() == 0.5) rate = 150;
-//                    else if (choiceSpeed.doubleValue() == 1.5) rate = 75;
-//                    else if (choiceSpeed.doubleValue() == 2) rate = 50;
-//                    else if (choiceSpeed.doubleValue() == 2.5) rate = 20;
-//                    else rate = 100;
-//                    Thread.sleep((long) rate);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//            System.out.println("DONE");
-//        }).start();
-
         this.m.playFile();
     }
 
@@ -170,17 +140,11 @@ public class ViewModelController extends Observable implements Observer {
         this.m.forwardFile();
     }
 
-    public void plus15() {
-        this.m.plus151File();
-    }
-
-    public void minus15() {
-        this.m.minus15File();
-    }
+//
 
     public void speedPlay(double rate) {
-       //rate.addListener((o, ov, nv) -> m.op.setPlaySpeed((double) nv));
-       // m.op.setPlaySpeed(rate);
+        //rate.addListener((o, ov, nv) -> m.op.setPlaySpeed((double) nv));
+        // m.op.setPlaySpeed(rate);
         if (choiceSpeed.doubleValue() == 0.5) rate = 150;
         else if (choiceSpeed.doubleValue() == 1.5) rate = 75;
         else if (choiceSpeed.doubleValue() == 2) rate = 50;
@@ -192,11 +156,39 @@ public class ViewModelController extends Observable implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        if(o==m)
-        {
-        //    System.out.println(1);
-        this.timeStamp.setValue(m.getTime());
-        clock.increcment();
+        if (o == m) {
+            //    System.out.println(1);
+            this.timeStamp.setValue(m.getTime());
+            clock.increcment();
+
+            String p = (String) arg;
+//        if(p!=null){
+//            if(p.equals("+150")) {
+//                clock.miliSec.set(clock.miliSec.get() + 150);
+//                if(clock.miliSec.get() == 100) {
+//                    clock.seconds.set(clock.seconds.get() + 1);
+//                    clock.miliSec.set(0);
+//                }
+//                if(clock.seconds.get() == 60) {
+//                    clock.minutes.set(clock.minutes.get() + 1);
+//                    clock.seconds.set(0);
+//                }
+//            }
+//            else if(p.equals("-150")){
+//                clock.miliSec.set(clock.miliSec.get() - 150);
+//                if(clock.miliSec.get() == 100) {
+//                    clock.seconds.set(clock.seconds.get() + 1);
+//                    clock.miliSec.set(0);
+//                }
+//                if(clock.seconds.get() == 60) {
+//                    clock.minutes.set(clock.minutes.get() + 1);
+//                    clock.seconds.set(0);
+//                }
+//            }
+//
+//        }
+
+
         }
 
     }

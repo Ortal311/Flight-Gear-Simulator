@@ -55,7 +55,8 @@ public class ControllerView extends Pane implements Observer{
         playerButtons.miliSec.bind(vmc.clock.miliSec.asString());
         playerButtons.seconds.bind(vmc.clock.seconds.asString());
         playerButtons.minutes.bind(vmc.clock.minutes.asString());
-        playerButtons.sliderTime.bind(vmc.sliderTime);
+        //playerButtons.sliderTime.bind(vmc.sliderTime);
+        playerButtons.sliderTime.bindBidirectional(vmc.sliderTime);
         vmc.choiceSpeed.bind(playerButtons.choiceSpeed);
 
         timeBoard.airSpeed.bind(vmc.airSpeed);
@@ -82,8 +83,6 @@ public class ControllerView extends Pane implements Observer{
         playerButtons.onStop.addListener((o, ov, nv)->vmc.stop());
         playerButtons.onRewind.addListener((o, ov, nv)->vmc.rewind());
         playerButtons.onForward.addListener((o, ov, nv)->vmc.forward());
-        playerButtons.onPlus15.addListener((o, ov, nv)->vmc.plus15());
-        playerButtons.onMinus15.addListener((o, ov, nv)->vmc.minus15());
 
         vmc.attributeList.addListener((ListChangeListener) change -> attributesList.lst.addAll(change.getList()));
     }
