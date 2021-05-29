@@ -44,6 +44,7 @@ public class Model extends Observable implements SimulatorModel {
         return this.time;
     }
 
+
     public double getPlaySpeed() {
         return playSpeed;
     }
@@ -51,6 +52,10 @@ public class Model extends Observable implements SimulatorModel {
     public void setPlaySpeed(double playSpeed) {
         this.playSpeed = playSpeed;
     }
+//    public void setTime(double time) {
+//        this.time = time;
+//    }
+
 
     @Override
     public boolean ConnectToServer(String ip, double port) {
@@ -97,6 +102,8 @@ public class Model extends Observable implements SimulatorModel {
                         else
                             i = sizeTS;
                         op.forward = false;
+                        setChanged();
+                        notifyObservers("+150");
                         break;
                     }
                     if (op.rewind) {
@@ -106,7 +113,13 @@ public class Model extends Observable implements SimulatorModel {
                          else
                             i = 1;
                         op.rewind = false;
+                        setChanged();
+                        notifyObservers("-150");
                         break;
+                    }
+                    if(op.scroll){
+                        op.scroll=false;
+                        i=(int)time;
                     }
 
                 } catch (InterruptedException e) {
@@ -132,7 +145,8 @@ public class Model extends Observable implements SimulatorModel {
 
     public void setTime(double time) {
         this.time = time;
-        new Thread(() -> displayFlight(true)).start();
+        op.scroll=true;
+       // new Thread(() -> displayFlight(true)).start();
     }
 
     public void openXML() {

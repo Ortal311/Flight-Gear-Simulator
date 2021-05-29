@@ -51,12 +51,17 @@ public class ViewModelController extends Observable implements Observer {
         roll = new SimpleStringProperty();
         yaw = new SimpleStringProperty();
 
-        attributeList= FXCollections.observableArrayList();
+        attributeList = FXCollections.observableArrayList();
 
         choiceSpeed.addListener((o, ov, nv) -> {
             rate = nv.doubleValue();
             speedPlay(rate);
 
+        });
+        sliderTime.addListener((o, ov, nv) -> {
+            // updateDisplayVariables(nv.intValue());
+            timeStamp.setValue(nv.doubleValue());
+            m.setTime(nv.doubleValue());
         });
 
         timeStamp.addListener((o, ov, nv) -> {
@@ -79,7 +84,7 @@ public class ViewModelController extends Observable implements Observer {
         fd.setValue(String.valueOf(ts.getValueByTime(36, value)));
         pitch.setValue(String.valueOf(ts.getValueByTime(29, value)));//18
         roll.setValue(String.valueOf(ts.getValueByTime(17, value)));
-        yaw.setValue(String.valueOf(ts.getValueByTime(20,value)));
+        yaw.setValue(String.valueOf(ts.getValueByTime(20, value)));
     }
 
 
@@ -116,27 +121,6 @@ public class ViewModelController extends Observable implements Observer {
     }
 
     public void play() {
-        //need to convert it, because in the choice list is come as small numbers
-
-//        new Thread(() -> {
-//            for (int i = 1; i < ts.getSize() - 1; i++) {
-//                this.timeStamp.setValue(i);
-//                clock.increcment();
-//
-//                try {
-//                    if (choiceSpeed.doubleValue() == 0.5) rate = 150;
-//                    else if (choiceSpeed.doubleValue() == 1.5) rate = 75;
-//                    else if (choiceSpeed.doubleValue() == 2) rate = 50;
-//                    else if (choiceSpeed.doubleValue() == 2.5) rate = 20;
-//                    else rate = 100;
-//                    Thread.sleep((long) rate);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//            System.out.println("DONE");
-//        }).start();
-
         this.m.playFile();
     }
 
@@ -166,8 +150,8 @@ public class ViewModelController extends Observable implements Observer {
     }
 
     public void speedPlay(double rate) {
-       //rate.addListener((o, ov, nv) -> m.op.setPlaySpeed((double) nv));
-       // m.op.setPlaySpeed(rate);
+        //rate.addListener((o, ov, nv) -> m.op.setPlaySpeed((double) nv));
+        // m.op.setPlaySpeed(rate);
         if (choiceSpeed.doubleValue() == 0.5) rate = 150;
         else if (choiceSpeed.doubleValue() == 1.5) rate = 75;
         else if (choiceSpeed.doubleValue() == 2) rate = 50;
@@ -179,11 +163,39 @@ public class ViewModelController extends Observable implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        if(o==m)
-        {
-        //    System.out.println(1);
-        this.timeStamp.setValue(m.getTime());
-        clock.increcment();
+        if (o == m) {
+            //    System.out.println(1);
+            this.timeStamp.setValue(m.getTime());
+            clock.increcment();
+
+            String p = (String) arg;
+//        if(p!=null){
+//            if(p.equals("+150")) {
+//                clock.miliSec.set(clock.miliSec.get() + 150);
+//                if(clock.miliSec.get() == 100) {
+//                    clock.seconds.set(clock.seconds.get() + 1);
+//                    clock.miliSec.set(0);
+//                }
+//                if(clock.seconds.get() == 60) {
+//                    clock.minutes.set(clock.minutes.get() + 1);
+//                    clock.seconds.set(0);
+//                }
+//            }
+//            else if(p.equals("-150")){
+//                clock.miliSec.set(clock.miliSec.get() - 150);
+//                if(clock.miliSec.get() == 100) {
+//                    clock.seconds.set(clock.seconds.get() + 1);
+//                    clock.miliSec.set(0);
+//                }
+//                if(clock.seconds.get() == 60) {
+//                    clock.minutes.set(clock.minutes.get() + 1);
+//                    clock.seconds.set(0);
+//                }
+//            }
+//
+//        }
+
+
         }
 
     }

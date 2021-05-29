@@ -55,7 +55,8 @@ public class ControllerView extends Pane implements Observer{
         playerButtons.miliSec.bind(vmc.clock.miliSec.asString());
         playerButtons.seconds.bind(vmc.clock.seconds.asString());
         playerButtons.minutes.bind(vmc.clock.minutes.asString());
-        playerButtons.sliderTime.bind(vmc.sliderTime);
+        //playerButtons.sliderTime.bind(vmc.sliderTime);
+        playerButtons.sliderTime.bindBidirectional(vmc.sliderTime);
         vmc.choiceSpeed.bind(playerButtons.choiceSpeed);
 
         timeBoard.airSpeed.bind(vmc.airSpeed);

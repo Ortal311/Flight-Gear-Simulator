@@ -54,7 +54,8 @@ public class PlayerButtons extends AnchorPane {
             pbc.seconds.textProperty().bind(seconds);
             pbc.minutes.textProperty().bind(minutes);
 
-            pbc.sliderTime.valueProperty().bind(sliderTime);
+          //  pbc.sliderTime.valueProperty().bind(sliderTime);
+            pbc.sliderTime.valueProperty().bindBidirectional(sliderTime);
             choiceSpeed.bind((pbc.choiceSpeed.valueProperty()));
 
 
