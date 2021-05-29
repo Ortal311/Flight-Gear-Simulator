@@ -12,7 +12,7 @@ import java.io.IOException;
 
 public class TimeBoard extends AnchorPane {
 
-    public StringProperty altimeter,airSpeed,fd,pitch,roll,yaw;
+    public StringProperty altimeter, airSpeed, fd, pitch, roll, yaw;
     public DoubleProperty centerX, centerY, xAirSpeed, yAirSpeed,
             xPitch, yPitch, xRoll, yRoll, xYaw, yYaw;
 
@@ -22,9 +22,9 @@ public class TimeBoard extends AnchorPane {
         altimeter= new SimpleStringProperty();
         airSpeed= new SimpleStringProperty();
         fd= new SimpleStringProperty();
-        pitch= new SimpleStringProperty();
-        roll= new SimpleStringProperty();
-        yaw= new SimpleStringProperty();
+//        pitch= new SimpleStringProperty();
+//        roll= new SimpleStringProperty();
+//        yaw= new SimpleStringProperty();
 
         centerX = new SimpleDoubleProperty();
         centerY = new SimpleDoubleProperty();
@@ -63,32 +63,32 @@ public class TimeBoard extends AnchorPane {
 
             xPitch.addListener((o, ov, nv) -> {
                 Double value = ((nv.doubleValue() + 10) / 27) * 59;
-                tbc.linePitch.setEndX(32 * Math.sin((value * (2 * Math.PI) / 60)));
+                tbc.linePitch.setEndX(28 * Math.sin((value * (2 * Math.PI) / 60)));
             });
 
             yPitch.addListener((o, ov, nv) -> {
                 Double value = ((nv.doubleValue() + 10) / 27) * 59;
-                tbc.linePitch.setEndY((-32) * Math.cos((value * (2 * Math.PI) / 60)));
+                tbc.linePitch.setEndY((-28) * Math.cos((value * (2 * Math.PI) / 60)));
             });
 
             xRoll.addListener((o, ov, nv) -> {
                 Double value = ((nv.doubleValue() + 38) / 81) * 59;
-                tbc.lineRoll.setEndX(32 * Math.sin((value * (2 * Math.PI) / 60)));
+                tbc.lineRoll.setEndX(28 * Math.sin((value * (2 * Math.PI) / 60)));
             });
 
             yRoll.addListener((o, ov, nv) -> {
                 Double value = ((nv.doubleValue() + 38) / 81) * 59;
-                tbc.lineRoll.setEndY((-32) * Math.cos((value * (2 * Math.PI) / 60)));
+                tbc.lineRoll.setEndY((-28) * Math.cos((value * (2 * Math.PI) / 60)));
             });
 
             xYaw.addListener((o, ov, nv) -> {
                 Double value = ((nv.doubleValue() + 29) / 120) * 59;
-                tbc.lineYaw.setEndX(32 * Math.sin((value * (2 * Math.PI) / 60)));
+                tbc.lineYaw.setEndX(28 * Math.sin((value * (2 * Math.PI) / 60)));
             });
 
             yYaw.addListener((o, ov, nv) -> {
                 Double value = ((nv.doubleValue() + 29) / 120) * 59;
-                tbc.lineYaw.setEndY((-32) * Math.cos((value * (2 * Math.PI) / 60)));
+                tbc.lineYaw.setEndY((-28) * Math.cos((value * (2 * Math.PI) / 60)));
             });
 
 

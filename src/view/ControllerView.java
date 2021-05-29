@@ -62,9 +62,9 @@ public class ControllerView extends Pane implements Observer{
         timeBoard.airSpeed.bind(vmc.airSpeed);
         timeBoard.altimeter.bind(vmc.altimeter);
         timeBoard.fd.bind(vmc.fd);
-        timeBoard.pitch.bind(vmc.pitch);
-        timeBoard.roll.bind(vmc.roll);
-        timeBoard.yaw.bind(vmc.yaw);
+//        timeBoard.pitch.bind(vmc.pitch);
+//        timeBoard.roll.bind(vmc.roll);
+//        timeBoard.yaw.bind(vmc.yaw);
 
 //        timeBoard.xAirSpeed.bind(vmc.airSpeed1);
 //        timeBoard.yAirSpeed.bind(vmc.airSpeed1);

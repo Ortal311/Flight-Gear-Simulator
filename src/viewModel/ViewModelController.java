@@ -18,7 +18,7 @@ public class ViewModelController extends Observable implements Observer {
 
     Model m;
     public DoubleProperty timeStamp, throttle, rudder, aileron,
-            elevators, sliderTime, choiceSpeed;
+            elevators, sliderTime, choiceSpeed, pitch1, roll1, yaw1;
     public TimeSeries ts;
 
     public double rate;
@@ -43,13 +43,17 @@ public class ViewModelController extends Observable implements Observer {
         sliderTime = new SimpleDoubleProperty();
         choiceSpeed = new SimpleDoubleProperty();
 
+        pitch1 = new SimpleDoubleProperty();
+        roll1 = new SimpleDoubleProperty();
+        yaw1 = new SimpleDoubleProperty();
+
         timeFlight = new SimpleStringProperty();
         altimeter = new SimpleStringProperty();
         airSpeed = new SimpleStringProperty();
         fd = new SimpleStringProperty();
-        pitch = new SimpleStringProperty();
-        roll = new SimpleStringProperty();
-        yaw = new SimpleStringProperty();
+//        pitch = new SimpleStringProperty();
+//        roll = new SimpleStringProperty();
+//        yaw = new SimpleStringProperty();
 
         attributeList = FXCollections.observableArrayList();
 
@@ -81,9 +85,13 @@ public class ViewModelController extends Observable implements Observer {
         altimeter.setValue(String.valueOf(ts.getValueByTime(25, value)));
         airSpeed.setValue(String.valueOf(ts.getValueByTime(24, value)));
         fd.setValue(String.valueOf(ts.getValueByTime(36, value)));
-        pitch.setValue(String.valueOf(ts.getValueByTime(29, value)));//18
-        roll.setValue(String.valueOf(ts.getValueByTime(17, value)));
-        yaw.setValue(String.valueOf(ts.getValueByTime(20, value)));
+//        pitch.setValue(String.valueOf(ts.getValueByTime(29, value)));//18
+//        roll.setValue(String.valueOf(ts.getValueByTime(17, value)));
+//        yaw.setValue(String.valueOf(ts.getValueByTime(20, value)));
+
+        pitch1.setValue(ts.getValueByTime(29, value));
+        roll1.setValue(ts.getValueByTime(17, value));
+        yaw1.setValue(ts.getValueByTime(20, value));
     }
 
 
@@ -112,6 +120,9 @@ public class ViewModelController extends Observable implements Observer {
                 alert.showAndWait();
             }
             attributeList.addAll(ts.getAttributes());
+            altimeter.setValue("0");
+            airSpeed.setValue("0");
+            fd.setValue("0");
         }
     }
 
