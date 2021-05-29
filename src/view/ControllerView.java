@@ -40,8 +40,8 @@ public class ControllerView extends Pane implements Observer{
         attributesList.setLayoutY(25);
         playerButtons.setLayoutY(435);
         playerButtons.setLayoutX(5);
-        timeBoard.setLayoutX(540);
-        timeBoard.setLayoutY(250);
+        timeBoard.setLayoutX(85);
+        timeBoard.setLayoutY(307);
         graphs.setLayoutX(230);
         graphs.setLayoutY(25);
 
@@ -65,7 +65,14 @@ public class ControllerView extends Pane implements Observer{
         timeBoard.roll.bind(vmc.roll);
         timeBoard.yaw.bind(vmc.yaw);
 
-
+//        timeBoard.xAirSpeed.bind(vmc.airSpeed1);
+//        timeBoard.yAirSpeed.bind(vmc.airSpeed1);
+        timeBoard.xPitch.bind(vmc.pitch1);
+        timeBoard.yPitch.bind(vmc.pitch1);
+        timeBoard.xRoll.bind(vmc.roll1);
+        timeBoard.yRoll.bind(vmc.roll1);
+        timeBoard.xYaw.bind(vmc.yaw1);
+        timeBoard.yYaw.bind(vmc.yaw1);
 
         playerButtons.onOpen.addListener((o, ov, nv)->vmc.openFile());
         playerButtons.onOpenXML.addListener((o, ov, nv)->vmc.openXMLFile());
