@@ -32,17 +32,9 @@ public class Main extends Application {
         primaryStage.setTitle("Hello World");
         ControllerView controllerView=fxl.getController();
         controllerView.init(vmc);
-       // MyJoystickController mjc = new MyJoystickController();
-       // PlayerButtonsController pbc= new PlayerButtonsController();
-       // pbc.init(vmc);
 
-       // mjc.paint();
-
-        //m.ConnectToServer("127.0.0.1",5402);
-        primaryStage.setScene(new Scene(root, 800, 550));
+        primaryStage.setScene(new Scene(root, 800, 560));
         primaryStage.show();
-
-
     }
 
 

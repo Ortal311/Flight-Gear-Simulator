@@ -38,7 +38,7 @@ public class ControllerView extends Pane implements Observer{
         myJoystick.setLayoutY(25);
         attributesList.setLayoutX(20);
         attributesList.setLayoutY(25);
-        playerButtons.setLayoutY(435);
+        playerButtons.setLayoutY(440);
         playerButtons.setLayoutX(5);
         timeBoard.setLayoutX(85);
         timeBoard.setLayoutY(307);
