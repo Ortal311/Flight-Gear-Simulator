@@ -33,7 +33,7 @@ public class Main extends Application {
         ControllerView controllerView=fxl.getController();
         controllerView.init(vmc);
 
-        primaryStage.setScene(new Scene(root, 800, 560));
+        primaryStage.setScene(new Scene(root, 1100, 560));
         primaryStage.show();
     }
 

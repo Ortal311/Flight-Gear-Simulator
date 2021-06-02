@@ -22,7 +22,7 @@ public class Model extends Observable implements SimulatorModel {
 
     // static double time = 0;
     private double playSpeed = 100;
-    private double time = 1;
+    private double time = 0;
     private volatile boolean pause = false;
     private boolean stop = false;
     public static boolean afterPause = false;
@@ -169,6 +169,9 @@ public class Model extends Observable implements SimulatorModel {
     }
 
     synchronized public void playFile() {
+        //to delete
+        String attribute="";
+        System.out.println("the attrucute is "+ attribute);
 
         if (afterForward) {//somehow it does not responded to it and cannot go back to normal rate
             afterForward = false;

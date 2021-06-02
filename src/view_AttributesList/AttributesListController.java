@@ -11,9 +11,10 @@ import viewModel.ViewModelController;
 public class AttributesListController {
 
     @FXML
-    ListView lv;
+   public ListView lv;
 
     DoubleProperty dp;
+//    ObservableList<String>chosen;
 
     public AttributesListController() {
         dp= new SimpleDoubleProperty();

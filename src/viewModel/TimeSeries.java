@@ -1,5 +1,9 @@
 package viewModel;
 
+import algo.Point;
+import javafx.beans.property.ListProperty;
+import javafx.beans.property.SimpleListProperty;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -8,6 +12,7 @@ import java.util.*;
 
 public class TimeSeries {
     public Map<String, Vector<Float>> map = new HashMap<String, Vector<Float>>();
+    public Map<String,Integer>mapIndex=new HashMap<>();
     public Vector<Vector<String>> cols = new Vector<Vector<String>>(); //include fields in the first line
     public Vector<Vector<Float>> colsFloat = new Vector<Vector<Float>>(); //include only the float data
     public Vector<String> rows = new Vector<String>();
@@ -49,6 +54,7 @@ public class TimeSeries {
                     colF.add(Float.parseFloat(cols.elementAt(i).elementAt(j))); //convert each string to float
                 colsFloat.add(colF);
                 map.put(cols.elementAt(i).elementAt(0), colF); //add the converted col to the map
+                mapIndex.put(cols.elementAt(i).elementAt(0),i-1);
             }
             reader.close(); //close the reading file
         } catch (IOException e) //in case of exception
@@ -68,5 +74,18 @@ public class TimeSeries {
     public float getValueByTime(int index, int time) {
         return this.colsFloat.get(index).get(time);
     }
+    public int getIndexOfAttribute(String attribute){
+        int s=this.mapIndex.get(attribute);// for checking
+
+        return this.mapIndex.get(attribute);
+    }
+//    public ListProperty<Point> getListOfPoints(String attributeName,int rowNumber){
+//        ListProperty<Point> listProperty=new SimpleListProperty<>();
+//        for(int i=0;i<getSize();i++){
+//
+//        }
+//
+//    }
+
 
 }
