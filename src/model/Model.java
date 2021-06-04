@@ -77,7 +77,7 @@ public class Model extends Observable implements SimulatorModel {
 
     synchronized public void displayFlight(boolean conncetServer) {
         int i = 0;
-        int sizeTS = ts.rows.size();
+        int sizeTS = ts.getSize();
      //   boolean condition = op.rewind ? i >= 0 : i < ts.rows.size();//if rewind go while>0 else (regula) go while <ts.size
 
         for (i = (int) time; i<sizeTS;i++ ) {
@@ -126,9 +126,11 @@ public class Model extends Observable implements SimulatorModel {
                     e.printStackTrace();
                 }
             }
+           // System.out.println(ts.getAtts().get(i));
             System.out.println(ts.rows.get(i));
             if (conncetServer) {
                 out.println(ts.rows.get(i));
+                //out.println(ts.getAtts().get(i));
                 out.flush();
             }
             time = i;

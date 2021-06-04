@@ -7,28 +7,9 @@ import javafx.beans.property.SimpleFloatProperty;
 
 public class Point {
 
-    public final FloatProperty x;
-    public final FloatProperty y;
-
-
-    public Point(double x, double y) {
-        this.x =new SimpleFloatProperty();
-        this.y =new SimpleFloatProperty();
-    }
-
-    public float getX() {
-        return x.get();
-    }
-
-    public FloatProperty xProperty() {
-        return x;
-    }
-
-    public float getY() {
-        return y.get();
-    }
-
-    public FloatProperty yProperty() {
-        return y;
+    public final float x,y;
+    public Point(float x, float y) {
+        this.x=x;
+        this.y=y;
     }
 }

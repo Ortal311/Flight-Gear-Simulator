@@ -116,9 +116,10 @@ public class ViewModelController extends Observable implements Observer {
                  //to update the specific chosen attribute
 
         //getting the number of the chosen attribute
-        numberOfSpecAttribute = ts.getIndexOfAttribute(chosenAttribute.getValue());
+       //numberOfSpecAttribute = ts.getIndexOfAttribute(chosenAttribute.getValue());
             //updating by binding the value of the chosen attribute
-        valueAxis.setValue(ts.getValueByTime(numberOfSpecAttribute, value));
+       // valueAxis.setValue(ts.getValueByTime(numberOfSpecAttribute, value));
+        valueAxis.setValue(ts.getValueByTime(chosenAttribute.getValue(), value));
 
 
             //init the name of the correlate attribute
@@ -126,9 +127,9 @@ public class ViewModelController extends Observable implements Observer {
             //getting the col's number of the correlate attribute
         if(correlateFeature.getValue()!=null)
         {
-            numberOfCorrelateAttribute=ts.getIndexOfAttribute(correlateFeature.getValue());
+            //numberOfCorrelateAttribute=ts.getIndexOfAttribute(correlateFeature.getValue());
             //updating the value of the correlate attribute
-            valueCorrelate.setValue(ts.getValueByTime(numberOfCorrelateAttribute,value));
+            valueCorrelate.setValue(ts.getValueByTime(correlateFeature.getValue(),value));
         }
         else{
             numberOfCorrelateAttribute=0;
@@ -166,7 +167,8 @@ public class ViewModelController extends Observable implements Observer {
             {
                 ts = new TimeSeries(chosen.getName());
                 simpleAnomalyDetector.learnNormal(ts);
-                if (ts.cols.size() != 42)
+                //if (ts.cols.size() != 42)
+                    if(ts.atts.size()!= 42)
                     System.err.println("wrong amount of columns - should be 42");
                 else
                     m.setTimeSeries(ts);

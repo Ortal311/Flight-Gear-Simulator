@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Slider;
+import javafx.scene.paint.Color;
 
 public class MyJoystickController {
 
@@ -39,6 +40,14 @@ public class MyJoystickController {
 
         gc.clearRect(0,0,joystick.getWidth(),joystick.getHeight());
         gc.strokeOval(jx.doubleValue()*50,jy.doubleValue()*50,60,60);
-    }
 
+//        gc.setFill(Color.GREEN);
+//        gc.setStroke(Color.BLUE);
+//        gc.setLineWidth(5);
+//        gc.strokeLine(40, 10, 10, 40);
+
+//        gc.setFill(Color.BLUE);
+//        gc.setStroke(Color.BLACK);
+    }
+//my
 }

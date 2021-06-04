@@ -2,153 +2,91 @@ package algo;
 
 import viewModel.TimeSeries;
 
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Vector;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
-//import java.lang.Math.abs;
 
-public class SimpleAnomalyDetector implements TimeSeriesAnomalyDetector
-{
-	public List<CorrelatedFeatures> ls = new ArrayList<CorrelatedFeatures>();
-	//public float threshold;
-	public float minCor=(float) 0.9;
-	public HashMap<String,String>featureANDCorrelateFeature=new HashMap<>();
+public class SimpleAnomalyDetector implements TimeSeriesAnomalyDetector {
+
+	ArrayList<CorrelatedFeatures> cf;
+
+	public SimpleAnomalyDetector() {
+		cf=new ArrayList<>();
+	}
 
 	@Override
-	public void learnNormal(TimeSeries ts)
-	{
-		//float minCor=(float) 0.9;
-		float max = 0;
-		float resP;
-		int count = 1;
-		String feature1,feature2;
+	public void learnNormal(TimeSeries ts) {
+		ArrayList<String> atts=ts.getAttributes();
+		int len=ts.getRowSize();
 
-		Map.Entry<String, Vector<Float>> pair1 = null;
-		Map.Entry<String, Vector<Float>> pair2 = null;
-
-		Iterator<Map.Entry<String, Vector<Float>>> it1 = ts.map.entrySet().iterator();
-
-		while(it1.hasNext()) //runs on all columns of the map
-		{
-			max=0;
-			Iterator<Map.Entry<String, Vector<Float>>> it2 = it1;
-
-			pair1 = it1.next();
-			feature1 = pair1.getKey();
-			feature2 = null;
-
-			while(it2.hasNext())
-			{
-				pair2 = it2.next(); //checks only with the forward columns (not from the beginning)
-				if(pair2.getKey().equals(feature1)) //if checks the same columns
-					break;
-
-				int size = pair1.getValue().size(); //length of each column of data
-				float[] arrA = new float[size];
-				float[] arrB = new float[size];
-
-				for(int i=0; i<size; i++)
-				{
-					arrA[i]=pair1.getValue().elementAt(i);
-					arrB[i]=pair2.getValue().elementAt(i);
-				}
-
-				resP = Math.abs(StatLib.pearson(arrA,arrB)); //calculate pearson between 2 columns
-
-				if(resP > minCor && resP > max)
-				{
-					feature2 = pair2.getKey();
-					max = resP;
-				}
+		float vals[][]=new float[atts.size()][len];
+		for(int i=0;i<atts.size();i++){
+			for(int j=0;j<ts.getRowSize();j++){
+				vals[i][j]=ts.getAttributeData(atts.get(i)).get(j);
 			}
-
-			if(max > 0) //max has been updated for the highest resP
-			{
-				int sizeCol = pair1.getValue().size(); //size of each column of data
-				float[] arr1 = new float[sizeCol];
-				float[] arr2 = new float[sizeCol];
-
-				Vector<Float> tmp = ts.map.get(feature2); //change 2nd column to the max column compared to pair1
-
-				Point[] points = new Point[sizeCol]; //create array of points
-				for(int i=0; i<sizeCol; i++) //insert to array of points
-				{
-					arr1[i] = pair1.getValue().elementAt(i);
-					arr2[i] = tmp.elementAt(i);
-					points[i] = new Point(arr1[i], arr2[i]);
-				}
-				Line line = StatLib.linear_reg(points); //calculate the linear reg between 2 columns
-
-				float threshold = 0; //initialize the threshold
-				//Point p = null;
-				float devCalc = 0;
-
-				for(int i=0; i<sizeCol; i++)
-				{
-					//p=new Point(arr1[i], arr2[i]);
-					devCalc = StatLib.dev(points[i], line);
-					if(devCalc > threshold) //check if the dev is higher than threshold
-						threshold = devCalc; //update to new threshold
-				}
-				ls.add(new CorrelatedFeatures(feature1, feature2, max, line, threshold));	//add to the list the new element of CorrelatedFeatures
-				featureANDCorrelateFeature.put(feature1,feature2);
-				System.out.println("featureANDCorrelateFeature was inside");
-			}
-			it1 = ts.map.entrySet().iterator();
-			for(int i=0; i<count;i++)
-			{
-				pair1 = it1.next();
-			}
-			count++;
 		}
+
+
+		for(int i=0;i<atts.size();i++){
+			for(int j=i+1;j<atts.size();j++){
+				float p=StatLib.pearson(vals[i],vals[j]);
+				if(Math.abs(p)>0.9){
+
+					Point ps[]=toPoints(ts.getAttributeData(atts.get(i)),ts.getAttributeData(atts.get(j)));
+					Line lin_reg=StatLib.linear_reg(ps);
+					float threshold=findThreshold(ps,lin_reg)*1.1f; // 10% increase
+
+					CorrelatedFeatures c=new CorrelatedFeatures(atts.get(i), atts.get(j), p, lin_reg, threshold);
+
+					cf.add(c);
+				}
+			}
+		}
+	}
+
+	private Point[] toPoints(ArrayList<Float> x, ArrayList<Float> y) {
+		Point[] ps=new Point[x.size()];
+		for(int i=0;i<ps.length;i++)
+			ps[i]=new Point(x.get(i),y.get(i));
+		return ps;
+	}
+
+	private float findThreshold(Point ps[],Line rl){
+		float max=0;
+		for(int i=0;i<ps.length;i++){
+			float d=Math.abs(ps[i].y - rl.f(ps[i].x));
+			if(d>max)
+				max=d;
+		}
+		return max;
 	}
 
 
 	@Override
-	public List<AnomalyReport> detect(TimeSeries ts)
-	{
-		Vector<AnomalyReport> result = new Vector<AnomalyReport>();
-		int size = ls.size();
-		for(int i = 0; i < size; i++)
-		{
-			String feat1 = ls.get(i).feature1;
-			String feat2 = ls.get(i).feature2;
-			Line line = ls.get(i).lin_reg;
-			float threshold = (float) (ls.get(i).threshold + ((ls.get(i).threshold)*0.1));
-			int sizeMapData = ts.map.get(feat1).size(); //size of data lines in each column
+	public List<AnomalyReport> detect(TimeSeries ts) {
+		ArrayList<AnomalyReport> v=new ArrayList<>();
 
-			for(int j = 0; j < sizeMapData; j++) //runs on each line of data in both columns
-			{
-				float x = ts.map.get(feat1).get(j);
-				float y = ts.map.get(feat2).get(j);
-				Point p = new Point(x,y);
-				float devRes = StatLib.dev(p, line);
-				if(devRes > threshold)
-				{
-					AnomalyReport report = new AnomalyReport(feat1 + "-" + feat2, j+1);
-					result.add(report);
+		for(CorrelatedFeatures c : cf) {
+			ArrayList<Float> x=ts.getAttributeData(c.feature1);
+			ArrayList<Float> y=ts.getAttributeData(c.feature2);
+			for(int i=0;i<x.size();i++){
+				if(Math.abs(y.get(i) - c.lin_reg.f(x.get(i)))>c.threshold){
+					String d=c.feature1 + "-" + c.feature2;
+					v.add(new AnomalyReport(d,(i+1)));
 				}
 			}
 		}
-		return result;
-	}
-	public String getCorrelateFeature(String feature){
-		String f=featureANDCorrelateFeature.get(feature);
-		featureANDCorrelateFeature.forEach((key, value) -> System.out.println(key + "                :                " + value));
-		featureANDCorrelateFeature.size();
-
-		return f;
+		return v;
 	}
 
-	public List<CorrelatedFeatures> getNormalModel()
-	{
-		return ls;
+	public List<CorrelatedFeatures> getNormalModel(){
+		return cf;
+	}
+
+	public String getCorrelateFeature(String attribute1){
+		for(CorrelatedFeatures c: cf){
+			if(c.feature1.equals(attribute1))
+				return c.feature2;
+		}
+		return null;
 	}
 }
-//yuval

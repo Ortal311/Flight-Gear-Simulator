@@ -29,7 +29,7 @@ public class ControllerView extends Pane implements Observer{
 
     @FXML
     Graphs graphs;
-    GraphsController graphsController;
+    //GraphsController graphsController;
 
     void init(ViewModelController vmc)
     {
