@@ -7,8 +7,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import model.Model;
 import viewModel.ViewModelController;
-import view_PlayerButtons.PlayerButtonsController;
-import view_joystick.MyJoystickController;
 
 public class Main extends Application {
 
@@ -25,6 +23,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         //added
         Model m = new Model();
+        m.writeToXML(m.properties);
         ViewModelController vmc = new ViewModelController(m);
 
         FXMLLoader fxl=new FXMLLoader();

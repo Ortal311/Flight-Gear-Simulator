@@ -68,12 +68,12 @@ public class ControllerView extends Pane implements Observer{
 
 //        timeBoard.xAirSpeed.bind(vmc.airSpeed1);
 //        timeBoard.yAirSpeed.bind(vmc.airSpeed1);
-        timeBoard.xPitch.bind(vmc.pitch1);
-        timeBoard.yPitch.bind(vmc.pitch1);
-        timeBoard.xRoll.bind(vmc.roll1);
-        timeBoard.yRoll.bind(vmc.roll1);
-        timeBoard.xYaw.bind(vmc.yaw1);
-        timeBoard.yYaw.bind(vmc.yaw1);
+        timeBoard.xPitch.bind(vmc.pitch);
+        timeBoard.yPitch.bind(vmc.pitch);
+        timeBoard.xRoll.bind(vmc.roll);
+        timeBoard.yRoll.bind(vmc.roll);
+        timeBoard.xYaw.bind(vmc.yaw);
+        timeBoard.yYaw.bind(vmc.yaw);
 
         playerButtons.onOpen.addListener((o, ov, nv)->vmc.openFile());
         playerButtons.onOpenXML.addListener((o, ov, nv)->vmc.openXMLFile());

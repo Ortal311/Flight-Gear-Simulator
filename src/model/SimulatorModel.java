@@ -1,13 +1,10 @@
 package model;
 
-import flightSetting.FlightSetting;
-
-import java.io.IOException;
+import viewModel.TimeSeries;
 
 public interface SimulatorModel {
     public boolean ConnectToServer(String ip, double port);
-    public void writeToXML (FlightSetting settings) throws IOException;
-    public FlightSetting readFromXML() throws IOException;
+    public void displayFlight(boolean conncetServer);
+    public void setTimeSeries(TimeSeries ts);
     public void openFile();
-
 }

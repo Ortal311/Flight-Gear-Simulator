@@ -18,21 +18,22 @@ public class ViewModelController extends Observable implements Observer {
 
     Model m;
     public DoubleProperty timeStamp, throttle, rudder, aileron,
-            elevators, sliderTime, choiceSpeed, pitch1, roll1, yaw1;
+            elevators, sliderTime, choiceSpeed, pitch, roll, yaw;
     public TimeSeries ts;
 
-    public double rate;
     public StringProperty timeFlight;
 
     public ObservableList<String> attributeList;
     public Clock clock;
     //from timeBoard
-    public StringProperty altimeter, airSpeed, fd, pitch, roll, yaw;
+    public StringProperty altimeter, airSpeed, fd;
+    public Boolean xmlFile, csvFile;
 
     public ViewModelController(Model m) {
         this.m = m;
         clock = new Clock();
-        rate = 100;
+        this.xmlFile = false;
+        this.csvFile = false;
         m.addObserver(this);//add Model as Observable
 
         timeStamp = new SimpleDoubleProperty();
@@ -43,25 +44,21 @@ public class ViewModelController extends Observable implements Observer {
         sliderTime = new SimpleDoubleProperty();
         choiceSpeed = new SimpleDoubleProperty();
 
-        pitch1 = new SimpleDoubleProperty();
-        roll1 = new SimpleDoubleProperty();
-        yaw1 = new SimpleDoubleProperty();
+        pitch = new SimpleDoubleProperty();
+        roll = new SimpleDoubleProperty();
+        yaw = new SimpleDoubleProperty();
 
         timeFlight = new SimpleStringProperty();
         altimeter = new SimpleStringProperty();
         airSpeed = new SimpleStringProperty();
         fd = new SimpleStringProperty();
-//        pitch = new SimpleStringProperty();
-//        roll = new SimpleStringProperty();
-//        yaw = new SimpleStringProperty();
 
         attributeList = FXCollections.observableArrayList();
 
         choiceSpeed.addListener((o, ov, nv) -> {
-            rate = nv.doubleValue();
-            speedPlay(rate);
-
+            speedPlay();
         });
+
         sliderTime.addListener((o, ov, nv) -> {
             // updateDisplayVariables(nv.intValue());
             timeStamp.setValue(nv.doubleValue());
@@ -70,28 +67,22 @@ public class ViewModelController extends Observable implements Observer {
 
         timeStamp.addListener((o, ov, nv) -> {
             updateDisplayVariables(nv.intValue());
-            //m.displayFlight(nv.intValue());
         });
     }
 
-    public void updateDisplayVariables(int value) {
-        aileron.setValue(ts.getValueByTime(0, value));
-        elevators.setValue(ts.getValueByTime(1, value));
-        rudder.setValue(ts.getValueByTime(2, value));
-        throttle.setValue(ts.getValueByTime(6, value));
-        sliderTime.setValue(value);
-        timeFlight.setValue(String.valueOf(value));
-
-        altimeter.setValue(String.valueOf(ts.getValueByTime(25, value)));
-        airSpeed.setValue(String.valueOf(ts.getValueByTime(24, value)));
-        fd.setValue(String.valueOf(ts.getValueByTime(36, value)));
-//        pitch.setValue(String.valueOf(ts.getValueByTime(29, value)));//18
-//        roll.setValue(String.valueOf(ts.getValueByTime(17, value)));
-//        yaw.setValue(String.valueOf(ts.getValueByTime(20, value)));
-
-        pitch1.setValue(ts.getValueByTime(29, value));
-        roll1.setValue(ts.getValueByTime(17, value));
-        yaw1.setValue(ts.getValueByTime(20, value));
+    public void updateDisplayVariables(int time) {
+        sliderTime.setValue(time);
+        timeFlight.setValue(String.valueOf(time));
+        aileron.setValue(ts.getValueByTime(m.attributeMap.get("aileron").associativeName, time));
+        elevators.setValue(ts.getValueByTime(m.attributeMap.get("elevators").associativeName, time));
+        rudder.setValue(ts.getValueByTime(m.attributeMap.get("rudder").associativeName, time));
+        throttle.setValue(ts.getValueByTime(m.attributeMap.get("throttle").associativeName, time));
+        altimeter.setValue(String.valueOf(ts.getValueByTime(m.attributeMap.get("altimeter").associativeName, time)));
+        airSpeed.setValue(String.valueOf(ts.getValueByTime(m.attributeMap.get("airSpeed").associativeName, time)));
+        fd.setValue(String.valueOf(ts.getValueByTime(m.attributeMap.get("fd").associativeName, time)));
+        pitch.setValue(ts.getValueByTime(m.attributeMap.get("pitch").associativeName, time));
+        roll.setValue(ts.getValueByTime(m.attributeMap.get("roll").associativeName, time));
+        yaw.setValue(ts.getValueByTime(m.attributeMap.get("yaw").associativeName, time));
     }
 
 
@@ -123,15 +114,24 @@ public class ViewModelController extends Observable implements Observer {
             altimeter.setValue("0");
             airSpeed.setValue("0");
             fd.setValue("0");
+            this.csvFile = true;
         }
     }
 
     public void openXMLFile() {
-        m.openXML();
+        xmlFile = m.openXML();
     }
 
     public void play() {
-        this.m.playFile();
+        if(csvFile && xmlFile) {
+            this.m.playFile();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("File is missing");
+            alert.setContentText("Please upload csv file and xml file");
+            alert.showAndWait();
+        }
     }
 
     public void pause() {
@@ -153,16 +153,12 @@ public class ViewModelController extends Observable implements Observer {
 
 //
 
-    public void speedPlay(double rate) {
-        //rate.addListener((o, ov, nv) -> m.op.setPlaySpeed((double) nv));
-        // m.op.setPlaySpeed(rate);
-        if (choiceSpeed.doubleValue() == 0.5) rate = 150;
-        else if (choiceSpeed.doubleValue() == 1.5) rate = 75;
-        else if (choiceSpeed.doubleValue() == 2) rate = 50;
-        else if (choiceSpeed.doubleValue() == 2.5) rate = 20;
-        else rate = 100;
-
-        m.setPlaySpeed(rate);
+    public void speedPlay() {
+        if (choiceSpeed.doubleValue() == 0.5) m.properties.setPlaySpeed(150);
+        else if (choiceSpeed.doubleValue() == 1.5) m.properties.setPlaySpeed(75);
+        else if (choiceSpeed.doubleValue() == 2) m.properties.setPlaySpeed(50);
+        else if (choiceSpeed.doubleValue() == 2.5) m.properties.setPlaySpeed(20);
+        else m.properties.setPlaySpeed(100);
     }
 
     @Override
