@@ -3,70 +3,85 @@ package viewModel;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-
 import java.util.*;
 
 public class TimeSeries {
-    public Map<String, Vector<Float>> map = new HashMap<String, Vector<Float>>();
-    public Vector<Vector<String>> cols = new Vector<Vector<String>>(); //include fields in the first line
-    public Vector<Vector<Float>> colsFloat = new Vector<Vector<Float>>(); //include only the float data
-    public Vector<String> rows = new Vector<String>();
 
-    public TimeSeries(String csvFileName) //throws IOException
-    {
+    Map<String, ArrayList<Float>> ts;
+    Map<Integer, ArrayList<Float>> tsNum;
+   public ArrayList<String> rows;
+    ArrayList<String> atts;
+    int dataRowSize;
+
+    public TimeSeries(String csvFileName) {
+        System.out.println("init TS");
+        ts=new HashMap<>();
+        tsNum=new HashMap<>();
+        rows=new ArrayList<>();
+
+        atts=new ArrayList<>();
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(csvFileName)); //open to read the result file
-            String line;
-            Vector<Vector<String>> csvRows = new Vector<Vector<String>>();
-            String[] str;
-            while ((line = reader.readLine()) != null) //run on rows of the file and read each line separately
-            {
-                //String word; //name of each feature
-                Vector<String> row = new Vector<String>(); //initialize the row vector
-                str = line.split(","); //array of the string numbers in each row
-                rows.add(line);
-
-                for (int i = 0; i < str.length; i++) //runs on 4 data columns of the table
-                {
-                    row.add(str[i]); //add each string number to the vector
+            BufferedReader in=new BufferedReader(new FileReader(csvFileName));
+            String line=in.readLine();
+            int j=0;
+            for(String att : line.split(",")) {
+                atts.add(att);
+                ts.put(att, new ArrayList<>());
+                tsNum.put(j++,new ArrayList<>());
+            }
+            while((line=in.readLine())!=null) {
+                int i=0;
+                for(String val : line.split(",")) {
+                    ts.get(atts.get(i)).add(Float.parseFloat(val));
+                    tsNum.get(i).add(Float.parseFloat(val));
+                    i++;
                 }
-                csvRows.add(row); //add the updated row to the vector of vectors
+                rows.add(line);
             }
+            dataRowSize=ts.get(atts.get(0)).size();
 
-
-            for (int i = 0; i < csvRows.elementAt(0).size(); i++) //runs on each feature (column)
-            {
-                Vector<String> col = new Vector<String>(); //initialize the column vector
-                for (int j = 0; j < csvRows.size(); j++)
-                    col.add(csvRows.elementAt(j).elementAt(i));
-                cols.add(col);
-            }
-
-            for (int i = 0; i < cols.size(); i++) //runs on each feature and convert the data to float from string numbers
-            {
-                Vector<Float> colF = new Vector<Float>();
-                for (int j = 1; j < cols.firstElement().size(); j++) //length of column
-                    colF.add(Float.parseFloat(cols.elementAt(i).elementAt(j))); //convert each string to float
-                colsFloat.add(colF);
-                map.put(cols.elementAt(i).elementAt(0), colF); //add the converted col to the map
-            }
-            reader.close(); //close the reading file
-        } catch (IOException e) //in case of exception
-        {
-            e.printStackTrace();
-        }
+            in.close();
+        }catch(IOException e) {}
     }
 
-    public int getSize() {
-        return this.rows.size();
+    public ArrayList<Float> getAttributeData(String name){
+        return ts.get(name);
     }
 
-    public List<String> getAttributes() {
-        return new LinkedList<>(this.map.keySet());
+    public ArrayList<String> getAttributes(){
+        return atts;
+    }
+
+    public int getSize() {// they both doing the exact same thing, but cuz we mixed code we need to change the name we call that function
+        return dataRowSize;
+    }
+    public int getRowSize() {
+        return dataRowSize;
     }
 
     public float getValueByTime(int index, int time) {
-        return this.colsFloat.get(index).get(time);
+
+        float f=tsNum.get(index).get(time);
+        return tsNum.get(index).get(time);
     }
+
+    public float getValueByTime(String index, int time) {
+
+      return ts.get(index).get(time);
+    }
+
+    public Map<String, ArrayList<Float>> getTs() {
+        return ts;
+    }
+
+    public ArrayList<String> getAtts() {
+        return atts;
+    }
+    //    public List<String> getAttributes() {
+//        return new LinkedList<>(this.map.keySet());
+//    }
+
+
+
 
 }

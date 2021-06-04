@@ -1,5 +1,6 @@
 package model;
 
+import flightSetting.FlightSetting;
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 import viewModel.TimeSeries;
@@ -9,7 +10,7 @@ import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.*;
 import java.net.Socket;
-import java.util.*;
+import java.util.Observable;
 
 public class Model extends Observable implements SimulatorModel {
 
@@ -17,13 +18,11 @@ public class Model extends Observable implements SimulatorModel {
     public PrintWriter out;
     public TimeSeries ts;
     public Options op = new Options();
-    public Map<String, Attribute> attributeMap;
-    public FlightSetting properties;
-    public Thread displaySetting;
+    Thread displaySetting;
 
     // static double time = 0;
-//    private double playSpeed = 100;
-    private double time = 1;
+    private double playSpeed = 100;
+    private double time = 0;
     private volatile boolean pause = false;
     private boolean stop = false;
     public static boolean afterPause = false;
@@ -31,10 +30,6 @@ public class Model extends Observable implements SimulatorModel {
     public static boolean afterRewind = false;
     public static boolean afterForward = false;
     public boolean isConnect;
-
-    public Model() {
-        this.properties = new FlightSetting();
-    }
 
     public boolean isStop() {
         return stop;
@@ -50,13 +45,13 @@ public class Model extends Observable implements SimulatorModel {
     }
 
 
-//    public double getPlaySpeed() {
-//        return playSpeed;
-//    }
-//
-//    public void setPlaySpeed(double playSpeed) {
-//        this.playSpeed = playSpeed;
-//    }
+    public double getPlaySpeed() {
+        return playSpeed;
+    }
+
+    public void setPlaySpeed(double playSpeed) {
+        this.playSpeed = playSpeed;
+    }
 //    public void setTime(double time) {
 //        this.time = time;
 //    }
@@ -69,6 +64,7 @@ public class Model extends Observable implements SimulatorModel {
             out = new PrintWriter(socket.getOutputStream());
             System.out.println("connected to server");
             return true;
+
         } catch (IOException e) {
             System.out.println("didnt connect");
             return false;
@@ -81,7 +77,7 @@ public class Model extends Observable implements SimulatorModel {
 
     synchronized public void displayFlight(boolean conncetServer) {
         int i = 0;
-        int sizeTS = ts.rows.size();
+        int sizeTS = ts.getSize();
      //   boolean condition = op.rewind ? i >= 0 : i < ts.rows.size();//if rewind go while>0 else (regula) go while <ts.size
 
         for (i = (int) time; i<sizeTS;i++ ) {
@@ -130,16 +126,18 @@ public class Model extends Observable implements SimulatorModel {
                     e.printStackTrace();
                 }
             }
+           // System.out.println(ts.getAtts().get(i));
             System.out.println(ts.rows.get(i));
             if (conncetServer) {
                 out.println(ts.rows.get(i));
+                //out.println(ts.getAtts().get(i));
                 out.flush();
             }
             time = i;
             setChanged();
             notifyObservers();
             try {
-                Thread.sleep((long) properties.getPlaySpeed());//responsible for the speed of the display
+                Thread.sleep((long) getPlaySpeed());//responsible for the speed of the display
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -153,37 +151,33 @@ public class Model extends Observable implements SimulatorModel {
        // new Thread(() -> displayFlight(true)).start();
     }
 
-    public Boolean openXML() {
+    public void openXML() {
         FileChooser fc = new FileChooser();
         fc.setTitle("open XML file");
         fc.setInitialDirectory(new File("./"));
         File chosen = fc.showOpenDialog(null);
+        if (chosen != null) {
+            System.out.println("the name of the file is:" + chosen.getName());
+        }
         if (!chosen.getName().contains(".xml"))  //checking the file
         {
+            //System.err.println("wrong file, choose xml file");
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Wrong file chosen");
-            alert.setContentText("Please choose a xml file");
+            alert.setContentText("please choose a csv file");
             alert.showAndWait();
-        } else {
-            try {
-                this.properties = readFromXML(chosen.getName());
-                if(this.properties != null) {
-                    createMapAttribute();
-                    return true;
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
-        return false;
     }
 
     synchronized public void playFile() {
+        //to delete
+        String attribute="";
+        System.out.println("the attrucute is "+ attribute);
 
         if (afterForward) {//somehow it does not responded to it and cannot go back to normal rate
             afterForward = false;
-            properties.setPlaySpeed(100);
+            op.setPlaySpeed(100);
         } else if (afterRewind) {
             op.rewind = false;
         } else if (afterPause) {
@@ -204,7 +198,7 @@ public class Model extends Observable implements SimulatorModel {
 
         } else {//first time of Play
 
-            isConnect = ConnectToServer(properties.getIp(), properties.getPort());
+            isConnect = ConnectToServer("127.0.0.1", 5402);
             if (isConnect) {
                 displaySetting = new Thread(() -> displayFlight(true), "Thread of displaySetting function");
                 displaySetting.start();
@@ -239,11 +233,9 @@ public class Model extends Observable implements SimulatorModel {
         // new Thread(() -> displayFlight()).start();
     }
 
+
+
     @Override
-    public void openFile() {
-
-    }
-
     public void writeToXML(FlightSetting settings) throws IOException {
         FileOutputStream fos = new FileOutputStream("settings.xml");
         XMLEncoder encoder = new XMLEncoder(fos);
@@ -252,40 +244,15 @@ public class Model extends Observable implements SimulatorModel {
                 System.out.println("Exception! :" + e.toString());
             }
         });
-
-        List<Attribute> lst = new ArrayList<>();
-        lst.add(createAtrribute("aileron", 0, -1, 1));
-        lst.add(createAtrribute("elevators", 1, -1, 1));
-        lst.add(createAtrribute("rudder", 2, 0, 1));
-        lst.add(createAtrribute("throttle", 6, 0, 1));
-        lst.add(createAtrribute("altimeter", 25, null, null));
-        lst.add(createAtrribute("airSpeed", 24, null, null));
-        lst.add(createAtrribute("fd", 36, 0, 360));
-        lst.add(createAtrribute("pitch", 29, -10, 17));
-        lst.add(createAtrribute("roll", 17, -38, 43));
-        lst.add(createAtrribute("yaw", 20, -29, 91));
-        settings.setAttributes(lst);
-        settings.setPort((double) 5402);
-        settings.setIp("127.0.0.1");
-        settings.setPlaySpeed(100);
-
         encoder.writeObject(settings);
         encoder.close();
         fos.close();
     }
 
-    public Attribute createAtrribute(String name, Integer associativeName, Integer min, Integer max) {
-        Attribute res = new Attribute();
-        res.setName(name);
-        res.setAssociativeName(associativeName);
-        res.setMax(max);
-        res.setMin(min);
+    @Override
+    public FlightSetting readFromXML() throws IOException {
 
-        return res;
-    }
-
-    public FlightSetting readFromXML(String fileName) throws IOException {
-        FileInputStream fis = new FileInputStream(fileName);
+        FileInputStream fis = new FileInputStream("settings.xml");
         XMLDecoder decoder = new XMLDecoder(fis);
         FlightSetting decodedSettings = (FlightSetting) decoder.readObject();
         decoder.close();
@@ -293,11 +260,13 @@ public class Model extends Observable implements SimulatorModel {
         return decodedSettings;
     }
 
-    public void createMapAttribute() {
-        this.attributeMap = new HashMap<>();
+    @Override
+    public void openFile() {
 
-        for(Attribute attribute: properties.getAttributes()){
-            attributeMap.put(attribute.name, attribute);
-        }
     }
+
+
+    //NOTE:we'll need to add get the result of each functions when needed-
+    // and we'll get them from the update of the viewModelController
+
 }
