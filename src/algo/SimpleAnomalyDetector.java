@@ -5,7 +5,7 @@ import viewModel.TimeSeries;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleAnomalyDetector implements TimeSeriesAnomalyDetector {
+public class SimpleAnomalyDetector implements AnomalyDetector {
 
 	ArrayList<CorrelatedFeatures> cf;
 
@@ -78,6 +78,11 @@ public class SimpleAnomalyDetector implements TimeSeriesAnomalyDetector {
 		return v;
 	}
 
+	@Override
+	public void paintALGgraph() {
+
+	}
+
 	public List<CorrelatedFeatures> getNormalModel(){
 		return cf;
 	}
@@ -86,6 +91,13 @@ public class SimpleAnomalyDetector implements TimeSeriesAnomalyDetector {
 		for(CorrelatedFeatures c: cf){
 			if(c.feature1.equals(attribute1))
 				return c.feature2;
+		}
+		return null;
+	}
+	public Line getRegLine(String f1,String f2) {
+		for (CorrelatedFeatures c : cf) {
+			if (c.feature1.equals(f1) && c.feature2.equals(f2))
+				return c.lin_reg;
 		}
 		return null;
 	}

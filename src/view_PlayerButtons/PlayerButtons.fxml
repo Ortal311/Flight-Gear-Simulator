@@ -59,5 +59,10 @@
             <Font name="Tahoma" size="18.0" />
          </font>
       </Text>
+      <Button layoutX="233.0" layoutY="2.0" mnemonicParsing="false" onAction="#onAnomalyDetector" prefHeight="30.0" prefWidth="187.0" style="-fx-background-color: #fff; -fx-border-color: #6d99f8#6d99f8; -fx-border-radius: 5px;" text="Load Anomaly Detector" textFill="#6d99f8">
+         <font>
+            <Font name="Tahoma Bold" size="13.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>

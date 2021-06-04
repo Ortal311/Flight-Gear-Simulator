@@ -1,5 +1,6 @@
 package model;
 
+import algo.SimpleAnomalyDetector;
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 import viewModel.TimeSeries;
@@ -30,6 +31,7 @@ public class Model extends Observable implements SimulatorModel {
     public static boolean afterRewind = false;
     public static boolean afterForward = false;
     public boolean isConnect;
+    public SimpleAnomalyDetector ad;
 
     public Model() {
         this.properties = new FlightSetting();
@@ -248,6 +250,23 @@ public class Model extends Observable implements SimulatorModel {
     public void openFile() {
 
     }
+    //class loader for Anomaly Detector's files
+
+    public void loadAnomalyDetector() {//String input
+//        URLClassLoader urlClassLoader= URLClassLoader.newInstance(new URL[]{new URL("file://"+input)});
+//        Class<?>c=urlClassLoader.loadClass(urlClassLoader.getName());
+//        SimpleAnomalyDetector ad=(SimpleAnomalyDetector) c.newInstance();
+
+        ad = new SimpleAnomalyDetector();
+        ad.learnNormal(ts);
+
+    }
+
+    @Override
+    public Runnable getPainter() {
+        return ()->ad.paintALGgraph();
+    }
+
 
     public void writeToXML(FlightSetting settings) throws IOException {
         FileOutputStream fos = new FileOutputStream("settings.xml");

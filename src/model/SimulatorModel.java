@@ -7,4 +7,5 @@ public interface SimulatorModel {
     public void displayFlight(boolean conncetServer);
     public void setTimeSeries(TimeSeries ts);
     public void openFile();
+    public Runnable getPainter();
 }

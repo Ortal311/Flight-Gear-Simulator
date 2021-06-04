@@ -10,7 +10,7 @@ public class PlayerButtons extends AnchorPane {
     public DoubleProperty sliderTime, choiceSpeed;
     public  StringProperty timeFlight, miliSec, seconds, minutes;
     public BooleanProperty onOpen, onOpenXML, onPlay, onPause, onSpeed, onStop,
-            onRewind, onForward;
+            onRewind, onForward,onAnomalyDetector;
 
     public PlayerButtons() {
         super();
@@ -25,6 +25,7 @@ public class PlayerButtons extends AnchorPane {
 
         onOpen= new SimpleBooleanProperty();
         onOpenXML= new SimpleBooleanProperty();
+        onAnomalyDetector=new SimpleBooleanProperty();
         onPlay= new SimpleBooleanProperty();
         onPause= new SimpleBooleanProperty();
         onSpeed= new SimpleBooleanProperty();
@@ -35,6 +36,7 @@ public class PlayerButtons extends AnchorPane {
 
         onOpen.setValue(false);
         onOpenXML.setValue(false);
+        onAnomalyDetector.setValue(false);
         onPlay.setValue(false);
         onPause.setValue(false);
         onSpeed.setValue(false);
@@ -58,6 +60,7 @@ public class PlayerButtons extends AnchorPane {
 
             onOpen.bind(pbc.onOpen);
             onOpenXML.bind(pbc.onOpenXML);
+            onAnomalyDetector.bind(pbc.onAnomalyDetector);
             onPlay.bind(pbc.onPlay);
             onPause.bind(pbc.onPause);
             onSpeed.bind(pbc.onSpeed);

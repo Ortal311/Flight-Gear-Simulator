@@ -26,11 +26,12 @@ public class PlayerButtonsController {
 
     // public DoubleProperty rate;
     public BooleanProperty onOpen, onOpenXML, onPlay, onPause, onSpeed, onStop,
-            onRewind, onForward;//, onPlus15, onMinus15;
+            onRewind, onForward,onAnomalyDetector;//, onPlus15, onMinus15;
 
     public PlayerButtonsController() {
         onOpen= new SimpleBooleanProperty();
         onOpenXML= new SimpleBooleanProperty();
+        onAnomalyDetector=new SimpleBooleanProperty();
         onPlay= new SimpleBooleanProperty();
         onPause= new SimpleBooleanProperty();
         onSpeed= new SimpleBooleanProperty();
@@ -42,6 +43,7 @@ public class PlayerButtonsController {
 
         onOpen.setValue(false);
         onOpenXML.setValue(false);
+        onAnomalyDetector.setValue(false);
         onPlay.setValue(false);
         onPause.setValue(false);
         onSpeed.setValue(false);
@@ -73,6 +75,14 @@ public class PlayerButtonsController {
         }
         else {
             onOpenXML.setValue(true);
+        }
+    }
+    public void onAnomalyDetector(){
+        if(onAnomalyDetector.getValue()){
+            onAnomalyDetector.setValue(false);
+        }
+        else {
+            onAnomalyDetector.setValue(true);
         }
     }
 

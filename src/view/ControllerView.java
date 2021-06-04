@@ -88,8 +88,12 @@ public class ControllerView extends Pane implements Observer{
         playerButtons.onOpen.addListener((o, ov, nv)->vmc.openFile());
         playerButtons.onOpenXML.addListener((o, ov, nv)->vmc.openXMLFile());
         playerButtons.onPlay.addListener((o, ov, nv)->vmc.play());
+        playerButtons.onAnomalyDetector.addListener((o, ov, nv) -> {
+            vmc.loadAnomalyDetector();
+        });
 
-       // playerButtons.onPlay.addListener((o, ov, nv)->vmc.);
+
+        // playerButtons.onPlay.addListener((o, ov, nv)->vmc.);
 
         playerButtons.onPause.addListener((o, ov, nv)->vmc.pause());
 //        playerButtons.onSpeed.addListener(nv->vmc.speedPlay());

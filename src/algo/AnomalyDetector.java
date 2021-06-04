@@ -5,9 +5,9 @@ import viewModel.TimeSeries;
 import java.util.List;
 
 
-public interface TimeSeriesAnomalyDetector 
+public interface AnomalyDetector
 {
-
 	void learnNormal(TimeSeries ts);
 	List<AnomalyReport> detect(TimeSeries ts);
+	void paintALGgraph();
 }

@@ -20,7 +20,7 @@ public class ViewModelController extends Observable implements Observer {
     public DoubleProperty timeStamp, throttle, rudder, aileron,
             elevators, sliderTime, choiceSpeed, pitch, roll, yaw, timeStampGraph;
     public TimeSeries ts;
-    public SimpleAnomalyDetector simpleAnomalyDetector=new SimpleAnomalyDetector();
+    //public SimpleAnomalyDetector simpleAnomalyDetector=new SimpleAnomalyDetector();
 
 
     public double rate;
@@ -114,7 +114,8 @@ public class ViewModelController extends Observable implements Observer {
         valueAxis.setValue(ts.getValueByTime(chosenAttribute.getValue(), time));
 
         //init the name of the correlate attribute
-        correlateFeature.setValue(simpleAnomalyDetector.getCorrelateFeature(chosenAttribute.getValue()));
+       // correlateFeature.setValue(simpleAnomalyDetector.getCorrelateFeature(chosenAttribute.getValue()));
+        correlateFeature.setValue(m.ad.getCorrelateFeature(chosenAttribute.getValue()));
 
         //getting the col's number of the correlate attribute
         if(correlateFeature.getValue()!=null) {
@@ -147,7 +148,7 @@ public class ViewModelController extends Observable implements Observer {
             if (chosen.getName().contains(".csv"))  //checking the file
             {
                 ts = new TimeSeries(chosen.getName());
-                simpleAnomalyDetector.learnNormal(ts);
+                //simpleAnomalyDetector.learnNormal(ts);
                 //if (ts.cols.size() != 42)
                     if(ts.atts.size()!= 42)
                     System.err.println("wrong amount of columns - should be 42");
@@ -202,7 +203,7 @@ public class ViewModelController extends Observable implements Observer {
     public void forward() {
         this.m.forwardFile();
     }
-
+    public void loadAnomalyDetector(){m.loadAnomalyDetector();}
 //
 
     public void speedPlay() {
