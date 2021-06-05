@@ -20,6 +20,7 @@ public class ViewModelController extends Observable implements Observer {
     public DoubleProperty timeStamp, throttle, rudder, aileron,
             elevators, sliderTime, choiceSpeed, pitch, roll, yaw, timeStampGraph;
     public TimeSeries ts;
+    public Runnable r;
     //public SimpleAnomalyDetector simpleAnomalyDetector=new SimpleAnomalyDetector();
 
 
@@ -89,7 +90,7 @@ public class ViewModelController extends Observable implements Observer {
         timeStamp.addListener((o, ov, nv) -> {
             updateDisplayVariables(nv.intValue());
         });
-
+         r=  m.getPainter();
     }
 
     public void updateDisplayVariables(int time) {
@@ -128,6 +129,7 @@ public class ViewModelController extends Observable implements Observer {
             numberOfCorrelateAttribute=0;
             valueCorrelate.setValue(0);
         }
+
     }
 //    public void getSeries(String selectedAttribute, Number nv, XYChart.Series s){
 //        Platform.runLater(()->{

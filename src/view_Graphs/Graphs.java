@@ -2,6 +2,7 @@ package view_Graphs;
 
 import javafx.beans.property.*;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.AnchorPane;
 
 import java.io.IOException;
@@ -25,6 +26,7 @@ public class Graphs extends AnchorPane {
         graphSpeed=new SimpleDoubleProperty();
         timeStamp=new SimpleDoubleProperty();
         sizeTS=new SimpleIntegerProperty();
+
 //this.graphicsContext=new
         try {
             AnchorPane graph = fxl.load(getClass().getResource("Graphs.fxml").openStream());

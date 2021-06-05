@@ -39,7 +39,7 @@ public class MyJoystickController {
         my=joystick.getHeight()/2;
 
         gc.clearRect(0,0,joystick.getWidth(),joystick.getHeight());
-        gc.strokeOval(jx.doubleValue()*50,jy.doubleValue()*50,60,60);
+        gc.strokeOval(jx.doubleValue()*50+30,jy.doubleValue()*50+10,60,60);
 
 //        gc.setFill(Color.GREEN);
 //        gc.setStroke(Color.BLUE);

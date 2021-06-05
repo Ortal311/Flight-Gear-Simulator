@@ -7,6 +7,7 @@
 
 <?import view_TimeBoard.TimeBoard?>
 <?import view_Graphs.Graphs?>
+<?import algo.SimpleAnomalyDetector?>
 <Pane fx:id="board" maxHeight="-Infinity" style="-fx-background-color: #fff;" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="393.0" prefWidth="676.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.ControllerView">
    <children>
       <AttributesList fx:id="attributesList" />
@@ -14,5 +15,6 @@
       <TimeBoard fx:id="timeBoard" />
       <Graphs fx:id="graphs" />
       <PlayerButtons fx:id="playerButtons"/>
+      <SimpleAnomalyDetector fx:id="ad"/>
    </children>
 </Pane>

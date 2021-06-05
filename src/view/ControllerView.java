@@ -1,10 +1,13 @@
 package view;
 
+import algo.SimpleAnomalyDetector;
 import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 import viewModel.ViewModelController;
+
 import java.util.Observable;
 import java.util.Observer;
+
 import view_AttributesList.AttributesList;
 import view_Graphs.Graphs;
 import view_Graphs.GraphsController;
@@ -12,7 +15,7 @@ import view_PlayerButtons.PlayerButtons;
 import view_TimeBoard.TimeBoard;
 import view_joystick.MyJoystick;
 
-public class ControllerView extends Pane implements Observer{
+public class ControllerView extends Pane implements Observer {
 
     @FXML
     PlayerButtons playerButtons;
@@ -29,11 +32,12 @@ public class ControllerView extends Pane implements Observer{
 
     @FXML
     Graphs graphs;
+    @FXML
+    SimpleAnomalyDetector ad;
     //GraphsController graphsController;
 
-    void init(ViewModelController vmc)
-    {
-        this.vmc=vmc;
+    void init(ViewModelController vmc) {
+        this.vmc = vmc;
 
         myJoystick.setLayoutX(860);
         myJoystick.setLayoutY(25);
@@ -45,6 +49,9 @@ public class ControllerView extends Pane implements Observer{
         timeBoard.setLayoutY(360);
         graphs.setLayoutX(230);
         graphs.setLayoutY(25);
+
+        ad.setLayoutX(230);
+        ad.setLayoutY(200);
 
 
         myJoystick.aileron.bind(vmc.aileron);
@@ -85,27 +92,30 @@ public class ControllerView extends Pane implements Observer{
         timeBoard.xYaw.bind(vmc.yaw);
         timeBoard.yYaw.bind(vmc.yaw);
 
-        playerButtons.onOpen.addListener((o, ov, nv)->vmc.openFile());
-        playerButtons.onOpenXML.addListener((o, ov, nv)->vmc.openXMLFile());
-        playerButtons.onPlay.addListener((o, ov, nv)->vmc.play());
+        playerButtons.onOpen.addListener((o, ov, nv) -> vmc.openFile());
+        playerButtons.onOpenXML.addListener((o, ov, nv) -> vmc.openXMLFile());
+        playerButtons.onPlay.addListener((o, ov, nv) -> vmc.play());
         playerButtons.onAnomalyDetector.addListener((o, ov, nv) -> {
             vmc.loadAnomalyDetector();
+            vmc.r.run();
         });
 
 
         // playerButtons.onPlay.addListener((o, ov, nv)->vmc.);
 
-        playerButtons.onPause.addListener((o, ov, nv)->vmc.pause());
+        playerButtons.onPause.addListener((o, ov, nv) -> vmc.pause());
 //        playerButtons.onSpeed.addListener(nv->vmc.speedPlay());
-        playerButtons.onStop.addListener((o, ov, nv)->vmc.stop());
-        playerButtons.onRewind.addListener((o, ov, nv)->vmc.rewind());
-        playerButtons.onForward.addListener((o, ov, nv)->vmc.forward());
+        playerButtons.onStop.addListener((o, ov, nv) -> vmc.stop());
+        playerButtons.onRewind.addListener((o, ov, nv) -> vmc.rewind());
+        playerButtons.onForward.addListener((o, ov, nv) -> vmc.forward());
 
-      //  vmc.attributeList.addListener((ListChangeListener) change -> attributesList.lst.addAll(change.getList()));
+        //  vmc.attributeList.addListener((ListChangeListener) change -> attributesList.lst.addAll(change.getList()));
 
         attributesList.alc.lv.setItems(vmc.attributeList);
         graphs.selectedAttribute.bind(attributesList.alc.lv.getSelectionModel().selectedItemProperty());
         vmc.chosenAttribute.bind(attributesList.alc.lv.getSelectionModel().selectedItemProperty());
+
+
 
     }
 
