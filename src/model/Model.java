@@ -16,7 +16,7 @@ public class Model extends Observable implements SimulatorModel {
 
     public Socket socket;
     public PrintWriter out;
-    public TimeSeries ts;
+    public TimeSeries ts_Anomal;
     public Options op = new Options();
     Thread displaySetting;
     public Map<String, Attribute> attributeMap;
@@ -78,12 +78,12 @@ public class Model extends Observable implements SimulatorModel {
     }
 
     public void setTimeSeries(TimeSeries ts) {
-        this.ts = ts;
+        this.ts_Anomal = ts;
     }
 
     synchronized public void displayFlight(boolean conncetServer) {
         int i = 0;
-        int sizeTS = ts.getSize();
+        int sizeTS = ts_Anomal.getSize();
      //   boolean condition = op.rewind ? i >= 0 : i < ts.rows.size();//if rewind go while>0 else (regula) go while <ts.size
 
         for (i = (int) time; i<sizeTS;i++ ) {
@@ -133,9 +133,9 @@ public class Model extends Observable implements SimulatorModel {
                 }
             }
            // System.out.println(ts.getAtts().get(i));
-            System.out.println(ts.rows.get(i));
+            System.out.println(ts_Anomal.rows.get(i));
             if (conncetServer) {
-                out.println(ts.rows.get(i));
+                out.println(ts_Anomal.rows.get(i));
                 //out.println(ts.getAtts().get(i));
                 out.flush();
             }
@@ -258,10 +258,9 @@ public class Model extends Observable implements SimulatorModel {
 //        SimpleAnomalyDetector ad=(SimpleAnomalyDetector) c.newInstance();
 
         ad = new SimpleAnomalyDetector();
-        ad.learnNormal(ts);
+        ad.learnNormal(ts_Anomal);
 
     }
-
     @Override
     public Runnable getPainter() {
         return ()->ad.paintALGgraph();

@@ -7,7 +7,11 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.chart.*;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 
 public class GraphsController {
 
@@ -17,22 +21,34 @@ public class GraphsController {
     private ScatterChart<String, Number> pointsReg;
     @FXML
     Canvas regPaint;
+    @FXML
+    Circle circle;
 
 
     private ListProperty<Point> pointsOfSelectedAttribute;
     public StringProperty selectedAttribute;
-    public DoubleProperty value, graphSpeed, timeStamp, valueCorrelate;
+    public DoubleProperty value, graphSpeed, timeStamp, valueCorrelate, x1, y1, x2, y2;
     public IntegerProperty sizeTS;
     private int rowNumber;
     double pointX;
     double pointY;
+    Line line;
 
     public GraphsController() {
         this.selectedAttribute = new SimpleStringProperty();
         this.value = new SimpleDoubleProperty();// also the val of X Axis
         this.valueCorrelate = new SimpleDoubleProperty();// also the val of Y Axis
         this.timeStamp = new SimpleDoubleProperty();
+
+        //4 points to draw the reg_line
+        this.x1 = new SimpleDoubleProperty();
+        this.x2 = new SimpleDoubleProperty();
+        this.y1 = new SimpleDoubleProperty();
+        this.y2 = new SimpleDoubleProperty();
+
         regPaint = new Canvas();
+         circle = new Circle();
+
 
     }
 
@@ -41,42 +57,26 @@ public class GraphsController {
         selectedAttribute.setValue("0");
         value.setValue(0);
         valueCorrelate.setValue(0);
+        x1.setValue(0);
+        x2.setValue(0);
+        y1.setValue(0);
+        y2.setValue(0);
         XYChart.Series series1 = new XYChart.Series();
         chosenAttributeGraph.getData().add(series1);
         //correlateGraph
         XYChart.Series series2 = new XYChart.Series();
         mostCorrelatedAttribute.getData().add(series2);
 
-//        //reg line
-//        XYChart.Series seriesReg = new XYChart.Series();
-//
-//        seriesReg.getData().add(new XYChart.Data("2.4", 37.6));
-//        seriesReg.getData().add(new XYChart.Data("5.2", 229.2));
-//        seriesReg.getData().add(new XYChart.Data("6.4", 15.6));
-//
-//        //reg points
-//        XYChart.Series seriesPoints = new XYChart.Series();
-//        seriesPoints.getData().add(new XYChart.Data("4.2", 193.2));
-//        seriesPoints.getData().add(new XYChart.Data("2.8", 33.6));
-//        seriesPoints.getData().add(new XYChart.Data("6.8", 23.6));
-//
-//
-//        anomalyDetectionGraph.setAnimated(false);
-//        anomalyDetectionGraph.setCreateSymbols(true);
-//
-//        anomalyDetectionGraph.getData().add(seriesReg);
-//        pointsReg.setAnimated(false);
-//
-//        pointsReg.getData().add(seriesPoints);
-//
-//        pointsReg.setOpacity(0.5);
+        circle.setFill(Color.TRANSPARENT);
+        circle.setStroke(Color.YELLOW);
 
-        //anomalyDetectionGraph.setStyle("-fx-background-color: green;");
-
+        //circle.centerXProperty().setValue(10);
+        //circle.setFill(Color.TRANSPARENT);
 
         timeStamp.addListener((o, ov, nv) -> {
             Platform.runLater(() -> {
-
+                    circle.setCenterX(timeStamp.getValue());
+                    circle.setCenterY(timeStamp.getValue());
                 //System.out.println(selectedAttribute.getValue().toString());
                 // System.out.println(timeStamp.getValue());
                 series1.getData().add(new XYChart.Data<>(timeStamp.getValue().toString(), value.doubleValue()));
@@ -91,6 +91,7 @@ public class GraphsController {
                 }*/
 
                 //chosenAttributeGraph.setTitle(selectedAttribute.getValue().toString());
+
             });
 
         });
@@ -98,27 +99,31 @@ public class GraphsController {
         chosenAttributeGraph.setCreateSymbols(false);
         mostCorrelatedAttribute.setCreateSymbols(false);
 
-        value.addListener(v->paintReg());
-        valueCorrelate.addListener(v->paintReg());
+        value.addListener(v -> paintReg());
+        valueCorrelate.addListener(v -> paintReg());
 
-        //  timeStamp.addListener(v->paintReg());
+
+          x1.addListener(v->paintReg());
+        GraphicsContext gc = regPaint.getGraphicsContext2D();
+
+
+        //gc.clearRect(0, 0, regPaint.getWidth(), regPaint.getHeight());
+
 
     }
 
     public void paintReg() {
         GraphicsContext gc = regPaint.getGraphicsContext2D();
-         pointX = regPaint.getWidth() / 2;
-         pointY = regPaint.getHeight() / 2;
+        pointX = regPaint.getWidth() / 2;
+        pointY = regPaint.getHeight() / 2;
 
-        gc.clearRect(0,0, regPaint.getWidth(), regPaint.getHeight());
+        gc.clearRect(0, 0, regPaint.getWidth(), regPaint.getHeight());
         gc.setLineWidth(1);
-        gc.strokeLine(40, 10, 10, 40);
-
-
-//    }
-
+       //  gc.strokeLine(x1.doubleValue(), y1.doubleValue(), x2.doubleValue(), y2.doubleValue());
+        gc.strokeLine(10,150-200,0,200);
 
     }
+
     public void addPoint(Point p, Paint color) {
 //        double displayX=(p.x/(maxValue-minValue))*width+width*(0-minValue)/(maxValue-minValue);
 //        double displayY=height-(p.y/(maxValue-minValue))*height-height/2;
@@ -132,4 +137,8 @@ public class GraphsController {
 //        algoPaint.getChildren().addAll(points);
 
     }
+//    private void updateLine() {
+//        LinearGradient linearGradient = new LinearGradient(x1.get(), y1.get(), x2.get(), y2.get(), false, CycleMethod.REFLECT, new Stop(0,Color.RED),new Stop(1,Color.GREEN));
+//        line.setStroke(linearGradient);
+//    }
 }

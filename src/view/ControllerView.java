@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.layout.Pane;
 import viewModel.ViewModelController;
 
+import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -29,6 +30,8 @@ public class ControllerView extends Pane implements Observer {
     @FXML
     TimeBoard timeBoard;
     ViewModelController vmc;
+    @FXML
+    SimpleAnomalyDetector graphALG;
 
     @FXML
     Graphs graphs;
@@ -50,8 +53,11 @@ public class ControllerView extends Pane implements Observer {
         graphs.setLayoutX(230);
         graphs.setLayoutY(25);
 
-        ad.setLayoutX(230);
-        ad.setLayoutY(200);
+        if(Objects.isNull(ad)){
+            graphALG.setLayoutX(500);
+            graphALG.setLayoutY(200);
+        }
+
 
 
         myJoystick.aileron.bind(vmc.aileron);
@@ -74,6 +80,11 @@ public class ControllerView extends Pane implements Observer {
         graphs.timeStamp.bind(vmc.timeStamp);
         graphs.graphSpeed.bind(vmc.choiceSpeed);
         graphs.sizeTS.setValue(vmc.sizeTS.getValue());
+        graphs.x1.bind(vmc.x1);
+        graphs.x2.bind(vmc.x2);
+        graphs.y1.bind(vmc.y1);
+        graphs.y2.bind(vmc.y2);
+
 
 
         timeBoard.airSpeed.bind(vmc.airSpeed);
