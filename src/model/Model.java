@@ -108,9 +108,6 @@ public class Model extends Observable implements SimulatorModel {
                         else
                             i = sizeTS;
                         op.forward = false;
-                        setChanged();
-                        notifyObservers("+150");
-                        break;
                     }
                     if (op.rewind) {
                         System.out.println("blabla after rewind");
@@ -119,9 +116,6 @@ public class Model extends Observable implements SimulatorModel {
                          else
                             i = 1;
                         op.rewind = false;
-                        setChanged();
-                        notifyObservers("-150");
-                        break;
                     }
                     if(op.scroll){
                         op.scroll=false;
@@ -223,7 +217,6 @@ public class Model extends Observable implements SimulatorModel {
     }
 
     public void pauseFile() {
-        //System.out.println("afterPause is true");
         pause = true;
         afterPause = true;
     }
@@ -237,8 +230,6 @@ public class Model extends Observable implements SimulatorModel {
 
     public void rewindFile() {
         op.rewind = true;
-        //there is no need to open a new thread for it, we can use the current working thread
-        //new Thread(() -> displayFlight()).start();
     }
 
     public void forwardFile() {

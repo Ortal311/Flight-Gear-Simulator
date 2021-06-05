@@ -15,26 +15,20 @@ import java.util.Observer;
 public class ViewModelController extends Observable implements Observer {
 
     Model m;
-    public DoubleProperty timeStamp, throttle, rudder, aileron,
-            elevators, sliderTime, choiceSpeed, pitch, roll, yaw, timeStampGraph;
     public TimeSeries ts_reg, ts_Anomal;//ts-reg
     public Runnable r;
+    public DoubleProperty timeStamp, throttle, rudder, aileron,
+            elevators, sliderTime, choiceSpeed, pitch, roll, yaw, timeStampGraph;
     //public SimpleAnomalyDetector simpleAnomalyDetector=new SimpleAnomalyDetector();
-
-
     public double rate;
-    public StringProperty timeFlight, chosenAttribute, correlateFeature;
+    public StringProperty timeFlight, chosenAttribute, correlateFeature, altimeter, airSpeed, fd;
 
     public BooleanProperty graphActivate;
 
     public ObservableList<String> attributeList;
-
-
     public int numberOfSpecAttribute, numberOfCorrelateAttribute;
-    public DoubleProperty valueAxis, valueCorrelate,x1,x2,y1,y2;
+    public DoubleProperty valueAxis, valueCorrelate, x1, x2, y1, y2;
     public Clock clock;
-    //from timeBoard
-    public StringProperty altimeter, airSpeed, fd;
     public IntegerProperty sizeTS;
     public Boolean xmlFile, csvFile;
 
@@ -51,16 +45,9 @@ public class ViewModelController extends Observable implements Observer {
         throttle = new SimpleDoubleProperty();
         sliderTime = new SimpleDoubleProperty();
         choiceSpeed = new SimpleDoubleProperty();
-
-        chosenAttribute = new SimpleStringProperty();
-        correlateFeature = new SimpleStringProperty();
-        chosenAttribute.setValue("0");
-        correlateFeature.setValue("0");
-        timeStampGraph = new SimpleDoubleProperty();
-
-        sizeTS = new SimpleIntegerProperty();
-
-
+        pitch = new SimpleDoubleProperty();
+        roll = new SimpleDoubleProperty();
+        yaw = new SimpleDoubleProperty();
         // newnumber=ts.getIndexOfAttribute(newvalueatt);
         valueAxis = new SimpleDoubleProperty();
         valueCorrelate = new SimpleDoubleProperty();
@@ -68,15 +55,18 @@ public class ViewModelController extends Observable implements Observer {
         x2=new SimpleDoubleProperty();
         y1=new SimpleDoubleProperty();
         y2=new SimpleDoubleProperty();
-
-        pitch = new SimpleDoubleProperty();
-        roll = new SimpleDoubleProperty();
-        yaw = new SimpleDoubleProperty();
+        timeStampGraph = new SimpleDoubleProperty();
 
         timeFlight = new SimpleStringProperty();
         altimeter = new SimpleStringProperty();
         airSpeed = new SimpleStringProperty();
         fd = new SimpleStringProperty();
+        chosenAttribute = new SimpleStringProperty();
+        correlateFeature = new SimpleStringProperty();
+        chosenAttribute.setValue("0");
+        correlateFeature.setValue("0");
+
+        sizeTS = new SimpleIntegerProperty();
 
         attributeList = FXCollections.observableArrayList();
 
@@ -87,6 +77,7 @@ public class ViewModelController extends Observable implements Observer {
         sliderTime.addListener((o, ov, nv) -> {
             timeStamp.setValue(nv.doubleValue());
             m.setTime(nv.doubleValue());
+            clock.update(nv.intValue() - ov.intValue());
         });
 
         timeStamp.addListener((o, ov, nv) -> {
@@ -210,7 +201,6 @@ public class ViewModelController extends Observable implements Observer {
     }
 
     public void pause() {
-        System.out.println("pause 2");
         this.m.pauseFile();
     }
 
@@ -229,7 +219,6 @@ public class ViewModelController extends Observable implements Observer {
     public void loadAnomalyDetector() {
         m.loadAnomalyDetector();
     }
-//
 
     public void speedPlay() {
         if (choiceSpeed.doubleValue() == 0.5) m.properties.setPlaySpeed(150);
@@ -242,42 +231,7 @@ public class ViewModelController extends Observable implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         if (o == m) {
-            //    System.out.println(1);
             this.timeStamp.setValue(m.getTime());
-
-            clock.increcment();
-
-            String p = (String) arg;
-//        if(p!=null){
-//            if(p.equals("+150")) {
-//                clock.miliSec.set(clock.miliSec.get() + 150);
-//                if(clock.miliSec.get() == 100) {
-//                    clock.seconds.set(clock.seconds.get() + 1);
-//                    clock.miliSec.set(0);
-//                }
-//                if(clock.seconds.get() == 60) {
-//                    clock.minutes.set(clock.minutes.get() + 1);
-//                    clock.seconds.set(0);
-//                }
-//            }
-//            else if(p.equals("-150")){
-//                clock.miliSec.set(clock.miliSec.get() - 150);
-//                if(clock.miliSec.get() == 100) {
-//                    clock.seconds.set(clock.seconds.get() + 1);
-//                    clock.miliSec.set(0);
-//                }
-//                if(clock.seconds.get() == 60) {
-//                    clock.minutes.set(clock.minutes.get() + 1);
-//                    clock.seconds.set(0);
-//                }
-//            }
-//
-//        }
-
-
         }
-
     }
-
-
 }
