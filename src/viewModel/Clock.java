@@ -17,15 +17,23 @@ public class Clock {
         this.minutes.setValue(0);
     }
 
-    public void increcment() {
-        this.miliSec.set(this.miliSec.get() + 10);
-        if(this.miliSec.get() == 100) {
-            this.seconds.set(this.seconds.get() + 1);
-            this.miliSec.set(0);
+    public void update(int value) {
+        if(value == 1) {
+            this.miliSec.set(this.miliSec.get() + 10);
+            if(this.miliSec.get() == 100) {
+                this.seconds.set(this.seconds.get() + 1);
+                this.miliSec.set(0);
+            }
+        } else {
+            this.seconds.set(this.seconds.get() + value / 10);
+            if(this.seconds.get() < 0) {
+                this.seconds.set(this.seconds.get() * (-1));
+                if(this.minutes.get() > 0) {
+                    this.minutes.set(this.minutes.get() - ((value/ 10) / 60));
+                }
+            }
         }
-        if(this.seconds.get() == 60) {
-            this.minutes.set(this.minutes.get() + 1);
-            this.seconds.set(0);
-        }
+        this.minutes.set(this.minutes.get() + (this.seconds.get() / 60));
+        this.seconds.set(this.seconds.get() % 60);
     }
 }
