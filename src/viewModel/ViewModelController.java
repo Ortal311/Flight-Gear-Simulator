@@ -1,16 +1,14 @@
 package viewModel;
 
-import algo.SimpleAnomalyDetector;
-import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.stage.FileChooser;
 import model.Model;
 
 import java.io.File;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -19,21 +17,21 @@ public class ViewModelController extends Observable implements Observer {
     Model m;
     public DoubleProperty timeStamp, throttle, rudder, aileron,
             elevators, sliderTime, choiceSpeed, pitch, roll, yaw, timeStampGraph;
-    public TimeSeries ts;
+    public TimeSeries ts_reg, ts_Anomal;//ts-reg
     public Runnable r;
     //public SimpleAnomalyDetector simpleAnomalyDetector=new SimpleAnomalyDetector();
 
 
     public double rate;
-    public StringProperty timeFlight, chosenAttribute,correlateFeature;
+    public StringProperty timeFlight, chosenAttribute, correlateFeature;
 
     public BooleanProperty graphActivate;
 
     public ObservableList<String> attributeList;
 
 
-    public int numberOfSpecAttribute,numberOfCorrelateAttribute;
-    public DoubleProperty valueAxis, valueCorrelate;
+    public int numberOfSpecAttribute, numberOfCorrelateAttribute;
+    public DoubleProperty valueAxis, valueCorrelate,x1,x2,y1,y2;
     public Clock clock;
     //from timeBoard
     public StringProperty altimeter, airSpeed, fd;
@@ -55,7 +53,7 @@ public class ViewModelController extends Observable implements Observer {
         choiceSpeed = new SimpleDoubleProperty();
 
         chosenAttribute = new SimpleStringProperty();
-        correlateFeature=new SimpleStringProperty();
+        correlateFeature = new SimpleStringProperty();
         chosenAttribute.setValue("0");
         correlateFeature.setValue("0");
         timeStampGraph = new SimpleDoubleProperty();
@@ -66,6 +64,10 @@ public class ViewModelController extends Observable implements Observer {
         // newnumber=ts.getIndexOfAttribute(newvalueatt);
         valueAxis = new SimpleDoubleProperty();
         valueCorrelate = new SimpleDoubleProperty();
+        x1=new SimpleDoubleProperty();
+        x2=new SimpleDoubleProperty();
+        y1=new SimpleDoubleProperty();
+        y2=new SimpleDoubleProperty();
 
         pitch = new SimpleDoubleProperty();
         roll = new SimpleDoubleProperty();
@@ -90,44 +92,50 @@ public class ViewModelController extends Observable implements Observer {
         timeStamp.addListener((o, ov, nv) -> {
             updateDisplayVariables(nv.intValue());
         });
-         r=  m.getPainter();
+        r = m.getPainter();
     }
 
     public void updateDisplayVariables(int time) {
         sliderTime.setValue(time);
         timeFlight.setValue(String.valueOf(time));
-        aileron.setValue(ts.getValueByTime(m.attributeMap.get("aileron").associativeName, time));
-        elevators.setValue(ts.getValueByTime(m.attributeMap.get("elevators").associativeName, time));
-        rudder.setValue(ts.getValueByTime(m.attributeMap.get("rudder").associativeName, time));
-        throttle.setValue(ts.getValueByTime(m.attributeMap.get("throttle").associativeName, time));
-        altimeter.setValue(String.valueOf(ts.getValueByTime(m.attributeMap.get("altimeter").associativeName, time)));
-        airSpeed.setValue(String.valueOf(ts.getValueByTime(m.attributeMap.get("airSpeed").associativeName, time)));
-        fd.setValue(String.valueOf(ts.getValueByTime(m.attributeMap.get("fd").associativeName, time)));
-        pitch.setValue(ts.getValueByTime(m.attributeMap.get("pitch").associativeName, time));
-        roll.setValue(ts.getValueByTime(m.attributeMap.get("roll").associativeName, time));
-        yaw.setValue(ts.getValueByTime(m.attributeMap.get("yaw").associativeName, time));
+        aileron.setValue(ts_Anomal.getValueByTime(m.attributeMap.get("aileron").associativeName, time));
+        elevators.setValue(ts_Anomal.getValueByTime(m.attributeMap.get("elevators").associativeName, time));
+        rudder.setValue(ts_Anomal.getValueByTime(m.attributeMap.get("rudder").associativeName, time));
+        throttle.setValue(ts_Anomal.getValueByTime(m.attributeMap.get("throttle").associativeName, time));
+        altimeter.setValue(String.valueOf(ts_Anomal.getValueByTime(m.attributeMap.get("altimeter").associativeName, time)));
+        airSpeed.setValue(String.valueOf(ts_Anomal.getValueByTime(m.attributeMap.get("airSpeed").associativeName, time)));
+        fd.setValue(String.valueOf(ts_Anomal.getValueByTime(m.attributeMap.get("fd").associativeName, time)));
+        pitch.setValue(ts_Anomal.getValueByTime(m.attributeMap.get("pitch").associativeName, time));
+        roll.setValue(ts_Anomal.getValueByTime(m.attributeMap.get("roll").associativeName, time));
+        yaw.setValue(ts_Anomal.getValueByTime(m.attributeMap.get("yaw").associativeName, time));
 
         //to update the specific chosen attribute
         //getting the number of the chosen attribute
         // numberOfSpecAttribute = ts.getIndexOfAttribute(chosenAttribute.getValue());
         // updating by binding the value of the chosen attribute
         // valueAxis.setValue(ts.getValueByTime(numberOfSpecAttribute, value));
-        valueAxis.setValue(ts.getValueByTime(chosenAttribute.getValue(), time));
+        valueAxis.setValue(ts_Anomal.getValueByTime(chosenAttribute.getValue(), time));
+        x1.setValue(ts_reg.getValueByTime(chosenAttribute.getValue(),0));
+        x2.setValue(ts_reg.getValueByTime(chosenAttribute.getValue(),1000));
 
         //init the name of the correlate attribute
-       // correlateFeature.setValue(simpleAnomalyDetector.getCorrelateFeature(chosenAttribute.getValue()));
+        // correlateFeature.setValue(simpleAnomalyDetector.getCorrelateFeature(chosenAttribute.getValue()));
         correlateFeature.setValue(m.ad.getCorrelateFeature(chosenAttribute.getValue()));
 
         //getting the col's number of the correlate attribute
-        if(correlateFeature.getValue()!=null) {
+        if (correlateFeature.getValue() != null) {
             //numberOfCorrelateAttribute=ts.getIndexOfAttribute(correlateFeature.getValue());
             //updating the value of the correlate attribute
-            valueCorrelate.setValue(ts.getValueByTime(correlateFeature.getValue(),time));
-        }
+            valueCorrelate.setValue(ts_Anomal.getValueByTime(correlateFeature.getValue(), time));
+            y1.setValue(ts_reg.getValueByTime(chosenAttribute.getValue(),0));
+            y2.setValue(ts_reg.getValueByTime(chosenAttribute.getValue(),1000));
 
-        else {
-            numberOfCorrelateAttribute=0;
+        } else  {
+            numberOfCorrelateAttribute = 0;
             valueCorrelate.setValue(0);
+
+            y1.setValue(0);
+            y2.setValue(0);
         }
 
     }
@@ -140,23 +148,35 @@ public class ViewModelController extends Observable implements Observer {
 
     //Basic Functions- Buttons
     public void openFile() {
+        //for reg flight
         FileChooser fc = new FileChooser();
         fc.setTitle("open CSV file");
         fc.setInitialDirectory(new File("./"));
-        File chosen = fc.showOpenDialog(null);
-        if (chosen != null) {
-            System.out.println("the name of the file is:" + chosen.getName());
+        // File chosen = fc.showOpenDialog(null);
+        List<File> chosen = fc.showOpenMultipleDialog(null);
+        if (chosen != null && chosen.size() == 2) {
+            // System.out.println("the name of the file is:" + chosen.getName());
+            System.out.println("the name of the file is:" + chosen.get(0).getName());
+            System.out.println("the name of the file is:" + chosen.get(1).getName());
 
-            if (chosen.getName().contains(".csv"))  //checking the file
+            // if (chosen.getName().contains(".csv"))  //checking the file
+            if (chosen.get(0).getName().contains(".csv"))  //checking the file
             {
-                ts = new TimeSeries(chosen.getName());
+                if (chosen.get(0).getName().equals("reg_flight.csv")) {
+                    ts_reg = new TimeSeries(chosen.get(0).getName());
+                    ts_Anomal = new TimeSeries(chosen.get(1).getName());
+                } else {
+                    ts_reg = new TimeSeries(chosen.get(1).getName());
+                    ts_Anomal = new TimeSeries(chosen.get(0).getName());
+                }
+
                 //simpleAnomalyDetector.learnNormal(ts);
                 //if (ts.cols.size() != 42)
-                    if(ts.atts.size()!= 42)
+                if (ts_reg.atts.size() != 42)
                     System.err.println("wrong amount of columns - should be 42");
                 else
-                    m.setTimeSeries(ts);
-            }else {
+                    m.setTimeSeries(ts_Anomal);
+            } else {
                 //System.err.println("wrong file, choose csv file");
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error");
@@ -164,8 +184,8 @@ public class ViewModelController extends Observable implements Observer {
                 alert.setContentText("please choose a csv file");
                 alert.showAndWait();
             }
-            attributeList.addAll(ts.getAttributes());
-            sizeTS.setValue(ts.getSize());
+            attributeList.addAll(ts_Anomal.getAttributes());
+            sizeTS.setValue(ts_Anomal.getSize());
             altimeter.setValue("0");
             airSpeed.setValue("0");
             fd.setValue("0");
@@ -178,7 +198,7 @@ public class ViewModelController extends Observable implements Observer {
     }
 
     public void play() {
-        if(csvFile && xmlFile) {
+        if (csvFile && xmlFile) {
             this.m.playFile();
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -205,7 +225,10 @@ public class ViewModelController extends Observable implements Observer {
     public void forward() {
         this.m.forwardFile();
     }
-    public void loadAnomalyDetector(){m.loadAnomalyDetector();}
+
+    public void loadAnomalyDetector() {
+        m.loadAnomalyDetector();
+    }
 //
 
     public void speedPlay() {

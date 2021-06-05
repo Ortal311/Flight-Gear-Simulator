@@ -2,20 +2,25 @@ package algo;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.AnchorPane;
 import viewModel.TimeSeries;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleAnomalyDetector extends Canvas implements AnomalyDetector {
+public class SimpleAnomalyDetector extends AnchorPane implements AnomalyDetector {
     @FXML
     Canvas algPaint;
+    FXMLLoader fxl = new FXMLLoader();
 
     ArrayList<CorrelatedFeatures> cf;
 
     public SimpleAnomalyDetector() {
+
+
         cf = new ArrayList<>();
     }
 
@@ -86,24 +91,24 @@ public class SimpleAnomalyDetector extends Canvas implements AnomalyDetector {
 
 
     public void paintALGgraph() {
-       // FXMLLoader fxl = algPaint
 
 
+        // FXMLLoader fxl = algPaint
 
-            System.out.println("inside runnable");
-            //GraphicsContext helps to add shapes
-            algPaint = new Canvas(200,200);
-            GraphicsContext gc = algPaint.getGraphicsContext2D();
-            algPaint.setHeight(200);
-            algPaint.setWidth(200);
-            algPaint.setLayoutX(200);
-            algPaint.setLayoutY(174);
-            //find the mid of the canvas
-            double mx = algPaint.getWidth() / 2;
-            double my = algPaint.getHeight() / 2;
+        System.out.println("inside runnable");
+        //GraphicsContext helps to add shapes
+        algPaint = new Canvas(200, 200);
+        GraphicsContext gc = algPaint.getGraphicsContext2D();
+        algPaint.setHeight(200);
+        algPaint.setWidth(200);
+        algPaint.setLayoutX(200);
+        algPaint.setLayoutY(174);
+        //find the mid of the canvas
+        double mx = algPaint.getWidth() / 2;
+        double my = algPaint.getHeight() / 2;
 
-            //paint a shape around the middle of the canvas
-            gc.strokeOval(mx - 50, my - 50, 100, 100);
+        //paint a shape around the middle of the canvas
+        gc.strokeOval(mx - 50, my - 50, 100, 100);
 
     }
 
