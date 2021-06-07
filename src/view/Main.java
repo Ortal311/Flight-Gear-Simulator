@@ -1,9 +1,13 @@
 package view;
 
+import algo.SimpleAnomalyDetector;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import model.Model;
 import viewModel.ViewModelController;
@@ -20,25 +24,27 @@ public class Main extends Application {
 //    }
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) throws Exception {
         //added
         Model m = new Model();
         m.writeToXML(m.properties);
         ViewModelController vmc = new ViewModelController(m);
 
-        FXMLLoader fxl=new FXMLLoader();
+
+        FXMLLoader fxl = new FXMLLoader();
         Parent root = fxl.load(getClass().getResource("sample.fxml").openStream());
         primaryStage.setTitle("Hello World");
-        ControllerView controllerView=fxl.getController();
+        ControllerView controllerView = fxl.getController();
+        controllerView.setRoot(root);
         controllerView.init(vmc);
 
+
+        //controllerView.setRoot(root);
         primaryStage.setScene(new Scene(root, 1100, 560));
         primaryStage.show();
-       
+
 
     }
-
-
 
 
     public static void main(String[] args) {

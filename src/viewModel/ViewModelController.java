@@ -1,9 +1,13 @@
 package viewModel;
 
+import algo.SimpleAnomalyDetector;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.Parent;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import model.Model;
 
@@ -11,12 +15,17 @@ import java.io.File;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.Callable;
 
 public class ViewModelController extends Observable implements Observer {
 
     Model m;
+    public Canvas c;
+
+    //public SimpleAnomalyDetector.AlgDisplayer c;
+
     public TimeSeries ts_reg, ts_Anomal;//ts-reg
-    public Runnable r;
+    public Runnable runnable;
     public DoubleProperty timeStamp, throttle, rudder, aileron,
             elevators, sliderTime, choiceSpeed, pitch, roll, yaw, timeStampGraph;
     //public SimpleAnomalyDetector simpleAnomalyDetector=new SimpleAnomalyDetector();
@@ -32,6 +41,10 @@ public class ViewModelController extends Observable implements Observer {
     public IntegerProperty sizeTS;
     public Boolean xmlFile, csvFile;
 
+    public void setCanvas(Canvas canvas){
+    this.c=canvas;
+    m.getPaint(canvas);
+    }
     public ViewModelController(Model m) {
         this.m = m;
         clock = new Clock();
@@ -51,10 +64,10 @@ public class ViewModelController extends Observable implements Observer {
         // newnumber=ts.getIndexOfAttribute(newvalueatt);
         valueAxis = new SimpleDoubleProperty();
         valueCorrelate = new SimpleDoubleProperty();
-        x1=new SimpleDoubleProperty();
-        x2=new SimpleDoubleProperty();
-        y1=new SimpleDoubleProperty();
-        y2=new SimpleDoubleProperty();
+        x1 = new SimpleDoubleProperty();
+        x2 = new SimpleDoubleProperty();
+        y1 = new SimpleDoubleProperty();
+        y2 = new SimpleDoubleProperty();
         timeStampGraph = new SimpleDoubleProperty();
 
         timeFlight = new SimpleStringProperty();
@@ -83,8 +96,14 @@ public class ViewModelController extends Observable implements Observer {
         timeStamp.addListener((o, ov, nv) -> {
             updateDisplayVariables(nv.intValue());
         });
-        r = m.getPainter();
+
+        //  runnable = m.getPainter();
+
+        //   c=m.ad.d;
+
+
     }
+
 
     public void updateDisplayVariables(int time) {
         sliderTime.setValue(time);
@@ -106,8 +125,8 @@ public class ViewModelController extends Observable implements Observer {
         // updating by binding the value of the chosen attribute
         // valueAxis.setValue(ts.getValueByTime(numberOfSpecAttribute, value));
         valueAxis.setValue(ts_Anomal.getValueByTime(chosenAttribute.getValue(), time));
-        x1.setValue(ts_reg.getValueByTime(chosenAttribute.getValue(),0));
-        x2.setValue(ts_reg.getValueByTime(chosenAttribute.getValue(),1000));
+        x1.setValue(ts_reg.getValueByTime(chosenAttribute.getValue(), 0));
+        x2.setValue(ts_reg.getValueByTime(chosenAttribute.getValue(), 1000));
 
         //init the name of the correlate attribute
         // correlateFeature.setValue(simpleAnomalyDetector.getCorrelateFeature(chosenAttribute.getValue()));
@@ -118,10 +137,10 @@ public class ViewModelController extends Observable implements Observer {
             //numberOfCorrelateAttribute=ts.getIndexOfAttribute(correlateFeature.getValue());
             //updating the value of the correlate attribute
             valueCorrelate.setValue(ts_Anomal.getValueByTime(correlateFeature.getValue(), time));
-            y1.setValue(ts_reg.getValueByTime(chosenAttribute.getValue(),0));
-            y2.setValue(ts_reg.getValueByTime(chosenAttribute.getValue(),1000));
+            y1.setValue(ts_reg.getValueByTime(chosenAttribute.getValue(), 0));
+            y2.setValue(ts_reg.getValueByTime(chosenAttribute.getValue(), 1000));
 
-        } else  {
+        } else {
             numberOfCorrelateAttribute = 0;
             valueCorrelate.setValue(0);
 
@@ -218,6 +237,7 @@ public class ViewModelController extends Observable implements Observer {
 
     public void loadAnomalyDetector() {
         m.loadAnomalyDetector();
+        //m.getPaint();
     }
 
     public void speedPlay() {
@@ -227,6 +247,7 @@ public class ViewModelController extends Observable implements Observer {
         else if (choiceSpeed.doubleValue() == 2.5) m.properties.setPlaySpeed(20);
         else m.properties.setPlaySpeed(100);
     }
+    public Callable<AnchorPane> getPainter(){return m.getPainter();}
 
     @Override
     public void update(Observable o, Object arg) {

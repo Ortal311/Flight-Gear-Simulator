@@ -2,12 +2,21 @@ package view;
 
 import algo.SimpleAnomalyDetector;
 import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Button;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import viewModel.ViewModelController;
 
+import java.awt.*;
+import java.net.URL;
 import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.ResourceBundle;
 
 import view_AttributesList.AttributesList;
 import view_Graphs.Graphs;
@@ -31,20 +40,18 @@ public class ControllerView extends Pane implements Observer {
     TimeBoard timeBoard;
 
     @FXML
-    SimpleAnomalyDetector graphALG;
-
-    @FXML
     Graphs graphs;
 
-    @FXML
-    SimpleAnomalyDetector ad;
+
+    @FXML private AnchorPane adAnchorePane;
+    Canvas myCanvas;
+    Parent root;
 
     ViewModelController vmc;
     //GraphsController graphsController;
 
     void init(ViewModelController vmc) {
         this.vmc = vmc;
-
         myJoystick.setLayoutX(860);
         myJoystick.setLayoutY(25);
         attributesList.setLayoutX(20);
@@ -55,11 +62,8 @@ public class ControllerView extends Pane implements Observer {
         timeBoard.setLayoutY(360);
         graphs.setLayoutX(230);
         graphs.setLayoutY(25);
-
-        if(Objects.isNull(ad)){
-            graphALG.setLayoutX(500);
-            graphALG.setLayoutY(200);
-        }
+        adAnchorePane.setLayoutX(220);
+        adAnchorePane.setLayoutY(200);
 
         myJoystick.aileron.bind(vmc.aileron);
         myJoystick.elevators.bind(vmc.elevators);
@@ -99,9 +103,28 @@ public class ControllerView extends Pane implements Observer {
         playerButtons.onOpen.addListener((o, ov, nv) -> vmc.openFile());
         playerButtons.onOpenXML.addListener((o, ov, nv) -> vmc.openXMLFile());
         playerButtons.onPlay.addListener((o, ov, nv) -> vmc.play());
+
+
+
+
         playerButtons.onAnomalyDetector.addListener((o, ov, nv) -> {
             vmc.loadAnomalyDetector();
-            vmc.r.run();
+           // vmc.setCanvas(can);
+            try {
+                adAnchorePane.getChildren().setAll(getPainter());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            // vmc.runnable.run();
+           /* can= vmc.c;
+            this.getChildren().add(can);*/
+
+//            this.getChildren().add(vmc.c);
+//            this.myCanvas = vmc.c;
+//            this.myCanvas.setHeight(100);
+//            this.myCanvas.setWidth(100);
+//            // this.root.getChildren().add(myCanvas);
+//            this.getChildren().add(vmc.c);
         });
         playerButtons.onPause.addListener((o, ov, nv) -> vmc.pause());
         playerButtons.onStop.addListener((o, ov, nv) -> vmc.stop());
@@ -113,8 +136,20 @@ public class ControllerView extends Pane implements Observer {
         attributesList.alc.lv.setItems(vmc.attributeList);
         graphs.selectedAttribute.bind(attributesList.alc.lv.getSelectionModel().selectedItemProperty());
         vmc.chosenAttribute.bind(attributesList.alc.lv.getSelectionModel().selectedItemProperty());
+
+    }
+    public AnchorPane getPainter() throws Exception{
+        return vmc.getPainter().call();
+    }
+
+    public void setRoot(Parent root) {
+        this.root = root;
+
     }
 
     @Override
-    public void update(Observable o, Object arg) {}
+    public void update(Observable o, Object arg) {
+    }
+
+
 }

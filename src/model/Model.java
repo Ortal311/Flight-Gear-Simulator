@@ -1,7 +1,10 @@
 package model;
 
 import algo.SimpleAnomalyDetector;
+import algo.ZScoreAlgorithm;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import viewModel.TimeSeries;
 
@@ -11,6 +14,8 @@ import java.beans.XMLEncoder;
 import java.io.*;
 import java.net.Socket;
 import java.util.*;
+import java.util.List;
+import java.util.concurrent.Callable;
 
 public class Model extends Observable implements SimulatorModel {
 
@@ -32,6 +37,8 @@ public class Model extends Observable implements SimulatorModel {
     public static boolean afterForward = false;
     public boolean isConnect;
     public SimpleAnomalyDetector ad;
+    public ZScoreAlgorithm zScore;
+   // public SimpleAnomalyDetector  ad = new SimpleAnomalyDetector();
 
     public Model() {
         this.properties = new FlightSetting();
@@ -251,10 +258,13 @@ public class Model extends Observable implements SimulatorModel {
         ad = new SimpleAnomalyDetector();
         ad.learnNormal(ts_Anomal);
 
+        zScore=new ZScoreAlgorithm();
+//        zScore.learnNormal();
+
     }
-    @Override
-    public Runnable getPainter() {
-        return ()->ad.paintALGgraph();
+
+    public Canvas getPaint(Canvas canvas){
+        return ad.paintALGgraph(canvas);
     }
 
 
@@ -313,6 +323,18 @@ public class Model extends Observable implements SimulatorModel {
         for(Attribute attribute: properties.getAttributes()){
             attributeMap.put(attribute.name, attribute);
         }
+    }
+    public Callable<AnchorPane>getPainter(){
+                 //reg
+        ad=new SimpleAnomalyDetector();
+        if(ad!=null)
+            return ()->ad.paint();
+
+                //zScore
+//        zScore=new ZScoreAlgorithm();
+//        if(zScore!=null)return ()->zScore.paint();
+
+        return null;
     }
 
 

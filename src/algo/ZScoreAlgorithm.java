@@ -1,4 +1,8 @@
 package algo;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
+import javafx.scene.layout.AnchorPane;
 import viewModel.TimeSeries;
 
 import java.util.LinkedList;
@@ -7,7 +11,7 @@ import java.util.Vector;
 import static algo.StatLib.*;
 import java.util.ArrayList;
 
-public class ZScoreAlgorithm {
+public class ZScoreAlgorithm implements AnomalyDetector{
 	//TimeSeries ts;
 	
 	Vector<Float> tx;
@@ -62,11 +66,11 @@ public class ZScoreAlgorithm {
 	}
 	
 	
-//	public void learn(TimeSeries data)
-//	{
-//		LinkedList<Float> zScored = new LinkedList<>();
-//
-//		for(ArrayList<Float> col: data.ts.values())
+	public void learnNormal(TimeSeries ts)
+	{
+		LinkedList<Float> zScored = new LinkedList<>();
+
+//		for(ArrayList<Float> col: ts.values())
 //		{
 //			for(int j = 0; j < col.size(); j++) {
 //				zScored.add(calcZScore(col.subList(0, j - 1)));
@@ -74,14 +78,14 @@ public class ZScoreAlgorithm {
 //
 //			tx.add(argMax(zScored));
 //		}
-//	}
+	}
 	
 
-//	public boolean detect(TimeSeries data)
-//	{
-//		int i=0;
-//
-//		//for(ArrayList<Float> col: data.ts.values()) {
+	public List<AnomalyReport> detect(TimeSeries data)
+	{
+		int i=0;
+		ArrayList<AnomalyReport> v = new ArrayList<>();
+		//for(ArrayList<Float> col: data.ts.values()) {
 //		for(ArrayList<Float> col: data) {
 //			for(int j = 0; j < col.size(); j++) {
 //				if(calcZScore(col.subList(0, j - 1)) > tx.get(i++)){
@@ -89,7 +93,21 @@ public class ZScoreAlgorithm {
 //				}
 //			}
 //		}
-//		return false;
-//	}
+		return v;
+	}
+
+	@Override
+	public AnchorPane paint() {
+		AnchorPane ap=new AnchorPane();
+		LineChart<Number,Number> regGraph=new LineChart<>(new NumberAxis(),new NumberAxis());
+		XYChart.Series<Number,Number>chosenAttribute=new XYChart.Series<>();
+		regGraph.getData().add(chosenAttribute);
+
+		regGraph.setPrefSize(230,230);
+		regGraph.setMinSize(230,230);
+		regGraph.setMaxSize(230,230);
+		ap.getChildren().add(regGraph);
+		return ap;
+	}
 
 }

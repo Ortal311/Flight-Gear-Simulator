@@ -5,22 +5,26 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import viewModel.TimeSeries;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SimpleAnomalyDetector extends AnchorPane implements AnomalyDetector {
-    @FXML
-    Canvas algPaint;
-    FXMLLoader fxl = new FXMLLoader();
+public class SimpleAnomalyDetector implements AnomalyDetector {
+//    @FXML
+//    Canvas algPaint;
+//    FXMLLoader fxl = new FXMLLoader();
 
     ArrayList<CorrelatedFeatures> cf;
 
+    public AlgDisplayer d = new AlgDisplayer();
+
     public SimpleAnomalyDetector() {
-
-
         cf = new ArrayList<>();
     }
 
@@ -89,28 +93,37 @@ public class SimpleAnomalyDetector extends AnchorPane implements AnomalyDetector
         return v;
     }
 
-
-    public void paintALGgraph() {
-
-
-        // FXMLLoader fxl = algPaint
-
-        System.out.println("inside runnable");
-        //GraphicsContext helps to add shapes
-        algPaint = new Canvas(200, 200);
-        GraphicsContext gc = algPaint.getGraphicsContext2D();
-        algPaint.setHeight(200);
-        algPaint.setWidth(200);
-        algPaint.setLayoutX(200);
-        algPaint.setLayoutY(174);
-        //find the mid of the canvas
-        double mx = algPaint.getWidth() / 2;
-        double my = algPaint.getHeight() / 2;
-
-        //paint a shape around the middle of the canvas
-        gc.strokeOval(mx - 50, my - 50, 100, 100);
-
+    @Override
+    public AnchorPane paint() {
+        AnchorPane ap=new AnchorPane();
+        Canvas c=d;
+        d.paint();
+        ap.getChildren().add(c);
+        return ap;
     }
+
+    public class AlgDisplayer extends Canvas {
+        //        Canvas canvas;
+        public GraphicsContext gc;
+
+        public AlgDisplayer() {
+
+            gc = this.getGraphicsContext2D();
+            paint();
+        }
+
+        public void paint() {
+            this.gc = this.getGraphicsContext2D();
+            this.gc.fillRect(0, 0, 100, 100);
+            gc.setFill(Color.GREEN);
+        }
+    }
+
+    public Canvas paintALGgraph(Canvas c) {
+        c = new AlgDisplayer();
+        return c;
+    }
+
 
     public List<CorrelatedFeatures> getNormalModel() {
         return cf;
@@ -131,4 +144,5 @@ public class SimpleAnomalyDetector extends AnchorPane implements AnomalyDetector
         }
         return null;
     }
+
 }
