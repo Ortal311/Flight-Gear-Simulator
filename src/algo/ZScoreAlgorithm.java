@@ -99,6 +99,7 @@ public class ZScoreAlgorithm implements AnomalyDetector{
 	@Override
 	public AnchorPane paint() {
 		AnchorPane ap=new AnchorPane();
+
 		LineChart<Number,Number> regGraph=new LineChart<>(new NumberAxis(),new NumberAxis());
 		XYChart.Series<Number,Number>chosenAttribute=new XYChart.Series<>();
 		regGraph.getData().add(chosenAttribute);

@@ -1,7 +1,12 @@
 package model;
 
+import algo.CorrelatedFeatures;
 import algo.SimpleAnomalyDetector;
 import algo.ZScoreAlgorithm;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.AnchorPane;
@@ -21,7 +26,7 @@ public class Model extends Observable implements SimulatorModel {
 
     public Socket socket;
     public PrintWriter out;
-    public TimeSeries ts_Anomal;
+    public TimeSeries ts_Anomal,ts_reg;
     public Options op = new Options();
     Thread displaySetting;
     public Map<String, Attribute> attributeMap;
@@ -38,6 +43,88 @@ public class Model extends Observable implements SimulatorModel {
     public boolean isConnect;
     public SimpleAnomalyDetector ad;
     public ZScoreAlgorithm zScore;
+    public AnchorPane APref;
+
+    List<CorrelatedFeatures> getNormal;
+    public StringProperty attribute1=new SimpleStringProperty();
+    public StringProperty attribute2=new SimpleStringProperty();
+
+    public DoubleProperty valAtt1X=new SimpleDoubleProperty();
+    public DoubleProperty vaAtt1Xend=new SimpleDoubleProperty();
+
+    public DoubleProperty valAtt2Y=new SimpleDoubleProperty();
+    public DoubleProperty vaAtt2Yend=new SimpleDoubleProperty();
+
+    public DoubleProperty timeStep=new SimpleDoubleProperty();
+
+    public DoubleProperty valPointX=new SimpleDoubleProperty();
+    public DoubleProperty valPointY=new SimpleDoubleProperty();
+
+    public void setVarivablesTOALG(){//listen to timeStep
+
+        valPointX.setValue(ts_reg.getValueByTime(attribute1.getValue(),timeStep.intValue()));
+        if(attribute2.getValue()!=null)
+            valPointY.setValue(ts_reg.getValueByTime(attribute2.getValue(),timeStep.intValue()));
+        else
+            valPointY.setValue(0);
+
+       // System.out.println("first:"+ valPointX.doubleValue()+" "+"second:"+valPointY.doubleValue() );
+        ad.timeStep.bind(timeStep);
+        ad.valPointX.bind(valPointX);
+        ad.valPointY.bind(valPointY);
+    }
+    public void setVarivablesNamesTOALG(){//Listen to chosen attribute
+
+        valPointX.setValue(ts_reg.getValueByTime(attribute1.getValue(),timeStep.intValue()));//point
+
+        valAtt1X.setValue(ts_reg.getValueByTime(attribute1.getValue(),0));//reg x1
+        vaAtt1Xend.setValue(ts_reg.getValueByTime(attribute1.getValue(),ts_reg.getRowSize()-1));//regx2
+
+        if(attribute2.getValue()!=null){
+            valPointY.setValue(ts_reg.getValueByTime(attribute2.getValue(),timeStep.intValue()));
+
+            valAtt2Y.setValue(ts_reg.getValueByTime(attribute2.getValue(),0));//regY 1
+            vaAtt2Yend.setValue(ts_reg.getValueByTime(attribute2.getValue(),ts_reg.getRowSize()-1));//regY 2
+        }
+        else {
+            valPointY.setValue(0);
+            valAtt2Y.setValue(0);
+            vaAtt2Yend.setValue(0);
+        }
+        System.out.println("first and second"+ valAtt1X.doubleValue()+" "+vaAtt1Xend.doubleValue());
+
+        ad.attribute1.bind(attribute1);
+        ad.attribute2.bind(attribute2);
+        ad.valAtt1X.bind(valAtt1X);
+        ad.vaAtt1Xend.bind(vaAtt1Xend);
+        ad.valAtt2Y.bind(valAtt2Y);
+        ad.vaAtt2Yend.bind(vaAtt2Yend);
+
+    }
+
+    public void initDataForALG(){//this method will init the data for the ALG at the first at opening
+
+        vaAtt1Xend.setValue(ts_reg.getValueByTime(attribute1.getValue(),ts_reg.getRowSize()-1));//regx2
+
+        if(attribute2.getValue()!=null){
+            valAtt2Y.setValue(ts_reg.getValueByTime(attribute2.getValue(),0));//regY 1
+            vaAtt2Yend.setValue(ts_reg.getValueByTime(attribute2.getValue(),ts_reg.getRowSize()-1));//regY 2
+        }
+        else {
+            valAtt2Y.setValue(0);
+            vaAtt2Yend.setValue(0);
+        }
+        System.out.println("first and second init in open"+ valAtt1X.doubleValue()+" "+vaAtt1Xend.doubleValue());
+
+        ad.valAtt1X.bind(valAtt1X);
+        ad.vaAtt1Xend.bind(vaAtt1Xend);
+        ad.valAtt2Y.bind(valAtt2Y);
+        ad.vaAtt2Yend.bind(vaAtt2Yend);
+    }
+
+
+
+
    // public SimpleAnomalyDetector  ad = new SimpleAnomalyDetector();
 
     public Model() {
@@ -72,9 +159,12 @@ public class Model extends Observable implements SimulatorModel {
         }
     }
 
-    public void setTimeSeries(TimeSeries ts) {
-        this.ts_Anomal = ts;
+    public void setTimeSeries(TimeSeries tsAnomal,TimeSeries tsReg) {
+        this.ts_Anomal = tsAnomal;
+        this.ts_reg=tsReg;
     }
+
+
 
     synchronized public void displayFlight(boolean conncetServer) {
         int i = 0;
@@ -82,6 +172,7 @@ public class Model extends Observable implements SimulatorModel {
      //   boolean condition = op.rewind ? i >= 0 : i < ts.rows.size();//if rewind go while>0 else (regula) go while <ts.size
 
         for (i = (int) time; i<sizeTS;i++ ) {
+            timeStep.setValue(time);
             while (pause || op.scroll || afterStop || op.forward|| op.rewind)  //pause needs to be replaced with thread( works only one time now)
             {
                 try {
@@ -122,7 +213,7 @@ public class Model extends Observable implements SimulatorModel {
                 }
             }
            // System.out.println(ts.getAtts().get(i));
-            System.out.println(ts_Anomal.rows.get(i));
+         //   System.out.println(ts_Anomal.rows.get(i));
             if (conncetServer) {
                 out.println(ts_Anomal.rows.get(i));
                 //out.println(ts.getAtts().get(i));
@@ -136,7 +227,10 @@ public class Model extends Observable implements SimulatorModel {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-          //  i++;
+//            timeStep.addListener((o, ov, nv) -> {
+//                if (APref!=null)
+//                    ad.paintLive(APref);
+//            });
         }
     }
 
@@ -244,10 +338,16 @@ public class Model extends Observable implements SimulatorModel {
 //        SimpleAnomalyDetector ad=(SimpleAnomalyDetector) c.newInstance();
 
         ad = new SimpleAnomalyDetector();
-        ad.learnNormal(ts_Anomal);
+        ad.learnNormal(ts_reg);
+        ad.detect(ts_Anomal);
+
+        getNormal=ad.getNormalModel();
 
 //        zScore=new ZScoreAlgorithm();
 //        zScore.learnNormal();
+
+
+
         if(ad != null)
             return true;
         return false;
@@ -264,12 +364,17 @@ public class Model extends Observable implements SimulatorModel {
     public Callable<AnchorPane>getPainter(){
                  //reg
 //        ad=new SimpleAnomalyDetector();
+
+        APref=ad.paint();
+
         return ()->ad.paint();
+
 
                 //zScore
 //        zScore=new ZScoreAlgorithm();
 //        if(zScore!=null)return ()->zScore.paint();
     }
+
 
     public void writeToXML(FlightSetting settings) throws IOException {
         FileOutputStream fos = new FileOutputStream("settings.xml");

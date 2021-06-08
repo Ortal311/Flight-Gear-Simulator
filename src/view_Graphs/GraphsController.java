@@ -67,30 +67,12 @@ public class GraphsController {
         XYChart.Series series2 = new XYChart.Series();
         mostCorrelatedAttribute.getData().add(series2);
 
-        circle.setFill(Color.TRANSPARENT);
-        circle.setStroke(Color.YELLOW);
-
-        //circle.centerXProperty().setValue(10);
-        //circle.setFill(Color.TRANSPARENT);
-
         timeStamp.addListener((o, ov, nv) -> {
             Platform.runLater(() -> {
-                    circle.setCenterX(timeStamp.getValue());
-                    circle.setCenterY(timeStamp.getValue());
-                //System.out.println(selectedAttribute.getValue().toString());
-                // System.out.println(timeStamp.getValue());
+
                 series1.getData().add(new XYChart.Data<>(timeStamp.getValue().toString(), value.doubleValue()));
                 series2.getData().add(new XYChart.Data<>(timeStamp.getValue().toString(), valueCorrelate.doubleValue()));
 
-              /*  if(nv.doubleValue()<ov.doubleValue())
-                {
-                    series1.getData().remove(series1);
-                    //need to create a new graph with all the points of the new attribute until now
-
-                   // series1.getData().add(new XYChart.Data<>(timeStamp.getValue().toString(), value.doubleValue()));
-                }*/
-
-                //chosenAttributeGraph.setTitle(selectedAttribute.getValue().toString());
 
             });
 
