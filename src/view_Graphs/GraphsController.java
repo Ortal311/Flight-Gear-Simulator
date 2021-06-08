@@ -47,7 +47,7 @@ public class GraphsController {
         this.y2 = new SimpleDoubleProperty();
 
         regPaint = new Canvas();
-         circle = new Circle();
+        circle = new Circle();
 
 
     }

@@ -1,7 +1,11 @@
 package algo;
 
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.layout.AnchorPane;
 
 import viewModel.TimeSeries;
@@ -85,18 +89,42 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
     public AnchorPane paint() {
         AnchorPane ap=new AnchorPane();
 
-        Canvas c = new Canvas();
-        c.setWidth(150);
-        c.setHeight(150);
-        GraphicsContext gc= c.getGraphicsContext2D();
-        double mx, my;
-        double jx = 0, jy = 0;
-        mx= c.getWidth()/2;
-        my=c.getHeight()/2;
+//        Canvas c = new Canvas();
+//        c.setWidth(150);
+//        c.setHeight(150);
+//        GraphicsContext gc= c.getGraphicsContext2D();
+//        double mx, my;
+//        double jx = 0, jy = 0;
+//        mx= c.getWidth()/2;
+//        my=c.getHeight()/2;
+//
+//        gc.clearRect(0,0,c.getWidth(),c.getHeight());
+//        gc.strokeOval(jx*50+30,jy*50+10,60,60);
+//        ap.getChildren().add(c);
 
-        gc.clearRect(0,0,c.getWidth(),c.getHeight());
-        gc.strokeOval(jx*50+30,jy*50+10,60,60);
-        ap.getChildren().add(c);
+        LineChart<Number,Number> sc = new LineChart<>(new NumberAxis(),new NumberAxis());
+        sc.setPrefHeight(230);
+        sc.setPrefWidth(230);
+        XYChart.Series series1 = new XYChart.Series();
+//        series1.setName("Equities");
+        series1.getData().add(new XYChart.Data(4.2, 193.2));
+        series1.getData().add(new XYChart.Data(2.8, 33.6));
+        series1.getData().add(new XYChart.Data(6.8, 23.6));
+
+        XYChart.Series series2 = new XYChart.Series();
+//        series2.setName("Mutual funds");
+        series2.getData().add(new XYChart.Data(5.2, 229.2));
+        series2.getData().add(new XYChart.Data(2.4, 37.6));
+        series2.getData().add(new XYChart.Data(6.4, 15.6));
+
+        sc.setAnimated(false);
+        sc.setCreateSymbols(true);
+
+        sc.getData().addAll(series1, series2);
+
+        ap.getChildren().add(sc);
+        ap.getStylesheets().add("style.css");
+
         return ap;
     }
 

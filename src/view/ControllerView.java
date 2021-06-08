@@ -106,7 +106,6 @@ public class ControllerView extends Pane implements Observer {
         attributesList.alc.lv.setItems(vmc.attributeList);
         graphs.selectedAttribute.bind(attributesList.alc.lv.getSelectionModel().selectedItemProperty());
         vmc.chosenAttribute.bind(attributesList.alc.lv.getSelectionModel().selectedItemProperty());
-
     }
 
     @Override
