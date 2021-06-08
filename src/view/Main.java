@@ -35,7 +35,6 @@ public class Main extends Application {
         Parent root = fxl.load(getClass().getResource("sample.fxml").openStream());
         primaryStage.setTitle("Hello World");
         ControllerView controllerView = fxl.getController();
-        controllerView.setRoot(root);
         controllerView.init(vmc);
 
 

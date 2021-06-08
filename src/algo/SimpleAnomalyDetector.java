@@ -1,28 +1,17 @@
 package algo;
 
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
+
 import viewModel.TimeSeries;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SimpleAnomalyDetector implements AnomalyDetector {
-//    @FXML
-//    Canvas algPaint;
-//    FXMLLoader fxl = new FXMLLoader();
 
     ArrayList<CorrelatedFeatures> cf;
-
-    public AlgDisplayer d = new AlgDisplayer();
 
     public SimpleAnomalyDetector() {
         cf = new ArrayList<>();
@@ -75,7 +64,6 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
         return max;
     }
 
-
     @Override
     public List<AnomalyReport> detect(TimeSeries ts) {
         ArrayList<AnomalyReport> v = new ArrayList<>();
@@ -96,34 +84,21 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
     @Override
     public AnchorPane paint() {
         AnchorPane ap=new AnchorPane();
-        Canvas c=d;
-        d.paint();
+
+        Canvas c = new Canvas();
+        c.setWidth(150);
+        c.setHeight(150);
+        GraphicsContext gc= c.getGraphicsContext2D();
+        double mx, my;
+        double jx = 0, jy = 0;
+        mx= c.getWidth()/2;
+        my=c.getHeight()/2;
+
+        gc.clearRect(0,0,c.getWidth(),c.getHeight());
+        gc.strokeOval(jx*50+30,jy*50+10,60,60);
         ap.getChildren().add(c);
         return ap;
     }
-
-    public class AlgDisplayer extends Canvas {
-        //        Canvas canvas;
-        public GraphicsContext gc;
-
-        public AlgDisplayer() {
-
-            gc = this.getGraphicsContext2D();
-            paint();
-        }
-
-        public void paint() {
-            this.gc = this.getGraphicsContext2D();
-            this.gc.fillRect(0, 0, 100, 100);
-            gc.setFill(Color.GREEN);
-        }
-    }
-
-    public Canvas paintALGgraph(Canvas c) {
-        c = new AlgDisplayer();
-        return c;
-    }
-
 
     public List<CorrelatedFeatures> getNormalModel() {
         return cf;

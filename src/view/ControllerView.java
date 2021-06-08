@@ -1,26 +1,15 @@
 package view;
 
-import algo.SimpleAnomalyDetector;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import viewModel.ViewModelController;
 
-import java.awt.*;
-import java.net.URL;
-import java.util.Objects;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.ResourceBundle;
 
 import view_AttributesList.AttributesList;
 import view_Graphs.Graphs;
-import view_Graphs.GraphsController;
 import view_PlayerButtons.PlayerButtons;
 import view_TimeBoard.TimeBoard;
 import view_joystick.MyJoystick;
@@ -42,13 +31,10 @@ public class ControllerView extends Pane implements Observer {
     @FXML
     Graphs graphs;
 
-
-    @FXML private AnchorPane adAnchorePane;
-    Canvas myCanvas;
-    Parent root;
+    @FXML
+    AnchorPane adAnchorePane;
 
     ViewModelController vmc;
-    //GraphsController graphsController;
 
     void init(ViewModelController vmc) {
         this.vmc = vmc;
@@ -77,8 +63,6 @@ public class ControllerView extends Pane implements Observer {
         playerButtons.sliderTime.bindBidirectional(vmc.sliderTime);
         vmc.choiceSpeed.bind(playerButtons.choiceSpeed);
 
-
-        //graphs.value.bind(attributesList.chosenAttribute);
         graphs.value.bind(vmc.valueAxis);
         graphs.valueCorrelate.bind(vmc.valueCorrelate);
         graphs.timeStamp.bind(vmc.timeStamp);
@@ -88,7 +72,6 @@ public class ControllerView extends Pane implements Observer {
         graphs.x2.bind(vmc.x2);
         graphs.y1.bind(vmc.y1);
         graphs.y2.bind(vmc.y2);
-
 
         timeBoard.airSpeed.bind(vmc.airSpeed);
         timeBoard.altimeter.bind(vmc.altimeter);
@@ -104,28 +87,15 @@ public class ControllerView extends Pane implements Observer {
         playerButtons.onOpenXML.addListener((o, ov, nv) -> vmc.openXMLFile());
         playerButtons.onPlay.addListener((o, ov, nv) -> vmc.play());
 
-
-
-
         playerButtons.onAnomalyDetector.addListener((o, ov, nv) -> {
             vmc.loadAnomalyDetector();
-           // vmc.setCanvas(can);
             try {
-                adAnchorePane.getChildren().setAll(getPainter());
+                adAnchorePane.getChildren().setAll(vmc.getPainter().call());
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            // vmc.runnable.run();
-           /* can= vmc.c;
-            this.getChildren().add(can);*/
-
-//            this.getChildren().add(vmc.c);
-//            this.myCanvas = vmc.c;
-//            this.myCanvas.setHeight(100);
-//            this.myCanvas.setWidth(100);
-//            // this.root.getChildren().add(myCanvas);
-//            this.getChildren().add(vmc.c);
         });
+
         playerButtons.onPause.addListener((o, ov, nv) -> vmc.pause());
         playerButtons.onStop.addListener((o, ov, nv) -> vmc.stop());
         playerButtons.onRewind.addListener((o, ov, nv) -> vmc.rewind());
@@ -138,18 +108,8 @@ public class ControllerView extends Pane implements Observer {
         vmc.chosenAttribute.bind(attributesList.alc.lv.getSelectionModel().selectedItemProperty());
 
     }
-    public AnchorPane getPainter() throws Exception{
-        return vmc.getPainter().call();
-    }
-
-    public void setRoot(Parent root) {
-        this.root = root;
-
-    }
 
     @Override
     public void update(Observable o, Object arg) {
     }
-
-
 }

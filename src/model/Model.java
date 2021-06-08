@@ -58,18 +58,6 @@ public class Model extends Observable implements SimulatorModel {
     }
 
 
-//    public double getPlaySpeed() {
-//        return playSpeed;
-//    }
-//
-//    public void setPlaySpeed(double playSpeed) {
-//        this.playSpeed = playSpeed;
-//    }
-//    public void setTime(double time) {
-//        this.time = time;
-//    }
-
-
     @Override
     public boolean ConnectToServer(String ip, double port) {
         try {
@@ -250,7 +238,7 @@ public class Model extends Observable implements SimulatorModel {
     }
     //class loader for Anomaly Detector's files
 
-    public void loadAnomalyDetector() {//String input
+    public Boolean loadAnomalyDetector() {//String input
 //        URLClassLoader urlClassLoader= URLClassLoader.newInstance(new URL[]{new URL("file://"+input)});
 //        Class<?>c=urlClassLoader.loadClass(urlClassLoader.getName());
 //        SimpleAnomalyDetector ad=(SimpleAnomalyDetector) c.newInstance();
@@ -258,15 +246,30 @@ public class Model extends Observable implements SimulatorModel {
         ad = new SimpleAnomalyDetector();
         ad.learnNormal(ts_Anomal);
 
-        zScore=new ZScoreAlgorithm();
+//        zScore=new ZScoreAlgorithm();
 //        zScore.learnNormal();
-
+        if(ad != null)
+            return true;
+        return false;
     }
 
-    public Canvas getPaint(Canvas canvas){
-        return ad.paintALGgraph(canvas);
+    public void createMapAttribute() {
+        this.attributeMap = new HashMap<>();
+
+        for(Attribute attribute: properties.getAttributes()){
+            attributeMap.put(attribute.name, attribute);
+        }
     }
 
+    public Callable<AnchorPane>getPainter(){
+                 //reg
+//        ad=new SimpleAnomalyDetector();
+        return ()->ad.paint();
+
+                //zScore
+//        zScore=new ZScoreAlgorithm();
+//        if(zScore!=null)return ()->zScore.paint();
+    }
 
     public void writeToXML(FlightSetting settings) throws IOException {
         FileOutputStream fos = new FileOutputStream("settings.xml");
@@ -315,26 +318,6 @@ public class Model extends Observable implements SimulatorModel {
         decoder.close();
         fis.close();
         return decodedSettings;
-    }
-
-    public void createMapAttribute() {
-        this.attributeMap = new HashMap<>();
-
-        for(Attribute attribute: properties.getAttributes()){
-            attributeMap.put(attribute.name, attribute);
-        }
-    }
-    public Callable<AnchorPane>getPainter(){
-                 //reg
-        ad=new SimpleAnomalyDetector();
-        if(ad!=null)
-            return ()->ad.paint();
-
-                //zScore
-//        zScore=new ZScoreAlgorithm();
-//        if(zScore!=null)return ()->zScore.paint();
-
-        return null;
     }
 
 
