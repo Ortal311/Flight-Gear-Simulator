@@ -25,11 +25,9 @@ public class ViewModelController extends Observable implements Observer {
     //public SimpleAnomalyDetector.AlgDisplayer c;
 
     public TimeSeries ts_reg, ts_Anomal;//ts-reg
-    public Runnable runnable;
     public DoubleProperty timeStamp, throttle, rudder, aileron,
             elevators, sliderTime, choiceSpeed, pitch, roll, yaw, timeStampGraph;
     //public SimpleAnomalyDetector simpleAnomalyDetector=new SimpleAnomalyDetector();
-    public double rate;
     public StringProperty timeFlight, chosenAttribute, correlateFeature, altimeter, airSpeed, fd;
 
     public BooleanProperty graphActivate;
@@ -42,13 +40,13 @@ public class ViewModelController extends Observable implements Observer {
     public Boolean xmlFile, csvFile;
 
     public void setCanvas(Canvas canvas){
-    this.c=canvas;
-    m.getPaint(canvas);
+        this.c=canvas;
+        m.getPaint(canvas);
     }
+
     public ViewModelController(Model m) {
         this.m = m;
         clock = new Clock();
-        rate = 100;
         m.addObserver(this);//add Model as Observable
 
         timeStamp = new SimpleDoubleProperty();
@@ -100,8 +98,6 @@ public class ViewModelController extends Observable implements Observer {
         //  runnable = m.getPainter();
 
         //   c=m.ad.d;
-
-
     }
 
 
