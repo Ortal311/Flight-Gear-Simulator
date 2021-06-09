@@ -1,113 +1,134 @@
 package algo;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.AnchorPane;
 import viewModel.TimeSeries;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
+
 import static algo.StatLib.*;
-import java.util.ArrayList;
 
 public class ZScoreAlgorithm implements AnomalyDetector{
-	//TimeSeries ts;
-	
-	Vector<Float> tx;
 
-	public ZScoreAlgorithm()
-	{
-		tx = new Vector<>();
+	Vector<Float> tx;
+	HashMap<Integer, LinkedList<Float>> ZScoreMap;
+	HashMap<String, ArrayList<Float>> avgMap;
+
+	public ZScoreAlgorithm() {
+		this.tx = new Vector<>();
+		this.ZScoreMap = new HashMap<>();
+		avgMap = new HashMap<>();
 	}
 
-	
 	public float[] ListToArr(List<Float> lst)
 	{
 		float[] res= new float[lst.size()];
-		
+
 		for(int i=0; i<res.length; i++) {
 			res[i]= lst.get(i);
 		}
 		return res;
 	}
-	
-	
-	public float calcZScore(List<Float> col)
+
+	public float calcZScore(List<Float> col, String attribute)
 	{
-		float res=0;
-		float arrAvg;
+		float avg, sigma;
 		float[] arrFloat;
-		float arrSigma;
-		
-		for(int x = 0; x < col.size(); x++)
-		{
-			if(x == 0) {
-				return 0;
-			}
-			arrFloat = ListToArr(col.subList(0, x - 1));
-			arrAvg = avg(arrFloat);
-			arrSigma=(float)Math.sqrt(var(arrFloat));
-			res = Math.abs((col.get(x)-arrAvg))/arrSigma;
+		int colSize = col.size();
+		float x;
+
+		if(colSize == 0) {
+			return 0;
 		}
-		return res;
+
+		x = col.get(colSize - 1);
+		if(colSize == 1) {
+			arrFloat = ListToArr(col);
+			avgMap.get(attribute).add(StatLib.avg(arrFloat));
+			return Math.abs((x - StatLib.avg(arrFloat))) / StatLib.var(arrFloat);
+		}
+
+		arrFloat = ListToArr(col.subList(0, col.size() - 1));
+		avg = (avgMap.get(attribute).get(colSize - 2) * (colSize) + x) / (colSize + 1);
+		avgMap.get(attribute).add(avg);
+		sigma = (float)Math.sqrt(StatLib.var(arrFloat));
+
+		return Math.abs((x - avg)) / sigma;
 	}
-	
-	
+
 	public float argMax(LinkedList<Float> z)
 	{
 		float max=0;
-		for(int i=0; i < z.size(); i++)
-		{
+		for(int i=0; i < z.size(); i++) {
 			if(max<z.get(i))
 				max=z.get(i);
 		}
 		return max;
 	}
-	
-	
-	public void learnNormal(TimeSeries ts)
-	{
-		LinkedList<Float> zScored = new LinkedList<>();
-
-//		for(ArrayList<Float> col: ts.values())
-//		{
-//			for(int j = 0; j < col.size(); j++) {
-//				zScored.add(calcZScore(col.subList(0, j - 1)));
-//			}
-//
-//			tx.add(argMax(zScored));
-//		}
-	}
-	
-
-	public List<AnomalyReport> detect(TimeSeries data)
-	{
-		int i=0;
-		ArrayList<AnomalyReport> v = new ArrayList<>();
-		//for(ArrayList<Float> col: data.ts.values()) {
-//		for(ArrayList<Float> col: data) {
-//			for(int j = 0; j < col.size(); j++) {
-//				if(calcZScore(col.subList(0, j - 1)) > tx.get(i++)){
-//					return true;
-//				}
-//			}
-//		}
-		return v;
-	}
 
 	@Override
+	public void learnNormal(TimeSeries ts) {
+		int index = 0;
+		LinkedList<Float> zScored = new LinkedList<>();
+		String attribute;
+
+		for(ArrayList<Float> col: ts.tsNum.values()) {
+			attribute = ts.atts.get(index);
+			avgMap.put(attribute, new ArrayList<>());
+
+			for(int j = 0; j < col.size(); j++) {
+				zScored.add(calcZScore(col.subList(0, j), attribute));
+			}
+
+			tx.add(argMax(zScored));
+			this.ZScoreMap.put(index++, zScored);
+		}
+	}
+
+	public List<AnomalyReport> detect(TimeSeries data) {
+		List<AnomalyReport> lst = new LinkedList<>();
+		String attribute;
+
+		for(int indexCol = 0; indexCol < data.atts.size(); indexCol++) {
+			ArrayList<Float> col = data.tsNum.get(indexCol);
+			attribute = data.atts.get(indexCol);
+			for(int indexTime = 0; indexTime < col.size(); indexTime++) {
+				if (calcZScore(col.subList(0, indexTime), attribute) > tx.get(indexCol)) {
+					lst.add(new AnomalyReport(attribute, indexTime));
+				}
+			}
+		}
+		return lst;
+	}
+
 	public AnchorPane paint() {
 		AnchorPane ap=new AnchorPane();
-		LineChart<Number,Number> regGraph=new LineChart<>(new NumberAxis(),new NumberAxis());
-		XYChart.Series<Number,Number>chosenAttribute=new XYChart.Series<>();
-		regGraph.getData().add(chosenAttribute);
+//		LineChart<Number,Number> regGraph = new LineChart<>(new NumberAxis(),new NumberAxis());
+//		XYChart.Series<Number,Number>chosenAttribute = new XYChart.Series<>();
+//		regGraph.getData().add(chosenAttribute);
+//
+//		regGraph.setPrefSize(230,230);
+//		regGraph.setMinSize(230,230);
+//		regGraph.setMaxSize(230,230);
+		System.out.println("zScore - paint");
+		Canvas c = new Canvas();
+		c.setHeight(150);
+		c.setWidth(150);
+		double mx, my;
+		double jx = 0, jy = 0;
+		GraphicsContext gc= c.getGraphicsContext2D();
+		mx = c.getWidth()/2;
+		my = c.getHeight()/2;
 
-		regGraph.setPrefSize(230,230);
-		regGraph.setMinSize(230,230);
-		regGraph.setMaxSize(230,230);
-		ap.getChildren().add(regGraph);
+		gc.clearRect(0,0,c.getWidth(),c.getHeight());
+		gc.strokeOval(jx*50+30,jy*50+10,60,60);
+
+		ap.getChildren().add(c);
 		return ap;
 	}
+
 
 }
