@@ -105,7 +105,17 @@ public class ZScoreAlgorithm implements AnomalyDetector{
 	}
 
 	public AnchorPane paint() {
+
 		AnchorPane ap=new AnchorPane();
+
+		LineChart<Number,Number> regGraph=new LineChart<>(new NumberAxis(),new NumberAxis());
+		XYChart.Series<Number,Number>chosenAttribute=new XYChart.Series<>();
+		regGraph.getData().add(chosenAttribute);
+
+		regGraph.setPrefSize(230,230);
+		regGraph.setMinSize(230,230);
+		regGraph.setMaxSize(230,230);
+		ap.getChildren().add(regGraph);
 
 		return ap;
 	}
