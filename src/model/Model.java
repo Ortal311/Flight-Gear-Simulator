@@ -65,9 +65,9 @@ public class Model extends Observable implements SimulatorModel {
 
     public void setVarivablesTOALG(){//listen to timeStep
 
-        valPointX.setValue(ts_reg.getValueByTime(attribute1.getValue(),timeStep.intValue()));
+        valPointX.setValue(ts_Anomal.getValueByTime(attribute1.getValue(),timeStep.intValue()));
         if(attribute2.getValue()!=null)
-            valPointY.setValue(ts_reg.getValueByTime(attribute2.getValue(),timeStep.intValue()));
+            valPointY.setValue(ts_Anomal.getValueByTime(attribute2.getValue(),timeStep.intValue()));
         else
             valPointY.setValue(0);
 
@@ -78,7 +78,7 @@ public class Model extends Observable implements SimulatorModel {
     }
     public void setVarivablesNamesTOALG(){//Listen to chosen attribute
 
-        valPointX.setValue(ts_reg.getValueByTime(attribute1.getValue(),timeStep.intValue()));//point
+        valPointX.setValue(ts_Anomal.getValueByTime(attribute1.getValue(),timeStep.intValue()));//point
 
         attribute2.setValue(ad.getCorrelateFeature(attribute1.getValue())); //point X
 
@@ -87,7 +87,7 @@ public class Model extends Observable implements SimulatorModel {
             //update the reg line
             regLineForCorrelateAttribute=ad.getRegLine(attribute1.getValue(),attribute2.getValue());
 
-            valPointY.setValue(ts_reg.getValueByTime(attribute2.getValue(),timeStep.intValue()));//point Y
+            valPointY.setValue(ts_Anomal.getValueByTime(attribute2.getValue(),timeStep.intValue()));//point Y
 
 
             //valAtt1X.setValue(ts_reg.getValueByTime(attribute1.getValue(),0));//reg x1      getting from ts
