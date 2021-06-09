@@ -106,27 +106,7 @@ public class ZScoreAlgorithm implements AnomalyDetector{
 
 	public AnchorPane paint() {
 		AnchorPane ap=new AnchorPane();
-//		LineChart<Number,Number> regGraph = new LineChart<>(new NumberAxis(),new NumberAxis());
-//		XYChart.Series<Number,Number>chosenAttribute = new XYChart.Series<>();
-//		regGraph.getData().add(chosenAttribute);
-//
-//		regGraph.setPrefSize(230,230);
-//		regGraph.setMinSize(230,230);
-//		regGraph.setMaxSize(230,230);
-		System.out.println("zScore - paint");
-		Canvas c = new Canvas();
-		c.setHeight(150);
-		c.setWidth(150);
-		double mx, my;
-		double jx = 0, jy = 0;
-		GraphicsContext gc= c.getGraphicsContext2D();
-		mx = c.getWidth()/2;
-		my = c.getHeight()/2;
 
-		gc.clearRect(0,0,c.getWidth(),c.getHeight());
-		gc.strokeOval(jx*50+30,jy*50+10,60,60);
-
-		ap.getChildren().add(c);
 		return ap;
 	}
 
