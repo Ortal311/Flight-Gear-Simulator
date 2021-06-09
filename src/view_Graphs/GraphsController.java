@@ -69,13 +69,14 @@ public class GraphsController {
 
         timeStamp.addListener((o, ov, nv) -> {
             Platform.runLater(() -> {
-
                 series1.getData().add(new XYChart.Data<>(timeStamp.getValue().toString(), value.doubleValue()));
                 series2.getData().add(new XYChart.Data<>(timeStamp.getValue().toString(), valueCorrelate.doubleValue()));
-
-
             });
-
+            // note if we move the slider the condition will be T cuz it'll also go a bit backward
+            if(nv.doubleValue()<ov.doubleValue()){
+                series1.getData().clear();
+                series2.getData().clear();
+            }
         });
 
         chosenAttributeGraph.setCreateSymbols(false);

@@ -87,10 +87,12 @@ public class ViewModelController extends Observable implements Observer {
                 m.setVarivablesTOALG();//updating the date for the alg graph
 
         });
-        m.attribute1.bind(chosenAttribute);
-        m.attribute2.bind(correlateFeature);
+
+//        m.attribute1.bind(chosenAttribute);
+//        m.attribute2.bind(correlateFeature);
         chosenAttribute.addListener((o, ov, nv) -> {
-            // if((chosenAttribute.getValue()!=null)&& (correlateFeature.getValue() != null));
+            m.attribute1.bind(chosenAttribute);
+           // m.attribute2.bind(correlateFeature);
             if(xmlFile && algoFile && openedCSV)
                 m.setVarivablesNamesTOALG();
         });
@@ -119,9 +121,9 @@ public class ViewModelController extends Observable implements Observer {
          */
         valueAxis.setValue(ts_Anomal.getValueByTime(chosenAttribute.getValue(), time));
 
-        //  Init the name of the correlate attribute
-        correlateFeature.setValue(m.ad.getCorrelateFeature(chosenAttribute.getValue()));//need to be according to the ALG
-
+//        //  Init the name of the correlate attribute
+//        correlateFeature.setValue(m.ad.getCorrelateFeature(chosenAttribute.getValue()));//need to be according to the ALG
+        correlateFeature=getCorrelateFeature();
 
         //  Getting the col's number of the correlate attribute
         if (correlateFeature.getValue() != null) {
@@ -137,6 +139,11 @@ public class ViewModelController extends Observable implements Observer {
             y1.setValue(0);
             y2.setValue(0);
         }
+    }
+    public StringProperty getCorrelateFeature(){
+        //  Init the name of the correlate attribute
+        correlateFeature.setValue(m.ad.getCorrelateFeature(chosenAttribute.getValue()));//need to be according to the ALG
+        return correlateFeature;
     }
 
     //  Basic Functions- Buttons
@@ -169,7 +176,7 @@ public class ViewModelController extends Observable implements Observer {
                     System.err.println("wrong amount of columns - should be 42");
                 else{
                     m.setTimeSeries(ts_Anomal,ts_reg);
-
+                    //m.initData();
                 }
             } else {
                 //System.err.println("wrong file, choose csv file");

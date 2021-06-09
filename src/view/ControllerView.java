@@ -98,6 +98,8 @@ public class ControllerView extends Pane implements Observer {
 
 
 
+
+
         playerButtons.onPause.addListener((o, ov, nv) -> vmc.pause());
         playerButtons.onStop.addListener((o, ov, nv) -> vmc.stop());
         playerButtons.onRewind.addListener((o, ov, nv) -> vmc.rewind());
@@ -106,8 +108,14 @@ public class ControllerView extends Pane implements Observer {
         //  vmc.attributeList.addListener((ListChangeListener) change -> attributesList.lst.addAll(change.getList()));
 
         attributesList.alc.lv.setItems(vmc.attributeList);
+
+        //attributesList.alc.lv.
+
+
         graphs.selectedAttribute.bind(attributesList.alc.lv.getSelectionModel().selectedItemProperty());
+        //for the graph
         vmc.chosenAttribute.bind(attributesList.alc.lv.getSelectionModel().selectedItemProperty());
+
     }
 
     @Override
