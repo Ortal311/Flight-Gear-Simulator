@@ -102,9 +102,9 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
             }
         }
         ar=v;
-//        for(AnomalyReport a: v){
-//            System.out.println(a.description+"   "+a.timeStep);
-//        }
+        for(AnomalyReport a: v){
+            System.out.println(a.description+"   "+a.timeStep);
+        }
         return v;
     }
 

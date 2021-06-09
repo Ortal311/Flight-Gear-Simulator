@@ -7,12 +7,12 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.layout.AnchorPane;
 import viewModel.TimeSeries;
 
+import java.sql.Time;
 import java.util.*;
 
 import static algo.StatLib.*;
 
 public class ZScoreAlgorithm implements AnomalyDetector{
-
 	Vector<Float> tx;
 	HashMap<Integer, LinkedList<Float>> ZScoreMap;
 	HashMap<String, ArrayList<Float>> avgMap;
@@ -104,11 +104,19 @@ public class ZScoreAlgorithm implements AnomalyDetector{
 		return lst;
 	}
 
+	@Override
 	public AnchorPane paint() {
 		AnchorPane ap=new AnchorPane();
 
+		LineChart<Number,Number> regGraph=new LineChart<>(new NumberAxis(),new NumberAxis());
+		XYChart.Series<Number,Number>chosenAttribute=new XYChart.Series<>();
+		regGraph.getData().add(chosenAttribute);
+
+		regGraph.setPrefSize(230,230);
+		regGraph.setMinSize(230,230);
+		regGraph.setMaxSize(230,230);
+		ap.getChildren().add(regGraph);
 		return ap;
 	}
-
 
 }
