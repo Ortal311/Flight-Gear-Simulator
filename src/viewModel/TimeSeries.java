@@ -77,6 +77,29 @@ public class TimeSeries {
     public ArrayList<String> getAtts() {
         return atts;
     }
+
+    public float getMinFromAttribute(String val){
+        ArrayList<Float> lst= ts.get(val);
+
+        float minVal=ts.get(val).get(0);//get the val of the first timeStep
+
+        for(float f : lst){
+            if ((f < minVal))
+                minVal = f;
+        }
+        return minVal;
+    }
+    public float getMaxFromAttribute(String val){
+        ArrayList<Float> lst= ts.get(val);
+        float maxVal=0;
+        for(float f :lst){
+            if ((f > maxVal))
+                maxVal = f;
+        }
+        return maxVal;
+    }
+
+
     //    public List<String> getAttributes() {
 //        return new LinkedList<>(this.map.keySet());
 //    }

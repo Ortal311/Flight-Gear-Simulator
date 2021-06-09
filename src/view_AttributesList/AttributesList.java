@@ -15,7 +15,7 @@ public class AttributesList extends AnchorPane {
 
     public ObservableList lst;
     public StringProperty chosenAttribute;
-   public AttributesListController alc;
+    public AttributesListController alc;
 
     public AttributesList() {
         super();

@@ -22,15 +22,20 @@ import java.util.List;
 public class SimpleAnomalyDetector implements AnomalyDetector {
 
     ArrayList<CorrelatedFeatures> cf;
+    ArrayList<AnomalyReport> ar;
     public StringProperty attribute1 = new SimpleStringProperty();
     public StringProperty attribute2 = new SimpleStringProperty();
-    public DoubleProperty valAtt1X = new SimpleDoubleProperty();//static for line
-    public DoubleProperty valAtt2Y = new SimpleDoubleProperty();//static for line
-    public DoubleProperty vaAtt1Xend = new SimpleDoubleProperty();//static for line
-    public DoubleProperty vaAtt2Yend = new SimpleDoubleProperty();//static for line
+
+    public DoubleProperty valAtt1X = new SimpleDoubleProperty();//static for line- minValX
+    public DoubleProperty valAtt2Y = new SimpleDoubleProperty();//static for line- minValY
+    public DoubleProperty vaAtt1Xend = new SimpleDoubleProperty();//static for line -maxValX
+    public DoubleProperty vaAtt2Yend = new SimpleDoubleProperty();//static for line -maxValY
+
     public DoubleProperty valPointX = new SimpleDoubleProperty();
     public DoubleProperty valPointY = new SimpleDoubleProperty();
+
     public DoubleProperty timeStep = new SimpleDoubleProperty();
+
 
     public SimpleAnomalyDetector() {
         cf = new ArrayList<>();
@@ -47,7 +52,6 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
                 vals[i][j] = ts.getAttributeData(atts.get(i)).get(j);
             }
         }
-
 
         for (int i = 0; i < atts.size(); i++) {
             for (int j = i + 1; j < atts.size(); j++) {
@@ -97,85 +101,47 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
                 }
             }
         }
-
+        ar=v;
+//        for(AnomalyReport a: v){
+//            System.out.println(a.description+"   "+a.timeStep);
+//        }
         return v;
     }
 
     @Override
     public AnchorPane paint() {
         AnchorPane ap = new AnchorPane();
+        //line Chart, child of Anchor
         LineChart<Number, Number> sc = new LineChart<>(new NumberAxis(), new NumberAxis());
-        sc.setPrefHeight(230);
-        sc.setPrefWidth(230);
-        XYChart.Series series1 = new XYChart.Series();//points
+        sc.setPrefHeight(250);
+        sc.setPrefWidth(350);
+        XYChart.Series series1 = new XYChart.Series();//points for normal Flight
+        XYChart.Series series3 = new XYChart.Series();//points for Anomaly parts
         XYChart.Series series2 = new XYChart.Series();//line
-        sc.getData().addAll(series1, series2);
+        sc.getData().addAll(series1, series2,series3);
 
-
-//        series2.getData().add(new XYChart.Data(6.4, 15.6));
-
-      timeStep.addListener((o, ov, nv) -> {
-        // System.out.println("first:"+ valPointX.doubleValue()+" "+"second:"+valPointY.doubleValue() );
-            Platform.runLater(() -> {
-                series2.getData().add(new XYChart.Data(valAtt1X.doubleValue(), valAtt2Y.doubleValue()));//reg first point
-                series2.getData().add(new XYChart.Data(vaAtt1Xend.doubleValue(), vaAtt2Yend.doubleValue()));//reg sec point
-
-                series1.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue()));//points
+        attribute1.addListener((ob,oldV,newV)->{//to delete the old graph if attribute has changed
+            timeStep.addListener((o, ov, nv) -> {
+                Platform.runLater(() -> {
+                    series2.getData().add(new XYChart.Data(valAtt1X.doubleValue(), valAtt2Y.doubleValue()));//reg first point
+                    series2.getData().add(new XYChart.Data(vaAtt1Xend.doubleValue(), vaAtt2Yend.doubleValue()));//reg sec point
+                    if(nv.doubleValue()>ov.doubleValue()+30)
+                        series1.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue()));//points
+                });
             });
+            if(!newV.equals(oldV)){
+                series1.getData().clear();
+                series2.getData().clear();
+            }
         });
-
-//        series1.setName("Equities");
-
-//        series1.getData().add(new XYChart.Data(2.8, 33.6));
-//        series1.getData().add(new XYChart.Data(6.8, 23.6));
-
-
-//        series2.setName("Mutual funds");
 
         sc.setAnimated(false);
         sc.setCreateSymbols(true);
         ap.getChildren().add(sc);
         ap.getStylesheets().add("style.css");
 
-         paintLive(ap);
         return ap;
     }
-
-
-    public void paintLive(AnchorPane ap) {
-//        LineChart<Number, Number> sc = new LineChart<>(new NumberAxis(), new NumberAxis());
-//        sc.setPrefHeight(230);
-//        sc.setPrefWidth(230);
-//        XYChart.Series series1 = new XYChart.Series();//points
-//        XYChart.Series series2 = new XYChart.Series();//line
-//        sc.getData().addAll(series1, series2);
-//
-//        series2.getData().add(new XYChart.Data(valAtt1X.getValue(), valAtt2Y.getValue()));
-//        series2.getData().add(new XYChart.Data(vaAtt1Xend.getValue(), vaAtt2Yend.getValue()));
-////        series2.getData().add(new XYChart.Data(6.4, 15.6));
-//
-//        timeStep.addListener((o, ov, nv) -> {
-//            Platform.runLater(() -> {
-//                series1.getData().add(new XYChart.Data(valPointX.getValue(), valPointY.get()));
-//            });
-//        });
-//
-//        series1.setName("Equities");
-//
-//        series1.getData().add(new XYChart.Data(2.8, 33.6));
-//        series1.getData().add(new XYChart.Data(6.8, 23.6));
-//
-//
-//        series2.setName("Mutual funds");
-//
-//        sc.setAnimated(false);
-//        sc.setCreateSymbols(true);
-//        ap.getChildren().add(sc);
-//        ap.getStylesheets().add("style.css");
-    }
-
-
-
 
     public List<CorrelatedFeatures> getNormalModel() {
         return cf;
@@ -186,6 +152,8 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
             if (c.feature1.equals(attribute1))
                 return c.feature2;
         }
+        for (CorrelatedFeatures c : cf)
+            System.out.println("f1:  " + c.feature1 + "  f2:  " + c.feature2);
         return null;
     }
 
