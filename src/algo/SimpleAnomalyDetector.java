@@ -1,5 +1,11 @@
 package algo;
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
+import javafx.application.Platform;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -16,6 +22,15 @@ import java.util.List;
 public class SimpleAnomalyDetector implements AnomalyDetector {
 
     ArrayList<CorrelatedFeatures> cf;
+    public StringProperty attribute1 = new SimpleStringProperty();
+    public StringProperty attribute2 = new SimpleStringProperty();
+    public DoubleProperty valAtt1X = new SimpleDoubleProperty();//static for line
+    public DoubleProperty valAtt2Y = new SimpleDoubleProperty();//static for line
+    public DoubleProperty vaAtt1Xend = new SimpleDoubleProperty();//static for line
+    public DoubleProperty vaAtt2Yend = new SimpleDoubleProperty();//static for line
+    public DoubleProperty valPointX = new SimpleDoubleProperty();
+    public DoubleProperty valPointY = new SimpleDoubleProperty();
+    public DoubleProperty timeStep = new SimpleDoubleProperty();
 
     public SimpleAnomalyDetector() {
         cf = new ArrayList<>();
@@ -82,51 +97,85 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
                 }
             }
         }
+
         return v;
     }
 
     @Override
     public AnchorPane paint() {
-        AnchorPane ap=new AnchorPane();
-
-//        Canvas c = new Canvas();
-//        c.setWidth(150);
-//        c.setHeight(150);
-//        GraphicsContext gc= c.getGraphicsContext2D();
-//        double mx, my;
-//        double jx = 0, jy = 0;
-//        mx= c.getWidth()/2;
-//        my=c.getHeight()/2;
-//
-//        gc.clearRect(0,0,c.getWidth(),c.getHeight());
-//        gc.strokeOval(jx*50+30,jy*50+10,60,60);
-//        ap.getChildren().add(c);
-
-        LineChart<Number,Number> sc = new LineChart<>(new NumberAxis(),new NumberAxis());
+        AnchorPane ap = new AnchorPane();
+        LineChart<Number, Number> sc = new LineChart<>(new NumberAxis(), new NumberAxis());
         sc.setPrefHeight(230);
         sc.setPrefWidth(230);
-        XYChart.Series series1 = new XYChart.Series();
-//        series1.setName("Equities");
-        series1.getData().add(new XYChart.Data(4.2, 193.2));
-        series1.getData().add(new XYChart.Data(2.8, 33.6));
-        series1.getData().add(new XYChart.Data(6.8, 23.6));
+        XYChart.Series series1 = new XYChart.Series();//points
+        XYChart.Series series2 = new XYChart.Series();//line
+        sc.getData().addAll(series1, series2);
 
-        XYChart.Series series2 = new XYChart.Series();
+
+//        series2.getData().add(new XYChart.Data(6.4, 15.6));
+
+      timeStep.addListener((o, ov, nv) -> {
+        // System.out.println("first:"+ valPointX.doubleValue()+" "+"second:"+valPointY.doubleValue() );
+            Platform.runLater(() -> {
+                series2.getData().add(new XYChart.Data(valAtt1X.doubleValue(), valAtt2Y.doubleValue()));//reg first point
+                series2.getData().add(new XYChart.Data(vaAtt1Xend.doubleValue(), vaAtt2Yend.doubleValue()));//reg sec point
+
+                series1.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue()));//points
+            });
+        });
+
+//        series1.setName("Equities");
+
+//        series1.getData().add(new XYChart.Data(2.8, 33.6));
+//        series1.getData().add(new XYChart.Data(6.8, 23.6));
+
+
 //        series2.setName("Mutual funds");
-        series2.getData().add(new XYChart.Data(5.2, 229.2));
-        series2.getData().add(new XYChart.Data(2.4, 37.6));
-        series2.getData().add(new XYChart.Data(6.4, 15.6));
 
         sc.setAnimated(false);
         sc.setCreateSymbols(true);
-
-        sc.getData().addAll(series1, series2);
-
         ap.getChildren().add(sc);
         ap.getStylesheets().add("style.css");
 
+         paintLive(ap);
         return ap;
     }
+
+
+    public void paintLive(AnchorPane ap) {
+//        LineChart<Number, Number> sc = new LineChart<>(new NumberAxis(), new NumberAxis());
+//        sc.setPrefHeight(230);
+//        sc.setPrefWidth(230);
+//        XYChart.Series series1 = new XYChart.Series();//points
+//        XYChart.Series series2 = new XYChart.Series();//line
+//        sc.getData().addAll(series1, series2);
+//
+//        series2.getData().add(new XYChart.Data(valAtt1X.getValue(), valAtt2Y.getValue()));
+//        series2.getData().add(new XYChart.Data(vaAtt1Xend.getValue(), vaAtt2Yend.getValue()));
+////        series2.getData().add(new XYChart.Data(6.4, 15.6));
+//
+//        timeStep.addListener((o, ov, nv) -> {
+//            Platform.runLater(() -> {
+//                series1.getData().add(new XYChart.Data(valPointX.getValue(), valPointY.get()));
+//            });
+//        });
+//
+//        series1.setName("Equities");
+//
+//        series1.getData().add(new XYChart.Data(2.8, 33.6));
+//        series1.getData().add(new XYChart.Data(6.8, 23.6));
+//
+//
+//        series2.setName("Mutual funds");
+//
+//        sc.setAnimated(false);
+//        sc.setCreateSymbols(true);
+//        ap.getChildren().add(sc);
+//        ap.getStylesheets().add("style.css");
+    }
+
+
+
 
     public List<CorrelatedFeatures> getNormalModel() {
         return cf;

@@ -28,7 +28,7 @@ public class ViewModelController extends Observable implements Observer {
 
     public ObservableList<String> attributeList;
     public int numberOfSpecAttribute, numberOfCorrelateAttribute;
-    public Boolean xmlFile, csvFile, algoFile;
+    public Boolean xmlFile, csvFile, algoFile,openedCSV=false;
 
     public ViewModelController(Model m) {
         this.m = m;
@@ -83,7 +83,19 @@ public class ViewModelController extends Observable implements Observer {
 
         timeStamp.addListener((o, ov, nv) -> {
             updateDisplayVariables(nv.intValue());
+            if( xmlFile && algoFile && openedCSV);
+                m.setVarivablesTOALG();//updating the date for the alg graph
+
         });
+        m.attribute1.bind(chosenAttribute);
+        m.attribute2.bind(correlateFeature);
+        chosenAttribute.addListener((o, ov, nv) -> {
+            // if((chosenAttribute.getValue()!=null)&& (correlateFeature.getValue() != null));
+            if(xmlFile && algoFile && openedCSV)
+                m.setVarivablesNamesTOALG();
+        });
+
+
     }
 
     public void updateDisplayVariables(int time) {
@@ -99,7 +111,6 @@ public class ViewModelController extends Observable implements Observer {
         pitch.setValue(ts_Anomal.getValueByTime(m.attributeMap.get("pitch").associativeName, time));
         roll.setValue(ts_Anomal.getValueByTime(m.attributeMap.get("roll").associativeName, time));
         yaw.setValue(ts_Anomal.getValueByTime(m.attributeMap.get("yaw").associativeName, time));
-
         /*
             To update the specific chosen attribute
             getting the number of the chosen attribute
@@ -107,19 +118,17 @@ public class ViewModelController extends Observable implements Observer {
             updating by binding the value of the chosen attribute
          */
         valueAxis.setValue(ts_Anomal.getValueByTime(chosenAttribute.getValue(), time));
-        x1.setValue(ts_reg.getValueByTime(chosenAttribute.getValue(), 0));
-        x2.setValue(ts_reg.getValueByTime(chosenAttribute.getValue(), 1000));
 
         //  Init the name of the correlate attribute
-        correlateFeature.setValue(m.ad.getCorrelateFeature(chosenAttribute.getValue()));
+        correlateFeature.setValue(m.ad.getCorrelateFeature(chosenAttribute.getValue()));//need to be according to the ALG
+
 
         //  Getting the col's number of the correlate attribute
         if (correlateFeature.getValue() != null) {
             //numberOfCorrelateAttribute=ts.getIndexOfAttribute(correlateFeature.getValue());
             //updating the value of the correlate attribute
             valueCorrelate.setValue(ts_Anomal.getValueByTime(correlateFeature.getValue(), time));
-            y1.setValue(ts_reg.getValueByTime(chosenAttribute.getValue(), 0));
-            y2.setValue(ts_reg.getValueByTime(chosenAttribute.getValue(), 1000));
+
 
         } else {
             numberOfCorrelateAttribute = 0;
@@ -158,8 +167,10 @@ public class ViewModelController extends Observable implements Observer {
                 //if (ts.cols.size() != 42)
                 if (ts_reg.atts.size() != 42)
                     System.err.println("wrong amount of columns - should be 42");
-                else
-                    m.setTimeSeries(ts_Anomal);
+                else{
+                    m.setTimeSeries(ts_Anomal,ts_reg);
+
+                }
             } else {
                 //System.err.println("wrong file, choose csv file");
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -175,6 +186,8 @@ public class ViewModelController extends Observable implements Observer {
             fd.setValue("0");
             this.csvFile = true;
         }
+        openedCSV=true;
+
     }
 
     public void openXMLFile() {
@@ -192,7 +205,6 @@ public class ViewModelController extends Observable implements Observer {
             alert.showAndWait();
         }
     }
-
     public void pause() {
         this.m.pauseFile();
     }
@@ -212,8 +224,10 @@ public class ViewModelController extends Observable implements Observer {
     public void loadAnomalyDetector() {
         algoFile = m.loadAnomalyDetector();
 
-        if(algoFile)
-            m.getPainter();
+//        if(algoFile)
+//        {
+//            m.getPainter();
+//        }
     }
 
     public void speedPlay() {

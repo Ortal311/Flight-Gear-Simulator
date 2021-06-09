@@ -96,6 +96,8 @@ public class ControllerView extends Pane implements Observer {
             }
         });
 
+
+
         playerButtons.onPause.addListener((o, ov, nv) -> vmc.pause());
         playerButtons.onStop.addListener((o, ov, nv) -> vmc.stop());
         playerButtons.onRewind.addListener((o, ov, nv) -> vmc.rewind());
