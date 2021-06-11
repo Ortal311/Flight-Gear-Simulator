@@ -21,12 +21,12 @@ public class ViewModelController extends Observable implements Observer {
     public TimeSeries ts_reg, ts_Anomal;    //ts-reg
     public DoubleProperty timeStamp, throttle, rudder, aileron,
             elevators, sliderTime, choiceSpeed, pitch, roll, yaw, timeStampGraph;
-    public DoubleProperty valueAxis, valueCorrelate, x1, x2, y1, y2;
+    public DoubleProperty valueAxis, valueCorrelate;
     public StringProperty timeFlight, chosenAttribute, correlateFeature, altimeter, airSpeed, fd;
     public IntegerProperty sizeTS;
-//    public BooleanProperty graphActivate;
 
     public ObservableList<String> attributeList;
+
     public int numberOfSpecAttribute, numberOfCorrelateAttribute;
     public Boolean xmlFile, csvFile, algoFile,openedCSV=false;
 
@@ -51,10 +51,7 @@ public class ViewModelController extends Observable implements Observer {
 
         valueAxis = new SimpleDoubleProperty();
         valueCorrelate = new SimpleDoubleProperty();
-        x1 = new SimpleDoubleProperty();
-        x2 = new SimpleDoubleProperty();
-        y1 = new SimpleDoubleProperty();
-        y2 = new SimpleDoubleProperty();
+
         timeStampGraph = new SimpleDoubleProperty();
 
         timeFlight = new SimpleStringProperty();
@@ -88,11 +85,8 @@ public class ViewModelController extends Observable implements Observer {
 
         });
 
-//        m.attribute1.bind(chosenAttribute);
-//        m.attribute2.bind(correlateFeature);
         chosenAttribute.addListener((o, ov, nv) -> {
             m.attribute1.bind(chosenAttribute);
-           // m.attribute2.bind(correlateFeature);
             if(xmlFile && algoFile && openedCSV)
                 m.setVarivablesNamesTOALG();
         });
@@ -125,23 +119,20 @@ public class ViewModelController extends Observable implements Observer {
 
         //  Getting the col's number of the correlate attribute
         if (correlateFeature.getValue() != null) {
-            //numberOfCorrelateAttribute=ts.getIndexOfAttribute(correlateFeature.getValue());
-            //updating the value of the correlate attribute
             valueCorrelate.setValue(ts_Anomal.getValueByTime(correlateFeature.getValue(), time));
-
 
         } else {
             numberOfCorrelateAttribute = 0;
             valueCorrelate.setValue(0);
-
-            y1.setValue(0);
-            y2.setValue(0);
         }
     }
     public StringProperty getCorrelateFeature(){
         //  Init the name of the correlate attribute
         correlateFeature.setValue(m.ad.getCorrelateFeature(chosenAttribute.getValue()));//need to be according to the ALG
         return correlateFeature;
+    }
+    public ListProperty<Float>getDataOfAtt(String attribute){
+        return ts_Anomal.getDataOfAttUntilIndex(attribute,timeStamp.intValue());
     }
 
     //  Basic Functions- Buttons
@@ -153,7 +144,6 @@ public class ViewModelController extends Observable implements Observer {
         // File chosen = fc.showOpenDialog(null);
         List<File> chosen = fc.showOpenMultipleDialog(null);
         if (chosen != null && chosen.size() == 2) {
-            // System.out.println("the name of the file is:" + chosen.getName());
             System.out.println("the name of the file is:" + chosen.get(0).getName());
             System.out.println("the name of the file is:" + chosen.get(1).getName());
 

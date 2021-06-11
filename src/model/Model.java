@@ -75,9 +75,10 @@ public class Model extends Observable implements SimulatorModel {
         new Thread(() -> initData()).start();//needs if to init data at first time
         getNormal = ad.getNormalModel();
 
-
-//        zScore=new ZScoreAlgorithm();
-//        zScore.learnNormal();
+        zScore=new ZScoreAlgorithm();
+        zScore.learnNormal(ts_reg);
+        System.out.println("before detect Zscore");
+        zScore.detect(ts_Anomal);
 
 
         if (ad != null)
@@ -90,7 +91,7 @@ public class Model extends Observable implements SimulatorModel {
         setVarivablesNamesTOALG();
     }
 
-    public void setVarivablesTOALG() {//listen to timeStep and init reg
+    public void setVarivablesTOALG() {//listen to timeStep and init line chart of reg
 
         valPointX.setValue(ts_Anomal.getValueByTime(attribute1.getValue(), timeStep.intValue()));
         if (attribute2.getValue() != null)
@@ -102,6 +103,9 @@ public class Model extends Observable implements SimulatorModel {
         ad.timeStep.bind(timeStep);
         ad.valPointX.bind(valPointX);
         ad.valPointY.bind(valPointY);
+
+        zScore.timeStep.bind(timeStep);
+
     }
 
     public void setVarivablesNamesTOALG() {//Listen to chosen attribute
@@ -141,6 +145,21 @@ public class Model extends Observable implements SimulatorModel {
         ad.vaAtt1Xend.bind(vaAtt1Xend);
         ad.valAtt2Y.bind(valAtt2Y);
         ad.vaAtt2Yend.bind(vaAtt2Yend);
+
+        zScore.Attribute.bind(attribute1);
+
+    }
+    public Callable<AnchorPane> getPainter() {
+        //reg
+//        ad=new SimpleAnomalyDetector();
+
+//        APref = ad.paint();
+//
+//        return () -> ad.paint();
+
+        //zScore
+//        zScore=new ZScoreAlgorithm();
+        return ()->zScore.paint();
 
     }
 
@@ -247,10 +266,7 @@ public class Model extends Observable implements SimulatorModel {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-//            timeStep.addListener((o, ov, nv) -> {
-//                if (APref!=null)
-//                    ad.paintLive(APref);
-//            });
+
         }
     }
 
@@ -361,19 +377,7 @@ public class Model extends Observable implements SimulatorModel {
         }
     }
 
-    public Callable<AnchorPane> getPainter() {
-        //reg
-//        ad=new SimpleAnomalyDetector();
 
-        APref = ad.paint();
-
-        return () -> ad.paint();
-
-
-        //zScore
-//        zScore=new ZScoreAlgorithm();
-//        if(zScore!=null)return ()->zScore.paint();
-    }
 
 
     public void writeToXML(FlightSetting settings) throws IOException {

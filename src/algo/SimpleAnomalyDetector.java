@@ -55,6 +55,8 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
 
     public DoubleProperty timeStep = new SimpleDoubleProperty();
 
+    public List<Double> collectedDataUntilChange=new ArrayList<>();
+
 
     public SimpleAnomalyDetector() {
         cf = new ArrayList<>();
@@ -76,11 +78,9 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
             for (int j = i + 1; j < atts.size(); j++) {
                 float p = StatLib.pearson(vals[i], vals[j]);
                 if (Math.abs(p) > 0.9) {
-
                     Point ps[] = toPoints(ts.getAttributeData(atts.get(i)), ts.getAttributeData(atts.get(j)));
                     Line lin_reg = StatLib.linear_reg(ps);
                     float threshold = findThreshold(ps, lin_reg) * 1.1f; // 10% increase
-
                     CorrelatedFeatures c = new CorrelatedFeatures(atts.get(i), atts.get(j), p, lin_reg, threshold);
 
                     cf.add(c);
@@ -144,39 +144,43 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
 
         attribute1.addListener((ob, oldV, newV) -> {//to delete the old graph if attribute has changed
             timeStep.addListener((o, ov, nv) -> {
-                Platform.runLater(() -> {
-                    if (!anomalyAndTimeStep.containsKey(attribute1.getValue())) {
-                        if (nv.doubleValue() > ov.doubleValue() + 30) {
-                            series1.getData().remove(0);
-                        }
-                        series1.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue()));//points
-                        series2.getData().add(new XYChart.Data(valAtt1X.doubleValue(), valAtt2Y.doubleValue()));//reg first point
-                        series2.getData().add(new XYChart.Data(vaAtt1Xend.doubleValue(), vaAtt2Yend.doubleValue()));//reg sec point
+                    Platform.runLater(() -> {
+                            if (!anomalyAndTimeStep.containsKey(attribute1.getValue())) {
+//                        if (nv.doubleValue() > ov.doubleValue() + 30) {
+//                            series1.getData().remove(0);
+//                        }
+                                series1.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue()));//points
+                                series2.getData().add(new XYChart.Data(valAtt1X.doubleValue(), valAtt2Y.doubleValue()));//reg first point
+                                series2.getData().add(new XYChart.Data(vaAtt1Xend.doubleValue(), vaAtt2Yend.doubleValue()));//reg sec point
 
-                    } else {
-                        if (!anomalyAndTimeStep.get(attribute1.getValue()).contains(timeStep.intValue())) {
-                            series1.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue()));//points
+                            } else {
+                                if (!anomalyAndTimeStep.get(attribute1.getValue()).contains(timeStep.intValue())) {
+                                    series1.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue()));//points
 
-                            series2.getData().add(new XYChart.Data(valAtt1X.doubleValue(), valAtt2Y.doubleValue()));//reg first point
-                            series2.getData().add(new XYChart.Data(vaAtt1Xend.doubleValue(), vaAtt2Yend.doubleValue()));//reg sec point
-                        } else {
-                            // sc.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
+                                    series2.getData().add(new XYChart.Data(valAtt1X.doubleValue(), valAtt2Y.doubleValue()));//reg first point
+                                    series2.getData().add(new XYChart.Data(vaAtt1Xend.doubleValue(), vaAtt2Yend.doubleValue()));//reg sec point
+                                } else {
+                                    // sc.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
 
-                            series3.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue()));//points of anomaly
-                            series2.getData().add(new XYChart.Data(valAtt1X.doubleValue(), valAtt2Y.doubleValue()));//reg first point
-                            series2.getData().add(new XYChart.Data(vaAtt1Xend.doubleValue(), vaAtt2Yend.doubleValue()));//reg sec point
+                                    series3.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue()));//points of anomaly
+                                    series2.getData().add(new XYChart.Data(valAtt1X.doubleValue(), valAtt2Y.doubleValue()));//reg first point
+                                    series2.getData().add(new XYChart.Data(vaAtt1Xend.doubleValue(), vaAtt2Yend.doubleValue()));//reg sec point
 
-                            //  sc.setBackground(null);
-                        }
-
-                    }
-                });
+                                    //  sc.setBackground(null);
+                                }
+                            }
+                    });
             });
             if (!newV.equals(oldV)) {//if change the attribute
                 series3.getData().clear();
                 series1.getData().clear();
                 series2.getData().clear();
             }
+//            if(attribute2.getValue() == null){
+//                series3.getData().clear();
+//                series1.getData().clear();
+//                series2.getData().clear();
+//            }
         });
 
         sc.setAnimated(false);
@@ -196,8 +200,8 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
             if (c.feature1.equals(attribute1))
                 return c.feature2;
         }
-        for (CorrelatedFeatures c : cf)
-            System.out.println("f1:  " + c.feature1 + "  f2:  " + c.feature2);
+//        for (CorrelatedFeatures c : cf)
+//            System.out.println("f1:  " + c.feature1 + "  f2:  " + c.feature2);
         return null;
     }
 

@@ -1,4 +1,9 @@
 package algo;
+import javafx.application.Platform;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.chart.LineChart;
@@ -14,8 +19,18 @@ import static algo.StatLib.*;
 
 public class ZScoreAlgorithm implements AnomalyDetector{
 	Vector<Float> tx;
-	HashMap<Integer, LinkedList<Float>> ZScoreMap;
-	HashMap<String, ArrayList<Float>> avgMap;
+	//HashMap<Integer, LinkedList<Float>> ZScoreMap;//original
+	public HashMap<Integer, ArrayList<Float>> ZScoreMap;
+
+	//HashMap<String,LinkedList<Float>>ZScoreReg=new HashMap<>();
+	public HashMap<String,ArrayList<Float>>ZScoreReg=new HashMap<>();
+	//HashMap<String,LinkedList<Integer>>ZScoreAnomaly=new HashMap<>();
+	public HashMap<String,ArrayList<Integer>>ZScoreAnomaly=new HashMap<>();
+
+	public HashMap<String, ArrayList<Float>> avgMap;
+
+	public StringProperty Attribute = new SimpleStringProperty();
+	public DoubleProperty timeStep = new SimpleDoubleProperty();
 
 	public ZScoreAlgorithm() {
 		this.tx = new Vector<>();
@@ -35,7 +50,7 @@ public class ZScoreAlgorithm implements AnomalyDetector{
 
 	public float calcZScore(List<Float> col, String attribute)
 	{
-		float avg, sigma;
+		float avg, sigma, zScore, var;
 		float[] arrFloat;
 		int colSize = col.size();
 		float x;
@@ -47,19 +62,38 @@ public class ZScoreAlgorithm implements AnomalyDetector{
 		x = col.get(colSize - 1);
 		if(colSize == 1) {
 			arrFloat = ListToArr(col);
-			avgMap.get(attribute).add(StatLib.avg(arrFloat));
 			return Math.abs((x - StatLib.avg(arrFloat))) / StatLib.var(arrFloat);
 		}
 
 		arrFloat = ListToArr(col.subList(0, col.size() - 1));
-		avg = (avgMap.get(attribute).get(colSize - 2) * (colSize) + x) / (colSize + 1);
-		avgMap.get(attribute).add(avg);
-		sigma = (float)Math.sqrt(StatLib.var(arrFloat));
+		avg = StatLib.avg(arrFloat);
+		var = StatLib.var(arrFloat);
 
-		return Math.abs((x - avg)) / sigma;
+		if(var < 0)
+			return 0;
+		sigma = (float)Math.sqrt(var);
+
+		if(sigma == 0)
+			return 0;
+		zScore = Math.abs(x - avg) / sigma;
+
+		System.out.println("zScore: " + zScore + " " + "attribute: " + attribute);
+		return zScore;
 	}
 
+
 	public float argMax(LinkedList<Float> z)
+	{
+		float max=0;
+		for(int i=0; i < z.size(); i++)
+		{
+			if(max<z.get(i))
+				max=z.get(i);
+		}
+		return max;
+	}
+
+	public float argMax(ArrayList<Float> z)
 	{
 		float max=0;
 		for(int i=0; i < z.size(); i++) {
@@ -72,7 +106,8 @@ public class ZScoreAlgorithm implements AnomalyDetector{
 	@Override
 	public void learnNormal(TimeSeries ts) {
 		int index = 0;
-		LinkedList<Float> zScored = new LinkedList<>();
+		//LinkedList<Float> zScored = new LinkedList<>();
+		ArrayList<Float>zScored = new ArrayList<>();
 		String attribute;
 
 		for(ArrayList<Float> col: ts.tsNum.values()) {
@@ -82,13 +117,16 @@ public class ZScoreAlgorithm implements AnomalyDetector{
 			for(int j = 0; j < col.size(); j++) {
 				zScored.add(calcZScore(col.subList(0, j), attribute));
 			}
-
 			tx.add(argMax(zScored));
+			this.ZScoreReg.put(attribute,zScored);
 			this.ZScoreMap.put(index++, zScored);
+
 		}
+
 	}
 
 	public List<AnomalyReport> detect(TimeSeries data) {
+		System.out.println("inside begging of detect Zscore 1");
 		List<AnomalyReport> lst = new LinkedList<>();
 		String attribute;
 
@@ -98,6 +136,15 @@ public class ZScoreAlgorithm implements AnomalyDetector{
 			for(int indexTime = 0; indexTime < col.size(); indexTime++) {
 				if (calcZScore(col.subList(0, indexTime), attribute) > tx.get(indexCol)) {
 					lst.add(new AnomalyReport(attribute, indexTime));
+					System.out.println("was inside detect ZScore");
+					System.out.println(attribute+"  "+indexCol);
+
+					if(!ZScoreAnomaly.containsKey(attribute)){
+						ZScoreAnomaly.put(attribute,new ArrayList<>());
+						ZScoreAnomaly.get(attribute).add(indexTime);
+					}
+					else
+						ZScoreAnomaly.get(attribute).add(indexTime);
 				}
 			}
 		}
@@ -106,16 +153,53 @@ public class ZScoreAlgorithm implements AnomalyDetector{
 
 	@Override
 	public AnchorPane paint() {
-		AnchorPane ap=new AnchorPane();
+		AnchorPane ap = new AnchorPane();
+		//line Chart, child of Anchor
+		LineChart<Number, Number> sc = new LineChart<>(new NumberAxis(), new NumberAxis());
 
-		LineChart<Number,Number> regGraph=new LineChart<>(new NumberAxis(),new NumberAxis());
-		XYChart.Series<Number,Number>chosenAttribute=new XYChart.Series<>();
-		regGraph.getData().add(chosenAttribute);
 
-		regGraph.setPrefSize(230,230);
-		regGraph.setMinSize(230,230);
-		regGraph.setMaxSize(230,230);
-		ap.getChildren().add(regGraph);
+
+		sc.setPrefHeight(250);
+		sc.setPrefWidth(350);
+		XYChart.Series line = new XYChart.Series();
+		sc.getData().add(line);
+
+		Attribute.addListener((ob, oldV, newV) -> {//to delete the old graph if attribute has changed
+			timeStep.addListener((o, ov, nv) -> {
+				Platform.runLater(() -> {
+
+					Float val= ZScoreReg.get(Attribute.getValue()).get(timeStep.getValue().intValue());
+
+
+					if ((ZScoreAnomaly.size()!=0)&&!ZScoreAnomaly.containsKey(Attribute.getValue())) {
+//                        if (nv.doubleValue() > ov.doubleValue() + 30) {
+//                            series1.getData().remove(0);
+//                        }
+						//line.getData().add(new XYChart.Data(ZScoreReg.get(Attribute).get(timeStep.intValue()),timeStep.getValue()));
+
+					} else {
+						System.out.println(timeStep.intValue());
+						System.out.println("the attribute is: "+Attribute.getValue().toString());
+						System.out.println("the value of Zscore   "+ZScoreReg.get(Attribute.getValue()).get(timeStep.getValue().intValue()).doubleValue());
+
+						System.out.println("the val is   "+val);
+						System.out.println("the val *10 is:   "+(100*val));
+
+							line.getData().add(new XYChart.Data<>(timeStep.getValue(),ZScoreReg.get(Attribute.getValue().toString()).get(timeStep.intValue())));
+					}
+				});
+			});
+			if (!newV.equals(oldV)) {//if change the attribute
+				line.getData().clear();
+//
+			}
+		});
+
+		sc.setAnimated(false);
+
+		sc.setCreateSymbols(false);
+
+		ap.getChildren().add(sc);
 		return ap;
 	}
 

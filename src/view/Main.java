@@ -33,7 +33,7 @@ public class Main extends Application {
 
         FXMLLoader fxl = new FXMLLoader();
         Parent root = fxl.load(getClass().getResource("sample.fxml").openStream());
-        primaryStage.setTitle("Hello World");
+        primaryStage.setTitle("Flight Gear Simulator");
         ControllerView controllerView = fxl.getController();
         controllerView.init(vmc);
 

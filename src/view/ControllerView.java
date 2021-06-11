@@ -34,6 +34,7 @@ public class ControllerView extends Pane implements Observer {
     @FXML
     AnchorPane adAnchorePane;
 
+
     ViewModelController vmc;
 
     void init(ViewModelController vmc) {
@@ -68,10 +69,7 @@ public class ControllerView extends Pane implements Observer {
         graphs.timeStamp.bind(vmc.timeStamp);
         graphs.graphSpeed.bind(vmc.choiceSpeed);
         graphs.sizeTS.setValue(vmc.sizeTS.getValue());
-        graphs.x1.bind(vmc.x1);
-        graphs.x2.bind(vmc.x2);
-        graphs.y1.bind(vmc.y1);
-        graphs.y2.bind(vmc.y2);
+        graphs.correlatedAttribute.setValue(vmc.correlateFeature.getValue());
 
         timeBoard.airSpeed.bind(vmc.airSpeed);
         timeBoard.altimeter.bind(vmc.altimeter);
@@ -87,6 +85,8 @@ public class ControllerView extends Pane implements Observer {
         playerButtons.onOpenXML.addListener((o, ov, nv) -> vmc.openXMLFile());
         playerButtons.onPlay.addListener((o, ov, nv) -> vmc.play());
 
+        //graphs.DataOfAttUntilIndex.bind(vmc.getDataOfAtt());
+
         playerButtons.onAnomalyDetector.addListener((o, ov, nv) -> {
             vmc.loadAnomalyDetector();
             try {
@@ -95,10 +95,6 @@ public class ControllerView extends Pane implements Observer {
                 e.printStackTrace();
             }
         });
-
-
-
-
 
         playerButtons.onPause.addListener((o, ov, nv) -> vmc.pause());
         playerButtons.onStop.addListener((o, ov, nv) -> vmc.stop());
@@ -109,14 +105,9 @@ public class ControllerView extends Pane implements Observer {
 
         attributesList.alc.lv.setItems(vmc.attributeList);
 
-        //attributesList.alc.lv.
-
-
         graphs.selectedAttribute.bind(attributesList.alc.lv.getSelectionModel().selectedItemProperty());
         graphs.correlatedAttribute.bind(vmc.correlateFeature);
-        //for the graph
         vmc.chosenAttribute.bind(attributesList.alc.lv.getSelectionModel().selectedItemProperty());
-
     }
 
     @Override

@@ -35,11 +35,16 @@ public class MyJoystickController {
     public void paint()
     {
         GraphicsContext gc= joystick.getGraphicsContext2D();
+        GraphicsContext gc2=joystick.getGraphicsContext2D();
         mx= joystick.getWidth()/2;
         my=joystick.getHeight()/2;
 
         gc.clearRect(0,0,joystick.getWidth(),joystick.getHeight());
         gc.strokeOval(jx.doubleValue()*50+30,jy.doubleValue()*50+10,60,60);
+        gc.fillOval(jx.doubleValue()*50+30,jy.doubleValue()*50+10,60,60);
+        gc2.strokeOval(50,50,30,30);
+
+
 
 //        gc.setFill(Color.GREEN);
 //        gc.setStroke(Color.BLUE);
