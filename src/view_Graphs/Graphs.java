@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class Graphs extends AnchorPane {
     public DoubleProperty lineChart;//categoryAxis,numberAxis,
-    public StringProperty selectedAttribute;
+    public StringProperty selectedAttribute,correlatedAttribute;
     public DoubleProperty value, valueCorrelate, graphSpeed, timeStamp, x1, y1, x2, y2;
     public IntegerProperty sizeTS;
 
@@ -21,6 +21,7 @@ public class Graphs extends AnchorPane {
         FXMLLoader fxl = new FXMLLoader();
 
         selectedAttribute = new SimpleStringProperty();
+        correlatedAttribute=new SimpleStringProperty();
         value = new SimpleDoubleProperty();
         valueCorrelate = new SimpleDoubleProperty();
         graphSpeed = new SimpleDoubleProperty();

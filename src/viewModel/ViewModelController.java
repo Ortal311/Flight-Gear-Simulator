@@ -96,8 +96,6 @@ public class ViewModelController extends Observable implements Observer {
             if(xmlFile && algoFile && openedCSV)
                 m.setVarivablesNamesTOALG();
         });
-
-
     }
 
     public void updateDisplayVariables(int time) {

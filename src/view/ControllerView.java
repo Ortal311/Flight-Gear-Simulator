@@ -113,6 +113,7 @@ public class ControllerView extends Pane implements Observer {
 
 
         graphs.selectedAttribute.bind(attributesList.alc.lv.getSelectionModel().selectedItemProperty());
+        graphs.correlatedAttribute.bind(vmc.correlateFeature);
         //for the graph
         vmc.chosenAttribute.bind(attributesList.alc.lv.getSelectionModel().selectedItemProperty());
 

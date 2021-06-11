@@ -27,13 +27,11 @@ public class Model extends Observable implements SimulatorModel {
 
     public Socket socket;
     public PrintWriter out;
-    public TimeSeries ts_Anomal,ts_reg;
+    public TimeSeries ts_Anomal, ts_reg;
     public Options op = new Options();
     Thread displaySetting;
     public Map<String, Attribute> attributeMap;
     public FlightSetting properties;
-    // static double time = 0;
-//    private double playSpeed = 100;
     private double time = 0;
     private volatile boolean pause = false;
     private boolean stop = false;
@@ -47,47 +45,77 @@ public class Model extends Observable implements SimulatorModel {
     public AnchorPane APref;
 
     List<CorrelatedFeatures> getNormal;
-    public StringProperty attribute1=new SimpleStringProperty();
-    public StringProperty attribute2=new SimpleStringProperty();
 
-    public DoubleProperty valAtt1X=new SimpleDoubleProperty();
-    public DoubleProperty vaAtt1Xend=new SimpleDoubleProperty();
+    public StringProperty attribute1 = new SimpleStringProperty();
+    public StringProperty attribute2 = new SimpleStringProperty();
 
-    public DoubleProperty valAtt2Y=new SimpleDoubleProperty();
-    public DoubleProperty vaAtt2Yend=new SimpleDoubleProperty();
+    public DoubleProperty valAtt1X = new SimpleDoubleProperty();
+    public DoubleProperty vaAtt1Xend = new SimpleDoubleProperty();
 
-    public DoubleProperty timeStep=new SimpleDoubleProperty();
+    public DoubleProperty valAtt2Y = new SimpleDoubleProperty();
+    public DoubleProperty vaAtt2Yend = new SimpleDoubleProperty();
 
-    public DoubleProperty valPointX=new SimpleDoubleProperty();
-    public DoubleProperty valPointY=new SimpleDoubleProperty();
+    public DoubleProperty timeStep = new SimpleDoubleProperty();
+
+    public DoubleProperty valPointX = new SimpleDoubleProperty();
+    public DoubleProperty valPointY = new SimpleDoubleProperty();
 
     public Line regLineForCorrelateAttribute;
 
-    public void setVarivablesTOALG(){//listen to timeStep
 
-        valPointX.setValue(ts_Anomal.getValueByTime(attribute1.getValue(),timeStep.intValue()));
-        if(attribute2.getValue()!=null)
-            valPointY.setValue(ts_Anomal.getValueByTime(attribute2.getValue(),timeStep.intValue()));
+    public Boolean loadAnomalyDetector() {//String input
+//        URLClassLoader urlClassLoader= URLClassLoader.newInstance(new URL[]{new URL("file://"+input)});
+//        Class<?>c=urlClassLoader.loadClass(urlClassLoader.getName());
+//        SimpleAnomalyDetector ad=(SimpleAnomalyDetector) c.newInstance();
+
+        //
+        ad = new SimpleAnomalyDetector();
+        ad.learnNormal(ts_reg);
+        ad.detect(ts_Anomal);
+        new Thread(() -> initData()).start();//needs if to init data at first time
+        getNormal = ad.getNormalModel();
+
+
+//        zScore=new ZScoreAlgorithm();
+//        zScore.learnNormal();
+
+
+        if (ad != null)
+            return true;
+        return false;
+    }
+
+    public void initData() {
+        setVarivablesTOALG();
+        setVarivablesNamesTOALG();
+    }
+
+    public void setVarivablesTOALG() {//listen to timeStep and init reg
+
+        valPointX.setValue(ts_Anomal.getValueByTime(attribute1.getValue(), timeStep.intValue()));
+        if (attribute2.getValue() != null)
+            valPointY.setValue(ts_Anomal.getValueByTime(attribute2.getValue(), timeStep.intValue()));
         else
             valPointY.setValue(0);
 
-       // System.out.println("first:"+ valPointX.doubleValue()+" "+"second:"+valPointY.doubleValue() );
+        // System.out.println("first:"+ valPointX.doubleValue()+" "+"second:"+valPointY.doubleValue() );
         ad.timeStep.bind(timeStep);
         ad.valPointX.bind(valPointX);
         ad.valPointY.bind(valPointY);
     }
-    public void setVarivablesNamesTOALG(){//Listen to chosen attribute
 
-        valPointX.setValue(ts_Anomal.getValueByTime(attribute1.getValue(),timeStep.intValue()));//point
+    public void setVarivablesNamesTOALG() {//Listen to chosen attribute
+
+        valPointX.setValue(ts_Anomal.getValueByTime(attribute1.getValue(), timeStep.intValue()));//point
 
         attribute2.setValue(ad.getCorrelateFeature(attribute1.getValue())); //point X
 
-        if(attribute2.getValue()!=null){
+        if (attribute2.getValue() != null) {
 
             //update the reg line
-            regLineForCorrelateAttribute=ad.getRegLine(attribute1.getValue(),attribute2.getValue());
+            regLineForCorrelateAttribute = ad.getRegLine(attribute1.getValue(), attribute2.getValue());
 
-            valPointY.setValue(ts_Anomal.getValueByTime(attribute2.getValue(),timeStep.intValue()));//point Y
+            valPointY.setValue(ts_Anomal.getValueByTime(attribute2.getValue(), timeStep.intValue()));//point Y
 
 
             //valAtt1X.setValue(ts_reg.getValueByTime(attribute1.getValue(),0));//reg x1      getting from ts
@@ -97,16 +125,15 @@ public class Model extends Observable implements SimulatorModel {
             //vaAtt1Xend.setValue(ts_reg.getValueByTime(attribute1.getValue(),ts_reg.getRowSize()-1));//regx2
             vaAtt1Xend.setValue(ts_reg.getMaxFromAttribute(attribute2.getValue()));//regx2
             vaAtt2Yend.setValue(regLineForCorrelateAttribute.f(vaAtt1Xend.floatValue()));//reg y2
-        }
-        else {
+        } else {
             valAtt1X.setValue(0);
             vaAtt1Xend.setValue(0);
             valPointY.setValue(0);
             valAtt2Y.setValue(0);
             vaAtt2Yend.setValue(0);
         }
-        System.out.println("first Point of line"+ valAtt1X.doubleValue()+" "+valAtt2Y.doubleValue());
-        System.out.println("second Point of line"+  vaAtt1Xend.doubleValue()+" "+vaAtt2Yend.doubleValue());
+        System.out.println("first Point of line" + valAtt1X.doubleValue() + " " + valAtt2Y.doubleValue());
+        System.out.println("second Point of line" + vaAtt1Xend.doubleValue() + " " + vaAtt2Yend.doubleValue());
 
         ad.attribute1.bind(attribute1);
         ad.attribute2.bind(attribute2);
@@ -117,38 +144,14 @@ public class Model extends Observable implements SimulatorModel {
 
     }
 
-    public void initDataForALG(){//this method will init the data for the ALG at the first at opening
-
-        vaAtt1Xend.setValue(ts_reg.getValueByTime(attribute1.getValue(),ts_reg.getRowSize()-1));//regx2
-
-        if(attribute2.getValue()!=null){
-            valAtt2Y.setValue(ts_reg.getValueByTime(attribute2.getValue(),0));//regY 1
-            vaAtt2Yend.setValue(ts_reg.getValueByTime(attribute2.getValue(),ts_reg.getRowSize()-1));//regY 2
-        }
-        else {
-            valAtt2Y.setValue(0);
-            vaAtt2Yend.setValue(0);
-        }
-        System.out.println("first and second init in open"+ valAtt1X.doubleValue()+" "+vaAtt1Xend.doubleValue());
-
-        ad.valAtt1X.bind(valAtt1X);
-        ad.vaAtt1Xend.bind(vaAtt1Xend);
-        ad.valAtt2Y.bind(valAtt2Y);
-        ad.vaAtt2Yend.bind(vaAtt2Yend);
-    }
-    public void setTimeSeries(TimeSeries tsAnomal,TimeSeries tsReg) {
+    public void setTimeSeries(TimeSeries tsAnomal, TimeSeries tsReg) {
         this.ts_Anomal = tsAnomal;
-        this.ts_reg=tsReg;
-        new Thread(()->initData()).start();
-    }
-
-    public void initData(){
-    setVarivablesTOALG();
-    setVarivablesNamesTOALG();
+        this.ts_reg = tsReg;
+//        new Thread(()->initData()).start();
     }
 
 
-   // public SimpleAnomalyDetector  ad = new SimpleAnomalyDetector();
+    // public SimpleAnomalyDetector  ad = new SimpleAnomalyDetector();
 
     public Model() {
         this.properties = new FlightSetting();
@@ -183,17 +186,14 @@ public class Model extends Observable implements SimulatorModel {
     }
 
 
-
-
-
     synchronized public void displayFlight(boolean conncetServer) {
         int i = 0;
         int sizeTS = ts_Anomal.getSize();
-     //   boolean condition = op.rewind ? i >= 0 : i < ts.rows.size();//if rewind go while>0 else (regula) go while <ts.size
+        //   boolean condition = op.rewind ? i >= 0 : i < ts.rows.size();//if rewind go while>0 else (regula) go while <ts.size
 
-        for (i = (int) time; i<sizeTS;i++ ) {
+        for (i = (int) time; i < sizeTS; i++) {
             timeStep.setValue(time);
-            while (pause || op.scroll || afterStop || op.forward|| op.rewind)  //pause needs to be replaced with thread( works only one time now)
+            while (pause || op.scroll || afterStop || op.forward || op.rewind)  //pause needs to be replaced with thread( works only one time now)
             {
                 try {
                     // System.out.println(Thread.currentThread().getName());
@@ -219,21 +219,21 @@ public class Model extends Observable implements SimulatorModel {
                         System.out.println("blabla after rewind");
                         if ((i - 150) > 0)
                             i -= 150;
-                         else
+                        else
                             i = 1;
                         op.rewind = false;
                     }
-                    if(op.scroll){
-                        op.scroll=false;
-                        i=(int)time;
+                    if (op.scroll) {
+                        op.scroll = false;
+                        i = (int) time;
                     }
 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-           // System.out.println(ts.getAtts().get(i));
-         //   System.out.println(ts_Anomal.rows.get(i));
+            // System.out.println(ts.getAtts().get(i));
+            //   System.out.println(ts_Anomal.rows.get(i));
             if (conncetServer) {
                 out.println(ts_Anomal.rows.get(i));
                 //out.println(ts.getAtts().get(i));
@@ -256,8 +256,8 @@ public class Model extends Observable implements SimulatorModel {
 
     public void setTime(double time) {
         this.time = time;
-        op.scroll=true;
-       // new Thread(() -> displayFlight(true)).start();
+        op.scroll = true;
+        // new Thread(() -> displayFlight(true)).start();
     }
 
     public boolean openXML() {
@@ -275,7 +275,7 @@ public class Model extends Observable implements SimulatorModel {
         } else {
             try {
                 this.properties = readFromXML(chosen.getName());
-                if(this.properties != null) {
+                if (this.properties != null) {
                     createMapAttribute();
                     return true;
                 }
@@ -288,8 +288,8 @@ public class Model extends Observable implements SimulatorModel {
 
     synchronized public void playFile() {
         //to delete
-        String attribute="";
-        System.out.println("the attrucute is "+ attribute);
+        String attribute = "";
+        System.out.println("the attrucute is " + attribute);
 
         if (afterForward) {//somehow it does not responded to it and cannot go back to normal rate
             afterForward = false;
@@ -352,44 +352,25 @@ public class Model extends Observable implements SimulatorModel {
     }
     //class loader for Anomaly Detector's files
 
-    public Boolean loadAnomalyDetector() {//String input
-//        URLClassLoader urlClassLoader= URLClassLoader.newInstance(new URL[]{new URL("file://"+input)});
-//        Class<?>c=urlClassLoader.loadClass(urlClassLoader.getName());
-//        SimpleAnomalyDetector ad=(SimpleAnomalyDetector) c.newInstance();
-
-        ad = new SimpleAnomalyDetector();
-        ad.learnNormal(ts_reg);
-        ad.detect(ts_Anomal);
-
-        getNormal=ad.getNormalModel();
-
-//        zScore=new ZScoreAlgorithm();
-//        zScore.learnNormal();
-
-
-        if(ad != null)
-            return true;
-        return false;
-    }
 
     public void createMapAttribute() {
         this.attributeMap = new HashMap<>();
 
-        for(Attribute attribute: properties.getAttributes()){
+        for (Attribute attribute : properties.getAttributes()) {
             attributeMap.put(attribute.name, attribute);
         }
     }
 
-    public Callable<AnchorPane>getPainter(){
-                 //reg
+    public Callable<AnchorPane> getPainter() {
+        //reg
 //        ad=new SimpleAnomalyDetector();
 
-        APref=ad.paint();
+        APref = ad.paint();
 
-        return ()->ad.paint();
+        return () -> ad.paint();
 
 
-                //zScore
+        //zScore
 //        zScore=new ZScoreAlgorithm();
 //        if(zScore!=null)return ()->zScore.paint();
     }

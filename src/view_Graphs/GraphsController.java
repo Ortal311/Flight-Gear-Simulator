@@ -26,7 +26,7 @@ public class GraphsController {
 
 
     private ListProperty<Point> pointsOfSelectedAttribute;
-    public StringProperty selectedAttribute;
+    public StringProperty selectedAttribute,correlatedAttribute;
     public DoubleProperty value, graphSpeed, timeStamp, valueCorrelate, x1, y1, x2, y2;
     public IntegerProperty sizeTS;
     private int rowNumber;
@@ -36,6 +36,7 @@ public class GraphsController {
 
     public GraphsController() {
         this.selectedAttribute = new SimpleStringProperty();
+        this.correlatedAttribute=new SimpleStringProperty();
         this.value = new SimpleDoubleProperty();// also the val of X Axis
         this.valueCorrelate = new SimpleDoubleProperty();// also the val of Y Axis
         this.timeStamp = new SimpleDoubleProperty();
@@ -55,6 +56,7 @@ public class GraphsController {
     public void init() {
 
         selectedAttribute.setValue("0");
+        correlatedAttribute.setValue("0");
         value.setValue(0);
         valueCorrelate.setValue(0);
         x1.setValue(0);
@@ -63,9 +65,12 @@ public class GraphsController {
         y2.setValue(0);
         XYChart.Series series1 = new XYChart.Series();
         chosenAttributeGraph.getData().add(series1);
+        series1.getNode().setStyle("-fx-stroke: black;");
+
         //correlateGraph
         XYChart.Series series2 = new XYChart.Series();
         mostCorrelatedAttribute.getData().add(series2);
+        series2.getNode().setStyle("-fx-stroke: black;");
 
         timeStamp.addListener((o, ov, nv) -> {
             Platform.runLater(() -> {
@@ -73,20 +78,22 @@ public class GraphsController {
                 series2.getData().add(new XYChart.Data<>(timeStamp.getValue().toString(), valueCorrelate.doubleValue()));
             });
             // note if we move the slider the condition will be T cuz it'll also go a bit backward
-            if(nv.doubleValue()<ov.doubleValue()){
+            if (nv.doubleValue() < ov.doubleValue()) {
                 series1.getData().clear();
                 series2.getData().clear();
             }
         });
 
+
         chosenAttributeGraph.setCreateSymbols(false);
         mostCorrelatedAttribute.setCreateSymbols(false);
+
 
         value.addListener(v -> paintReg());
         valueCorrelate.addListener(v -> paintReg());
 
 
-          x1.addListener(v->paintReg());
+        x1.addListener(v -> paintReg());
         GraphicsContext gc = regPaint.getGraphicsContext2D();
 
 
@@ -102,26 +109,9 @@ public class GraphsController {
 
         gc.clearRect(0, 0, regPaint.getWidth(), regPaint.getHeight());
         gc.setLineWidth(1);
-       //  gc.strokeLine(x1.doubleValue(), y1.doubleValue(), x2.doubleValue(), y2.doubleValue());
-        gc.strokeLine(10,150-200,0,200);
+        //  gc.strokeLine(x1.doubleValue(), y1.doubleValue(), x2.doubleValue(), y2.doubleValue());
+        gc.strokeLine(10, 150 - 200, 0, 200);
 
     }
 
-    public void addPoint(Point p, Paint color) {
-//        double displayX=(p.x/(maxValue-minValue))*width+width*(0-minValue)/(maxValue-minValue);
-//        double displayY=height-(p.y/(maxValue-minValue))*height-height/2;
-//        Circle toDisplay=new Circle();
-//        toDisplay.setRadius(1);
-//        toDisplay.setCenterX(displayX);
-//        toDisplay.setCenterY(displayY);
-//        toDisplay.setFill(color);
-//        points.add(toDisplay);
-//        algoPaint.getChildren().removeAll(points);
-//        algoPaint.getChildren().addAll(points);
-
-    }
-//    private void updateLine() {
-//        LinearGradient linearGradient = new LinearGradient(x1.get(), y1.get(), x2.get(), y2.get(), false, CycleMethod.REFLECT, new Stop(0,Color.RED),new Stop(1,Color.GREEN));
-//        line.setStroke(linearGradient);
-//    }
 }
