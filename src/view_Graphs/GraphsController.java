@@ -56,10 +56,10 @@ public class GraphsController {
                         series2.getData().add(new XYChart.Data<>(timeStamp.getValue().toString(), valueCorrelate.doubleValue()));
                 });
                 // note if we move the slider the condition will be T cuz it'll also go a bit backward
-                if (nv.doubleValue() < ov.doubleValue()) {// if we go back in time
-                    series1.getData().clear();
-                    series2.getData().clear();
-                }
+//                if (nv.doubleValue() < ov.doubleValue()) {// if we go back in time
+//                    series1.getData().clear();
+//                    series2.getData().clear();
+//                }
             });
             if (correlatedAttribute.getValue() == null) series2.getData().clear();
             if ((newVal != null) && (!newVal.equals(oldval))) {//if change the attribute
