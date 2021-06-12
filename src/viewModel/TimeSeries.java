@@ -19,6 +19,14 @@ public class TimeSeries {
     public ArrayList<String> atts;
     int dataRowSize;
 
+    public TimeSeries(){
+        this.ts=new HashMap<>();
+        this.tsNum=new HashMap<>();
+        this.rows=new ArrayList<>();
+        this.atts=new ArrayList<>();
+        this.dataRowSize=0;
+    }
+
     public TimeSeries(String csvFileName) {
         System.out.println("init TS");
         ts = new HashMap<>();
