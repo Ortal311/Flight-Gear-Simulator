@@ -108,7 +108,7 @@ public class Model extends Observable implements SimulatorModel {
         ad.valPointX.bind(valPointX);
         ad.valPointY.bind(valPointY);
 
-        zScore.timeStep.bind(timeStep);
+       // zScore.timeStep.bind(timeStep);
 
         hyperALG.timeStep.bind(timeStep);
         hyperALG.valPointX.bind(valPointX);
@@ -153,10 +153,14 @@ public class Model extends Observable implements SimulatorModel {
         ad.valAtt2Y.bind(valAtt2Y);
         ad.vaAtt2Yend.bind(vaAtt2Yend);
 
-        zScore.Attribute.bind(attribute1);
+       // zScore.Attribute.bind(attribute1);
 
         hyperALG.attribute1.bind(attribute1);
         hyperALG.attribute2.bind(attribute2);
+        hyperALG.valAtt1X.bind(valAtt1X);
+        hyperALG.vaAtt1Xend.bind(vaAtt1Xend);
+        hyperALG.valAtt2Y.bind(valAtt2Y);
+        hyperALG.vaAtt2Yend.bind(vaAtt2Yend);
 
     }
     public Callable<AnchorPane> getPainter() {
@@ -168,7 +172,7 @@ public class Model extends Observable implements SimulatorModel {
 //        return () -> ad.paint();
 
         //zScore
-        zScore=new ZScoreAlgorithm();
+        //zScore=new ZScoreAlgorithm();
 //        return ()->zScore.paint();
 
         //HyperALG

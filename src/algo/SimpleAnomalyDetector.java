@@ -39,6 +39,14 @@ import javafx.geometry.Insets;
 public class SimpleAnomalyDetector implements AnomalyDetector {
 
     ArrayList<CorrelatedFeatures> cf;
+    ArrayList<CorrelatedFeatures> cfmore95list;
+
+    HashMap<String,CorrelatedFeatureForAll>cfmore95;
+
+    HashMap<String,CorrelatedFeatureForAll>cfless50;
+
+    HashMap<String,CorrelatedFeatureForAll>cfBetween;
+
     ArrayList<AnomalyReport> ar;
     public Map<String, ArrayList<Integer>> anomalyAndTimeStep = new HashMap<>();
 
@@ -60,6 +68,11 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
 
     public SimpleAnomalyDetector() {
         cf = new ArrayList<>();
+        cfmore95list=new ArrayList<>();
+        cfmore95=new HashMap<>();
+        cfless50=new HashMap<>();
+        cfBetween=new HashMap<>();
+
     }
 
     @Override
@@ -76,14 +89,82 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
 
         for (int i = 0; i < atts.size(); i++) {
             for (int j = i + 1; j < atts.size(); j++) {
-                float p = StatLib.pearson(vals[i], vals[j]);
-                if (Math.abs(p) > 0.9) {
+                float p = StatLib.pearson(vals[i], vals[j]);//for the pearson
+
+                if (Math.abs(p) > 0.9) {//only if above o.
                     Point ps[] = toPoints(ts.getAttributeData(atts.get(i)), ts.getAttributeData(atts.get(j)));
                     Line lin_reg = StatLib.linear_reg(ps);
                     float threshold = findThreshold(ps, lin_reg) * 1.1f; // 10% increase
                     CorrelatedFeatures c = new CorrelatedFeatures(atts.get(i), atts.get(j), p, lin_reg, threshold);
-
                     cf.add(c);
+                }
+                if (Math.abs(p) >= 0.95) {
+
+                    if(!cfmore95.containsKey(atts.get(i))){
+
+                    Point ps[] = toPoints(ts.getAttributeData(atts.get(i)), ts.getAttributeData(atts.get(j)));
+                    Line lin_reg = StatLib.linear_reg(ps);
+                    float threshold = findThreshold(ps, lin_reg) * 1.1f; // 10% increase
+                    CorrelatedFeatures c = new CorrelatedFeatures(atts.get(i), atts.get(j), p, lin_reg, threshold);//att1_att2_pearsonCorrelate_null_threshold(the max one)
+                    CorrelatedFeatureForAll ca=new CorrelatedFeatureForAll(atts.get(i), atts.get(j),"Regression", Math.abs(p)) ;
+                         cfmore95list.add(c);
+                        cfmore95.put(atts.get(i),ca);
+
+
+                        if(cfBetween.containsKey(atts.get(i)))//if ZScore had the attribute we'll put it here instead
+                            cfBetween.remove(atts.get(i));
+                        if(cfless50.containsKey(atts.get(i)))
+                            cfless50.remove(atts.get(i));
+
+                    }
+                    else // if contain the attribute we'll take the max
+                    {
+                        if(cfmore95.get(atts.get(i)).corrlation<Math.abs(p))//if the the val with the different att is higher,we'll tack the other att
+                        {
+                            Point ps[] = toPoints(ts.getAttributeData(atts.get(i)), ts.getAttributeData(atts.get(j)));
+                            Line lin_reg = StatLib.linear_reg(ps);
+                            float threshold = findThreshold(ps, lin_reg) * 1.1f; // 10% increase
+                            CorrelatedFeatures c = new CorrelatedFeatures(atts.get(i), atts.get(j), p, lin_reg, threshold);//att1_att2_pearsonCorrelate_null_threshold(the max one)
+
+                            cfmore95.get(atts.get(i)).feature2=atts.get(j);
+                            cfmore95.get(atts.get(i)).corrlation=Math.abs(p);
+                        }
+                    }
+                }
+
+
+                else if((!cfmore95.containsKey(atts.get(i)))&&(0.5<=Math.abs(p))&&(Math.abs(p) <0.95)){// 0.5<val<0.95
+
+                    if(!cfBetween.containsKey(atts.get(i))){
+                        CorrelatedFeatureForAll ca=new CorrelatedFeatureForAll(atts.get(i), atts.get(j),"Welzl", Math.abs(p)) ;
+                        cfBetween.put(atts.get(i),ca);
+                        if(cfless50.containsKey(atts.get(i)))//if ZScore had the attribute we'll put it here instead
+                            cfless50.remove(atts.get(i));
+                    }
+                    else // if contain the attribute we'll take the max
+                    {
+                        if(cfBetween.get(atts.get(i)).corrlation<Math.abs(p))//if the the val with the different att is higher,we'll tack the other att
+                        {
+                            cfBetween.get(atts.get(i)).feature2=atts.get(j);
+                            cfBetween.get(atts.get(i)).corrlation=Math.abs(p);
+                        }
+                    }
+                }
+
+
+                else if((Math.abs(p) <0.5)&&(!cfBetween.containsKey(atts.get(i)))&&(!cfmore95.containsKey(atts.get(i)))){
+                    if(!cfless50.containsKey(atts.get(i))){
+                        CorrelatedFeatureForAll ca=new CorrelatedFeatureForAll(atts.get(i), atts.get(j),"ZScore", Math.abs(p)) ;
+                        cfless50.put(atts.get(i),ca);
+                    }
+                    else // if contain the attribute we'll take the max
+                    {
+                        if(cfless50.get(atts.get(i)).corrlation<Math.abs(p))//if the the val with the different att is higher,we'll tack the other att
+                        {
+                            cfless50.get(atts.get(i)).feature2=atts.get(j);
+                            cfless50.get(atts.get(i)).corrlation=Math.abs(p);
+                        }
+                    }
                 }
             }
         }
@@ -133,14 +214,17 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
     @Override
     public AnchorPane paint() {
         AnchorPane ap = new AnchorPane();
-        //line Chart, child of Anchor
+        //Data for BubbleChart
         LineChart<Number, Number> sc = new LineChart<>(new NumberAxis(), new NumberAxis());
         sc.setPrefHeight(250);
         sc.setPrefWidth(350);
-        XYChart.Series series1 = new XYChart.Series();//points for normal Flight
-        XYChart.Series series3 = new XYChart.Series();//points for Anomaly parts
-        XYChart.Series series2 = new XYChart.Series();//line
-        sc.getData().addAll(series1, series2, series3);
+        XYChart.Series pointsNormal = new XYChart.Series();//points for normal Flight
+        XYChart.Series pointsAnomal = new XYChart.Series();//points for Anomaly parts
+        XYChart.Series regLine = new XYChart.Series();//line
+        sc.getData().addAll(pointsNormal, regLine, pointsAnomal);
+
+
+
 
         attribute1.addListener((ob, oldV, newV) -> {//to delete the old graph if attribute has changed
             timeStep.addListener((o, ov, nv) -> {
@@ -149,22 +233,22 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
 //                        if (nv.doubleValue() > ov.doubleValue() + 30) {
 //                            series1.getData().remove(0);
 //                        }
-                                series1.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue()));//points
-                                series2.getData().add(new XYChart.Data(valAtt1X.doubleValue(), valAtt2Y.doubleValue()));//reg first point
-                                series2.getData().add(new XYChart.Data(vaAtt1Xend.doubleValue(), vaAtt2Yend.doubleValue()));//reg sec point
+                                pointsNormal.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue()));//points
+                                regLine.getData().add(new XYChart.Data(valAtt1X.doubleValue(), valAtt2Y.doubleValue()));//reg first point
+                                regLine.getData().add(new XYChart.Data(vaAtt1Xend.doubleValue(), vaAtt2Yend.doubleValue()));//reg sec point
 
                             } else {
                                 if (!anomalyAndTimeStep.get(attribute1.getValue()).contains(timeStep.intValue())) {
-                                    series1.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue()));//points
+                                    pointsNormal.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue()));//points
 
-                                    series2.getData().add(new XYChart.Data(valAtt1X.doubleValue(), valAtt2Y.doubleValue()));//reg first point
-                                    series2.getData().add(new XYChart.Data(vaAtt1Xend.doubleValue(), vaAtt2Yend.doubleValue()));//reg sec point
+                                    regLine.getData().add(new XYChart.Data(valAtt1X.doubleValue(), valAtt2Y.doubleValue()));//reg first point
+                                    regLine.getData().add(new XYChart.Data(vaAtt1Xend.doubleValue(), vaAtt2Yend.doubleValue()));//reg sec point
                                 } else {
                                     // sc.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
 
-                                    series3.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue()));//points of anomaly
-                                    series2.getData().add(new XYChart.Data(valAtt1X.doubleValue(), valAtt2Y.doubleValue()));//reg first point
-                                    series2.getData().add(new XYChart.Data(vaAtt1Xend.doubleValue(), vaAtt2Yend.doubleValue()));//reg sec point
+                                    pointsAnomal.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue()));//points of anomaly
+                                    regLine.getData().add(new XYChart.Data(valAtt1X.doubleValue(), valAtt2Y.doubleValue()));//reg first point
+                                    regLine.getData().add(new XYChart.Data(vaAtt1Xend.doubleValue(), vaAtt2Yend.doubleValue()));//reg sec point
 
                                     //  sc.setBackground(null);
                                 }
@@ -172,9 +256,9 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
                     });
             });
             if (!newV.equals(oldV)) {//if change the attribute
-                series3.getData().clear();
-                series1.getData().clear();
-                series2.getData().clear();
+                pointsAnomal.getData().clear();
+                pointsNormal.getData().clear();
+                regLine.getData().clear();
             }
 //            if(attribute2.getValue() == null){
 //                series3.getData().clear();
@@ -193,6 +277,19 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
 
     public List<CorrelatedFeatures> getNormalModel() {
         return cf;
+    }
+    public List<CorrelatedFeatures> getCorrelateMore95lst() {
+        return cfmore95list;
+    }
+    public HashMap<String,CorrelatedFeatureForAll>getCorrelateless50(){
+        return cfless50;
+    }
+    public HashMap<String, CorrelatedFeatureForAll> getCfBetween() {
+        return cfBetween;
+    }
+
+    public HashMap<String, CorrelatedFeatureForAll> getCfmore95() {
+        return cfmore95;
     }
 
     public String getCorrelateFeature(String attribute1) {
