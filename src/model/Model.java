@@ -1,9 +1,6 @@
 package model;
 
-import algo.CorrelatedFeatures;
-import algo.Line;
-import algo.SimpleAnomalyDetector;
-import algo.ZScoreAlgorithm;
+import algo.*;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -42,6 +39,7 @@ public class Model extends Observable implements SimulatorModel {
     public boolean isConnect;
     public SimpleAnomalyDetector ad;
     public ZScoreAlgorithm zScore;
+    hybridAlgorithm hyperALG;
     public AnchorPane APref;
 
     List<CorrelatedFeatures> getNormal;
@@ -75,10 +73,16 @@ public class Model extends Observable implements SimulatorModel {
         new Thread(() -> initData()).start();//needs if to init data at first time
         getNormal = ad.getNormalModel();
 
-        zScore=new ZScoreAlgorithm();
-        zScore.learnNormal(ts_reg);
-        System.out.println("before detect Zscore");
-        zScore.detect(ts_Anomal);
+//        zScore=new ZScoreAlgorithm();
+//        zScore.learnNormal(ts_reg);
+//        System.out.println("before detect Zscore");
+//        zScore.detect(ts_Anomal);
+
+
+        hyperALG=new hybridAlgorithm();
+        hyperALG.learnNormal(ts_reg);
+        hyperALG.detect(ts_Anomal);
+
 
 
         if (ad != null)
@@ -104,8 +108,11 @@ public class Model extends Observable implements SimulatorModel {
         ad.valPointX.bind(valPointX);
         ad.valPointY.bind(valPointY);
 
-        zScore.timeStep.bind(timeStep);
+       // zScore.timeStep.bind(timeStep);
 
+        hyperALG.timeStep.bind(timeStep);
+        hyperALG.valPointX.bind(valPointX);
+        hyperALG.valPointY.bind(valPointY);
     }
 
     public void setVarivablesNamesTOALG() {//Listen to chosen attribute
@@ -136,8 +143,8 @@ public class Model extends Observable implements SimulatorModel {
             valAtt2Y.setValue(0);
             vaAtt2Yend.setValue(0);
         }
-        System.out.println("first Point of line" + valAtt1X.doubleValue() + " " + valAtt2Y.doubleValue());
-        System.out.println("second Point of line" + vaAtt1Xend.doubleValue() + " " + vaAtt2Yend.doubleValue());
+        //System.out.println("first Point of line" + valAtt1X.doubleValue() + " " + valAtt2Y.doubleValue());
+      //  System.out.println("second Point of line" + vaAtt1Xend.doubleValue() + " " + vaAtt2Yend.doubleValue());
 
         ad.attribute1.bind(attribute1);
         ad.attribute2.bind(attribute2);
@@ -146,7 +153,14 @@ public class Model extends Observable implements SimulatorModel {
         ad.valAtt2Y.bind(valAtt2Y);
         ad.vaAtt2Yend.bind(vaAtt2Yend);
 
-        zScore.Attribute.bind(attribute1);
+       // zScore.Attribute.bind(attribute1);
+
+        hyperALG.attribute1.bind(attribute1);
+        hyperALG.attribute2.bind(attribute2);
+        hyperALG.valAtt1X.bind(valAtt1X);
+        hyperALG.vaAtt1Xend.bind(vaAtt1Xend);
+        hyperALG.valAtt2Y.bind(valAtt2Y);
+        hyperALG.vaAtt2Yend.bind(vaAtt2Yend);
 
     }
     public Callable<AnchorPane> getPainter() {
@@ -158,8 +172,11 @@ public class Model extends Observable implements SimulatorModel {
 //        return () -> ad.paint();
 
         //zScore
-//        zScore=new ZScoreAlgorithm();
-        return ()->zScore.paint();
+        //zScore=new ZScoreAlgorithm();
+//        return ()->zScore.paint();
+
+        //HyperALG
+        return  ()->hyperALG.paint();
 
     }
 

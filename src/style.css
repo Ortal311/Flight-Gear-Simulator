@@ -2,6 +2,12 @@
 .default-color1.chart-series-line { -fx-stroke: #042021; }
 .default-color2.chart-series-line { -fx-stroke: transparent; }/*for anomaly*/
 
+.default-color0.chart-series-Bubble { -fx-stroke: blue; }
+
+.default-color0.chart-bubble-symbol {
+    -fx-background-color: blue, green;
+}
+
 .default-color0.chart-line-symbol {
     -fx-background-color: green, green;
 }
@@ -15,6 +21,7 @@
 .default-color0.chart-legend-item-symbol{
     -fx-background-color: green;
 }
+/*those under are for under the graph*/
 .default-color1.chart-legend-item-symbol{
     -fx-background-color: red;
 }
