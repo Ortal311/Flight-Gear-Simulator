@@ -48,6 +48,8 @@ public class ViewModelController extends Observable implements Observer {
         pitch = new SimpleDoubleProperty();
         roll = new SimpleDoubleProperty();
         yaw = new SimpleDoubleProperty();
+        roll = new SimpleDoubleProperty();
+        yaw = new SimpleDoubleProperty();
 
         valueAxis = new SimpleDoubleProperty();
         valueCorrelate = new SimpleDoubleProperty();
@@ -105,6 +107,8 @@ public class ViewModelController extends Observable implements Observer {
         pitch.setValue(ts_Anomal.getValueByTime(m.attributeMap.get("pitch").associativeName, time));
         roll.setValue(ts_Anomal.getValueByTime(m.attributeMap.get("roll").associativeName, time));
         yaw.setValue(ts_Anomal.getValueByTime(m.attributeMap.get("yaw").associativeName, time));
+
+
         /*
             To update the specific chosen attribute
             getting the number of the chosen attribute
@@ -181,12 +185,15 @@ public class ViewModelController extends Observable implements Observer {
             fd.setValue("0");
             this.csvFile = true;
         }
-        openedCSV=true;
-
+        openedCSV = true;
     }
 
     public void openXMLFile() {
         xmlFile = m.openXML();
+//        if(xmlFile) {
+//            pitchMax.setValue(m.attributeMap.get("pitch").getMax());
+//            pitchMin.setValue(m.attributeMap.get("pitch").getMin());
+//        }
     }
 
     public void play() {

@@ -40,13 +40,12 @@ public class MyJoystickController {
         my=joystick.getHeight()/2;
 
         gc.clearRect(0,0,joystick.getWidth(),joystick.getHeight());
-        //gc.strokeOval(mx-jx.doubleValue()*50,my-jy.doubleValue()*50,60,60);
 
         gc.fillOval(mx-30+(jx.doubleValue()*50),my-30+(jy.doubleValue()*50),60,60);
         gc2.strokeOval(mx-50,my-50,100,100);
 
-        gc2.setFill(Color.GRAY);
-        gc.setFill(Color.BLACK);
+        gc2.setFill(Color.BLACK);
+        gc.setFill(Color.rgb(6, 36, 92));
 
 
 //        gc.setFill(Color.GREEN);
@@ -57,5 +56,4 @@ public class MyJoystickController {
 //        gc.setFill(Color.BLUE);
 //        gc.setStroke(Color.BLACK);
     }
-//my
 }

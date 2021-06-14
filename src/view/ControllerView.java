@@ -34,22 +34,21 @@ public class ControllerView extends Pane implements Observer {
     @FXML
     AnchorPane adAnchorePane;
 
-
     ViewModelController vmc;
 
     void init(ViewModelController vmc) {
         this.vmc = vmc;
-        myJoystick.setLayoutX(860);
-        myJoystick.setLayoutY(25);
-        attributesList.setLayoutX(20);
+        myJoystick.setLayoutX(730);
+        myJoystick.setLayoutY(20);
+        attributesList.setLayoutX(18);
         attributesList.setLayoutY(25);
-        playerButtons.setLayoutY(440);
-        playerButtons.setLayoutX(5);
-        timeBoard.setLayoutX(500);
-        timeBoard.setLayoutY(360);
-        graphs.setLayoutX(230);
-        graphs.setLayoutY(25);
-        adAnchorePane.setLayoutX(220);
+        playerButtons.setLayoutY(380);
+        playerButtons.setLayoutX(9);
+        timeBoard.setLayoutX(480);
+        timeBoard.setLayoutY(285);
+        graphs.setLayoutX(250);
+        graphs.setLayoutY(15);
+        adAnchorePane.setLayoutX(330);
         adAnchorePane.setLayoutY(200);
 
         myJoystick.aileron.bind(vmc.aileron);
@@ -74,12 +73,9 @@ public class ControllerView extends Pane implements Observer {
         timeBoard.airSpeed.bind(vmc.airSpeed);
         timeBoard.altimeter.bind(vmc.altimeter);
         timeBoard.fd.bind(vmc.fd);
-        timeBoard.xPitch.bind(vmc.pitch);
-        timeBoard.yPitch.bind(vmc.pitch);
-        timeBoard.xRoll.bind(vmc.roll);
-        timeBoard.yRoll.bind(vmc.roll);
-        timeBoard.xYaw.bind(vmc.yaw);
-        timeBoard.yYaw.bind(vmc.yaw);
+        timeBoard.pitch.bind(vmc.pitch);
+        timeBoard.roll.bind(vmc.roll);
+        timeBoard.yaw.bind(vmc.yaw);
 
         playerButtons.onOpen.addListener((o, ov, nv) -> vmc.openFile());
         playerButtons.onOpenXML.addListener((o, ov, nv) -> vmc.openXMLFile());

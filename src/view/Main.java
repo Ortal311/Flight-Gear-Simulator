@@ -39,7 +39,7 @@ public class Main extends Application {
 
 
         //controllerView.setRoot(root);
-        primaryStage.setScene(new Scene(root, 1100, 560));
+        primaryStage.setScene(new Scene(root, 980, 660));
         primaryStage.show();
 
 
