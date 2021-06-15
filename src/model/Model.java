@@ -71,10 +71,10 @@ public class Model extends Observable implements SimulatorModel {
 
         //
         ad = new SimpleAnomalyDetector();
-        ad.learnNormal(ts_reg);
-        ad.detect(ts_Anomal);
+//        ad.learnNormal(ts_reg);
+//        ad.detect(ts_Anomal);
         new Thread(() -> initData()).start();//needs if to init data at first time
-        getNormal = ad.getNormalModel();
+//        getNormal = ad.getNormalModel();
 
         zScore=new ZScoreAlgorithm();
         zScore.learnNormal(ts_reg);

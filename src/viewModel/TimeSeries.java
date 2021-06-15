@@ -110,7 +110,7 @@ public class TimeSeries {
         ArrayList<Float> lst = ts.get(val);
         float maxVal = 0;
         for (float f : lst) {
-            if ((f > maxVal))
+            if (f > maxVal)
                 maxVal = f;
         }
         return maxVal;

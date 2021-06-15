@@ -71,12 +71,14 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
     public void learnNormal(TimeSeries ts) {
         tsReg = ts;
         ArrayList<String> atts = ts.getAttributes();
-        int len = ts.getRowSize();
+        int len = ts.tsNum.get(0).size();
 
         float vals[][] = new float[atts.size()][len];
         for (int i = 0; i < atts.size(); i++) {
-            for (int j = 0; j < ts.getRowSize(); j++) {
-                vals[i][j] = ts.getAttributeData(atts.get(i)).get(j);
+            for (int j = 0; j < len; j++) {
+//                vals[i][j] = ts.getAttributeData(atts.get(i)).get(j);
+                System.out.println(i+" "+j);
+                vals[i][j] =ts.getValueByTime(atts.get(i),j);
             }
         }
 
@@ -93,6 +95,8 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
                 }
             }
         }
+        System.out.println(" the size of cf:"+cf.size());
+
     }
 
     private Point[] toPoints(ArrayList<Float> x, ArrayList<Float> y) {
