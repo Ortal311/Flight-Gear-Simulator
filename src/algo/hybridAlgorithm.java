@@ -28,9 +28,14 @@ public class hybridAlgorithm {
 
     List<CorrelatedFeatures> cfmore95list;
 
+    //for Hybrid
     HashMap<String, CorrelatedFeatureForAll> cfmore95;
     HashMap<String, CorrelatedFeatureForAll> cfless50;
     HashMap<String, CorrelatedFeatureForAll> cfBetween;
+
+    //for ZSore
+    public HashMap<String, ArrayList<Float>> ZScoreReg;
+    public HashMap<String, ArrayList<Integer>> ZScoreAnomaly;
 
     public StringProperty attribute1 = new SimpleStringProperty();
     public StringProperty attribute2 = new SimpleStringProperty();
@@ -44,6 +49,8 @@ public class hybridAlgorithm {
     public DoubleProperty valPointY = new SimpleDoubleProperty();
 
     public DoubleProperty timeStep = new SimpleDoubleProperty();
+
+
 
     public hybridAlgorithm() {
         circlesMap = new HashMap<>();
@@ -67,7 +74,13 @@ public class hybridAlgorithm {
         this.cfless50 = ad.getCorrelateless50();
 
         WelzlAlgorithm algorithm = new WelzlAlgorithm();
-        TimeSeries tsZscore = new TimeSeries();
+
+        zScore=new ZScoreAlgorithm();
+        zScore.learnNormal(ts);
+        ZScoreReg=zScore.getZScoreReg();
+        ZScoreAnomaly= zScore.getZscoreAnomal();
+
+       // TimeSeries tsZscore = new TimeSeries();
 
         cfAlgo = new HashMap<>();
         attALG = new HashMap<>();
@@ -96,31 +109,28 @@ public class hybridAlgorithm {
         System.out.println("size of all att ALG: " + attALG.size());
         System.out.println("size of cf is " + cf.size());
 
-//        for (CorrelatedFeatures c : cfAlgo.get("Welzl")) {//activate welze on all the attribute with 0.5-0.95 correlation
-//            circlesMap.put(c, algorithm.miniDisk(toListPoints(ts.getAttributeData(c.feature1), ts.getAttributeData(c.feature2))));
-//        }
+
         for (String key : cfBetween.keySet()) {//activate welze on all the attribute with 0.5-0.95 correlation
-            // CorrelatedFeatureForAll c= new CorrelatedFeatureForAll(cfBetween.get(i).feature1,cfBetween.get(i).feature2,cfBetween.get(i).nameALG,cfBetween.get(i).corrlation);
             circlesMap.put(cfBetween.get(key), algorithm.miniDisk(toListPoints(ts.getAttributeData(cfBetween.get(key).feature1), ts.getAttributeData(cfBetween.get(key).feature2))));
         }
         System.out.println("the size of welzl var is: " + circlesMap.size());
 
 
-        //check the ZScore for a
-        for (String key : cfless50.keySet()) {
-            tsZscore.ts.put(cfless50.get(key).feature1, ts.getAttributeData(cfless50.get(key).feature1));
-            tsZscore.ts.put(cfless50.get(key).feature2, ts.getAttributeData(cfless50.get(key).feature2));
-        }
-        System.out.println("the size of tszscore is : " + tsZscore.ts.size());
-        zScore = new ZScoreAlgorithm();
-        zScore.learnNormal(tsZscore);
 
-        ad.learnNormal(ts);
+//        for (String key : cfless50.keySet()) {
+//            tsZscore.ts.put(cfless50.get(key).feature1, ts.getAttributeData(cfless50.get(key).feature1));
+//            tsZscore.ts.put(cfless50.get(key).feature2, ts.getAttributeData(cfless50.get(key).feature2));
+//        }
+//        System.out.println("the size of tszscore is : " + tsZscore.ts.size());
+//        zScore = new ZScoreAlgorithm();
+//        zScore.learnNormal(tsZscore);
+
+        //ad.learnNormal(ts); why twice ??
 
 
-        for (CorrelatedFeatureForAll key : circlesMap.keySet()) {
-            System.out.println(key.feature1 + " " + key.feature2 + " " + key.nameALG);
-        }
+//        for (CorrelatedFeatureForAll key : circlesMap.keySet()) {
+//            System.out.println(key.feature1 + " " + key.feature2 + " " + key.nameALG);
+//        }
         System.out.println("the size of circle map is:  " + circlesMap.size());
 
     }
@@ -203,6 +213,11 @@ public class hybridAlgorithm {
         regBoard.getStylesheets().add("style.css");
         //circleGraph.getStylesheets().add("style.css");
 
+//        public void mylistener(int ov, int olv, int newvv){
+//            //Do....
+//        }
+//        attribute1.addListener((o, ov, nv)->mylistener());
+//        timeStep.add()
         attribute1.addListener((ob, oldV, newV) -> {//to delete the old graph if attribute has changed
 
             timeStep.addListener((o, ov, nv) -> {
@@ -298,10 +313,11 @@ public class hybridAlgorithm {
                     seriesPointsAnomal.getData().clear();
 
                     Platform.runLater(() -> {
-                        if ((zScore.ZScoreAnomaly.size() != 0) && !zScore.ZScoreAnomaly.containsKey(zScore.Attribute.getValue())) {// i dont think it's work
-                            lineAnomal.getData().add(new XYChart.Data<>(timeStep.getValue(), zScore.ZScoreAnomaly.get(attribute1.getValue().toString()).get(timeStep.intValue())));
+                        if ((ZScoreAnomaly.size() != 0) && !ZScoreAnomaly.containsKey(attribute1.getValue())) {// i dont think it's work
+                            lineAnomal.getData().add(new XYChart.Data<>(timeStep.getValue(), ZScoreAnomaly.get(attribute1.getValue().toString()).get(timeStep.intValue())));
                         } else {
-                            line.getData().add(new XYChart.Data<>(timeStep.getValue(), zScore.ZScoreReg.get(attribute1.getValue().toString()).get(timeStep.intValue())));
+
+                            line.getData().add(new XYChart.Data<>(timeStep.getValue(), ZScoreReg.get(attribute1.getValue().toString()).get(timeStep.intValue())));
                         }
                     });
 

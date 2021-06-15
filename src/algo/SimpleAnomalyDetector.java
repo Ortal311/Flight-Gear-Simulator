@@ -38,6 +38,10 @@ import javafx.geometry.Insets;
 
 public class SimpleAnomalyDetector implements AnomalyDetector {
 
+    TimeSeries tsReg;
+    TimeSeries tsAnomal;
+    public Line regLineForCorrelateAttribute;
+
     ArrayList<CorrelatedFeatures> cf;
     ArrayList<CorrelatedFeatures> cfmore95list;
 
@@ -77,6 +81,7 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
 
     @Override
     public void learnNormal(TimeSeries ts) {
+        tsReg=ts;
         ArrayList<String> atts = ts.getAttributes();
         int len = ts.getRowSize();
 
@@ -189,6 +194,7 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
 
     @Override
     public List<AnomalyReport> detect(TimeSeries ts) {
+        tsAnomal=ts;
         ArrayList<AnomalyReport> v = new ArrayList<>();
 
         for (CorrelatedFeatures c : cf) {
@@ -210,6 +216,28 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
 
         return v;
     }
+    public void initDataForGraphTimeChange(){
+        valPointX.setValue(tsAnomal.getValueByTime(attribute1.getValue(), timeStep.intValue()));
+//        if ((attribute2.getValue() == null)) { //find a way to leave it as null and not paint it in that case
+//            valPointY.setValue(0);
+//        } else {
+//            valPointY.setValue(tsAnomal.getValueByTime(attribute2.getValue(), timeStep.intValue()));
+//        }
+        if(attribute2.getValue()!=null)
+        valPointY.setValue(tsAnomal.getValueByTime(attribute2.getValue(), timeStep.intValue()));
+
+
+    }
+    public void initDataForGraphAttChange(){
+       // attribute2.setValue(getCorrelateFeature(attribute1.getValue()));
+                    //need to update with atta
+
+        regLineForCorrelateAttribute=getRegLine(attribute1.getValue(),attribute2.getValue());
+        valAtt2Y.setValue(tsReg.getMinFromAttribute(attribute1.getValue()));
+        valAtt2Y.setValue(regLineForCorrelateAttribute.f(valAtt1X.floatValue()));
+        vaAtt1Xend.setValue(tsReg.getMaxFromAttribute(attribute2.getValue()));
+        vaAtt2Yend.setValue(regLineForCorrelateAttribute.f(vaAtt1Xend.floatValue()));
+    }
 
     @Override
     public AnchorPane paint() {
@@ -227,44 +255,50 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
 
 
         attribute1.addListener((ob, oldV, newV) -> {//to delete the old graph if attribute has changed
-            timeStep.addListener((o, ov, nv) -> {
+            attribute2.setValue(getCorrelateFeature(attribute1.getValue()));
+            if (attribute2.getValue() != null)
+            {
+                initDataForGraphAttChange();
+                timeStep.addListener((o, ov, nv) -> {
+                    initDataForGraphTimeChange();
                     Platform.runLater(() -> {
-                            if (!anomalyAndTimeStep.containsKey(attribute1.getValue())) {
+                        if (!anomalyAndTimeStep.containsKey(attribute1.getValue())) {
 //                        if (nv.doubleValue() > ov.doubleValue() + 30) {
 //                            series1.getData().remove(0);
 //                        }
+                            pointsNormal.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue()));//points
+                            regLine.getData().add(new XYChart.Data(valAtt1X.doubleValue(), valAtt2Y.doubleValue()));//reg first point
+                            regLine.getData().add(new XYChart.Data(vaAtt1Xend.doubleValue(), vaAtt2Yend.doubleValue()));//reg sec point
+
+                        } else {
+                            if (!anomalyAndTimeStep.get(attribute1.getValue()).contains(timeStep.intValue())) {
                                 pointsNormal.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue()));//points
+
+                                regLine.getData().add(new XYChart.Data(valAtt1X.doubleValue(), valAtt2Y.doubleValue()));//reg first point
+                                regLine.getData().add(new XYChart.Data(vaAtt1Xend.doubleValue(), vaAtt2Yend.doubleValue()));//reg sec point
+                            } else {
+                                // sc.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
+
+                                pointsAnomal.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue()));//points of anomaly
                                 regLine.getData().add(new XYChart.Data(valAtt1X.doubleValue(), valAtt2Y.doubleValue()));//reg first point
                                 regLine.getData().add(new XYChart.Data(vaAtt1Xend.doubleValue(), vaAtt2Yend.doubleValue()));//reg sec point
 
-                            } else {
-                                if (!anomalyAndTimeStep.get(attribute1.getValue()).contains(timeStep.intValue())) {
-                                    pointsNormal.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue()));//points
-
-                                    regLine.getData().add(new XYChart.Data(valAtt1X.doubleValue(), valAtt2Y.doubleValue()));//reg first point
-                                    regLine.getData().add(new XYChart.Data(vaAtt1Xend.doubleValue(), vaAtt2Yend.doubleValue()));//reg sec point
-                                } else {
-                                    // sc.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
-
-                                    pointsAnomal.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue()));//points of anomaly
-                                    regLine.getData().add(new XYChart.Data(valAtt1X.doubleValue(), valAtt2Y.doubleValue()));//reg first point
-                                    regLine.getData().add(new XYChart.Data(vaAtt1Xend.doubleValue(), vaAtt2Yend.doubleValue()));//reg sec point
-
-                                    //  sc.setBackground(null);
-                                }
+                                //  sc.setBackground(null);
                             }
+                        }
                     });
-            });
-            if (!newV.equals(oldV)) {//if change the attribute
-                pointsAnomal.getData().clear();
-                pointsNormal.getData().clear();
-                regLine.getData().clear();
-            }
+                });
+                if (!newV.equals(oldV)) {//if change the attribute
+                    pointsAnomal.getData().clear();
+                    pointsNormal.getData().clear();
+                    regLine.getData().clear();
+                }
 //            if(attribute2.getValue() == null){
 //                series3.getData().clear();
 //                series1.getData().clear();
 //                series2.getData().clear();
 //            }
+            }
         });
 
         sc.setAnimated(false);

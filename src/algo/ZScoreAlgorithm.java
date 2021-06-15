@@ -177,4 +177,10 @@ public class ZScoreAlgorithm implements AnomalyDetector {
         ap.getChildren().add(sc);
         return ap;
     }
+    public HashMap<String, ArrayList<Float>>getZScoreReg(){
+        return this.ZScoreReg;
+    }
+    public HashMap<String, ArrayList<Integer>>getZscoreAnomal(){
+        return this.ZScoreAnomaly;
+    }
 }

@@ -37,9 +37,12 @@ public class Model extends Observable implements SimulatorModel {
     public static boolean afterRewind = false;
     public static boolean afterForward = false;
     public boolean isConnect;
+
+    //public AnomalyDetector ad;
     public SimpleAnomalyDetector ad;
     public ZScoreAlgorithm zScore;
-    hybridAlgorithm hyperALG;
+//    public hybridAlgorithm hyperALG;
+
     public AnchorPane APref;
 
     List<CorrelatedFeatures> getNormal;
@@ -73,15 +76,15 @@ public class Model extends Observable implements SimulatorModel {
         new Thread(() -> initData()).start();//needs if to init data at first time
         getNormal = ad.getNormalModel();
 
-//        zScore=new ZScoreAlgorithm();
-//        zScore.learnNormal(ts_reg);
-//        System.out.println("before detect Zscore");
-//        zScore.detect(ts_Anomal);
+        zScore=new ZScoreAlgorithm();
+        zScore.learnNormal(ts_reg);
+        System.out.println("before detect Zscore");
+        zScore.detect(ts_Anomal);
 
 
-        hyperALG=new hybridAlgorithm();
-        hyperALG.learnNormal(ts_reg);
-        hyperALG.detect(ts_Anomal);
+//        hyperALG=new hybridAlgorithm();
+//        hyperALG.learnNormal(ts_reg);
+//        hyperALG.detect(ts_Anomal);
 
 
 
@@ -97,70 +100,28 @@ public class Model extends Observable implements SimulatorModel {
 
     public void setVarivablesTOALG() {//listen to timeStep and init line chart of reg
 
-        valPointX.setValue(ts_Anomal.getValueByTime(attribute1.getValue(), timeStep.intValue()));
-        if (attribute2.getValue() != null)
-            valPointY.setValue(ts_Anomal.getValueByTime(attribute2.getValue(), timeStep.intValue()));
-        else
-            valPointY.setValue(0);
-
-        // System.out.println("first:"+ valPointX.doubleValue()+" "+"second:"+valPointY.doubleValue() );
         ad.timeStep.bind(timeStep);
-        ad.valPointX.bind(valPointX);
-        ad.valPointY.bind(valPointY);
 
-       // zScore.timeStep.bind(timeStep);
+        zScore.timeStep.bind(timeStep);
 
-        hyperALG.timeStep.bind(timeStep);
-        hyperALG.valPointX.bind(valPointX);
-        hyperALG.valPointY.bind(valPointY);
+//        hyperALG.timeStep.bind(timeStep);
+//        hyperALG.valPointX.bind(valPointX);
+//        hyperALG.valPointY.bind(valPointY);
     }
 
     public void setVarivablesNamesTOALG() {//Listen to chosen attribute
 
-        valPointX.setValue(ts_Anomal.getValueByTime(attribute1.getValue(), timeStep.intValue()));//point
-
-        attribute2.setValue(ad.getCorrelateFeature(attribute1.getValue())); //point X
-
-        if (attribute2.getValue() != null) {
-
-            //update the reg line
-            regLineForCorrelateAttribute = ad.getRegLine(attribute1.getValue(), attribute2.getValue());
-
-            valPointY.setValue(ts_Anomal.getValueByTime(attribute2.getValue(), timeStep.intValue()));//point Y
-
-
-            //valAtt1X.setValue(ts_reg.getValueByTime(attribute1.getValue(),0));//reg x1      getting from ts
-            valAtt1X.setValue(ts_reg.getMinFromAttribute(attribute1.getValue()));//reg x1      getting from ts
-            valAtt2Y.setValue(regLineForCorrelateAttribute.f(valAtt1X.floatValue()));//reg y1    getting from reg_line
-
-            //vaAtt1Xend.setValue(ts_reg.getValueByTime(attribute1.getValue(),ts_reg.getRowSize()-1));//regx2
-            vaAtt1Xend.setValue(ts_reg.getMaxFromAttribute(attribute2.getValue()));//regx2
-            vaAtt2Yend.setValue(regLineForCorrelateAttribute.f(vaAtt1Xend.floatValue()));//reg y2
-        } else {
-            valAtt1X.setValue(0);
-            vaAtt1Xend.setValue(0);
-            valPointY.setValue(0);
-            valAtt2Y.setValue(0);
-            vaAtt2Yend.setValue(0);
-        }
-        //System.out.println("first Point of line" + valAtt1X.doubleValue() + " " + valAtt2Y.doubleValue());
-      //  System.out.println("second Point of line" + vaAtt1Xend.doubleValue() + " " + vaAtt2Yend.doubleValue());
-
         ad.attribute1.bind(attribute1);
-        ad.attribute2.bind(attribute2);
-        ad.valAtt1X.bind(valAtt1X);
-        ad.vaAtt1Xend.bind(vaAtt1Xend);
-        ad.valAtt2Y.bind(valAtt2Y);
-        ad.vaAtt2Yend.bind(vaAtt2Yend);
 
-       // zScore.Attribute.bind(attribute1);
+        zScore.Attribute.bind(attribute1);
 
-        hyperALG.attribute1.bind(attribute1);
-        hyperALG.attribute2.bind(attribute2);
-        hyperALG.valAtt1X.bind(valAtt1X);
-        hyperALG.vaAtt1Xend.bind(vaAtt1Xend);
-        hyperALG.valAtt2Y.bind(valAtt2Y);
-        hyperALG.vaAtt2Yend.bind(vaAtt2Yend);
+//        hyperALG.attribute1.bind(attribute1);
+
+//        hyperALG.attribute2.bind(attribute2);
+//        hyperALG.valAtt1X.bind(valAtt1X);
+//        hyperALG.vaAtt1Xend.bind(vaAtt1Xend);
+//        hyperALG.valAtt2Y.bind(valAtt2Y);
+//        hyperALG.vaAtt2Yend.bind(vaAtt2Yend);
 
     }
     public Callable<AnchorPane> getPainter() {
@@ -173,10 +134,10 @@ public class Model extends Observable implements SimulatorModel {
 
         //zScore
         //zScore=new ZScoreAlgorithm();
-//        return ()->zScore.paint();
+        return ()->zScore.paint();
 
         //HyperALG
-        return  ()->hyperALG.paint();
+//        return  ()->hyperALG.paint();
 
     }
 
