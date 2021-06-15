@@ -16,6 +16,9 @@ public class PlayerButtonsController {
     ChoiceBox choiceSpeed;
 
     @FXML
+    ChoiceBox choiceAlgo;
+
+    @FXML
     TextField miliSec;
 
     @FXML
@@ -26,7 +29,7 @@ public class PlayerButtonsController {
 
     // public DoubleProperty rate;
     public BooleanProperty onOpen, onOpenXML, onPlay, onPause, onSpeed, onStop,
-            onRewind, onForward,onAnomalyDetector;//, onPlus15, onMinus15;
+            onRewind, onForward,onAnomalyDetector;
 
     public PlayerButtonsController() {
         onOpen= new SimpleBooleanProperty();
@@ -38,8 +41,6 @@ public class PlayerButtonsController {
         onStop= new SimpleBooleanProperty();
         onRewind= new SimpleBooleanProperty();
         onForward= new SimpleBooleanProperty();
-        //onPlus15= new SimpleBooleanProperty();
-      //  onMinus15= new SimpleBooleanProperty();
 
         onOpen.setValue(false);
         onOpenXML.setValue(false);
@@ -50,13 +51,13 @@ public class PlayerButtonsController {
         onStop.setValue(false);
         onRewind.setValue(false);
         onForward.setValue(false);
-       // onPlus15.setValue(false);
-      //  onMinus15.setValue(false);
     }
 
     public void init() {
         ObservableList<Double> speedList = FXCollections.observableArrayList(0.5, 1.0, 1.5, 2.0, 2.5);
         choiceSpeed.setItems(speedList);
+        ObservableList<String> algoList = FXCollections.observableArrayList("Linear regression", "Z Score", "Hybrid");
+        choiceAlgo.setItems(algoList);
     }
 
     public void onOpen() {

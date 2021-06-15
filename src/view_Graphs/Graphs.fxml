@@ -5,9 +5,9 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="169.0" prefWidth="530.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view_Graphs.GraphsController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="169.0" prefWidth="480.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view_Graphs.GraphsController">
    <children>
-       <LineChart fx:id="chosenAttributeGraph" layoutX="-16.0" layoutY="-5.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="187.0" prefWidth="275.0">
+       <LineChart fx:id="chosenAttributeGraph" layoutX="-16.0" layoutY="-5.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="185.0" prefWidth="240.0">
          <xAxis>
             <CategoryAxis side="BOTTOM" fx:id="xAxis" />
          </xAxis>
@@ -15,7 +15,7 @@
             <NumberAxis fx:id="yAxis" side="LEFT" />
          </yAxis>
       </LineChart>
-      <LineChart fx:id="mostCorrelatedAttribute" layoutX="264.0" layoutY="-5.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="187.0" prefWidth="275.0">
+      <LineChart fx:id="mostCorrelatedAttribute" layoutX="222.0" layoutY="-5.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="185.0" prefWidth="240.0">
          <xAxis>
             <CategoryAxis side="BOTTOM" />
          </xAxis>

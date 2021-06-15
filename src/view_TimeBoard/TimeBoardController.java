@@ -1,27 +1,21 @@
 package view_TimeBoard;
 
+import eu.hansolo.medusa.Gauge;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
-import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
-import viewModel.ViewModelController;
 
 public class TimeBoardController {
 
     @FXML
-    Text altimeter, airSpeed, fd, pitch, roll, yaw;
-
-//    @FXML
-//    Line lineAirSpeed;
+    Text altimeter, airSpeed, fd;
 
     @FXML
-    Line linePitch;
+    Gauge pitch;
 
     @FXML
-    Line lineRoll;
+    Gauge roll;
 
     @FXML
-    Line lineYaw;
-
+    Gauge yaw;
 
 }
