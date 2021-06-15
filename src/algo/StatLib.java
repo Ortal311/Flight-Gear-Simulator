@@ -1,5 +1,9 @@
 package algo;
+import viewModel.TimeSeries;
+
 import java.lang.Math;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StatLib {
 
@@ -36,6 +40,11 @@ public class StatLib {
 
     // returns the Pearson correlation coefficient of X and Y
     public static float pearson(float[] x, float[] y){
+
+        if(var(x) < 0 || var(y) < 0)
+            return 0;
+        if(Math.sqrt(var(x))*Math.sqrt(var(y)) == 0)
+            return 0;
         return (float) (cov(x,y)/(Math.sqrt(var(x))*Math.sqrt(var(y))));
     }
 

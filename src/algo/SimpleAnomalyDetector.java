@@ -41,15 +41,8 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
     TimeSeries tsReg;
     TimeSeries tsAnomal;
     public Line regLineForCorrelateAttribute;
+    public ArrayList<CorrelatedFeatures> cf;
 
-    ArrayList<CorrelatedFeatures> cf;
-    ArrayList<CorrelatedFeatures> cfmore95list;
-
-    HashMap<String,CorrelatedFeatureForAll>cfmore95;
-
-    HashMap<String,CorrelatedFeatureForAll>cfless50;
-
-    HashMap<String,CorrelatedFeatureForAll>cfBetween;
 
     ArrayList<AnomalyReport> ar;
     public Map<String, ArrayList<Integer>> anomalyAndTimeStep = new HashMap<>();
@@ -67,21 +60,16 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
 
     public DoubleProperty timeStep = new SimpleDoubleProperty();
 
-    public List<Double> collectedDataUntilChange=new ArrayList<>();
+    public List<Double> collectedDataUntilChange = new ArrayList<>();
 
 
     public SimpleAnomalyDetector() {
         cf = new ArrayList<>();
-        cfmore95list=new ArrayList<>();
-        cfmore95=new HashMap<>();
-        cfless50=new HashMap<>();
-        cfBetween=new HashMap<>();
-
     }
 
     @Override
     public void learnNormal(TimeSeries ts) {
-        tsReg=ts;
+        tsReg = ts;
         ArrayList<String> atts = ts.getAttributes();
         int len = ts.getRowSize();
 
@@ -102,74 +90,6 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
                     float threshold = findThreshold(ps, lin_reg) * 1.1f; // 10% increase
                     CorrelatedFeatures c = new CorrelatedFeatures(atts.get(i), atts.get(j), p, lin_reg, threshold);
                     cf.add(c);
-                }
-                if (Math.abs(p) >= 0.95) {
-
-                    if(!cfmore95.containsKey(atts.get(i))){
-
-                    Point ps[] = toPoints(ts.getAttributeData(atts.get(i)), ts.getAttributeData(atts.get(j)));
-                    Line lin_reg = StatLib.linear_reg(ps);
-                    float threshold = findThreshold(ps, lin_reg) * 1.1f; // 10% increase
-                    CorrelatedFeatures c = new CorrelatedFeatures(atts.get(i), atts.get(j), p, lin_reg, threshold);//att1_att2_pearsonCorrelate_null_threshold(the max one)
-                    CorrelatedFeatureForAll ca=new CorrelatedFeatureForAll(atts.get(i), atts.get(j),"Regression", Math.abs(p)) ;
-                         cfmore95list.add(c);
-                        cfmore95.put(atts.get(i),ca);
-
-
-                        if(cfBetween.containsKey(atts.get(i)))//if ZScore had the attribute we'll put it here instead
-                            cfBetween.remove(atts.get(i));
-                        if(cfless50.containsKey(atts.get(i)))
-                            cfless50.remove(atts.get(i));
-
-                    }
-                    else // if contain the attribute we'll take the max
-                    {
-                        if(cfmore95.get(atts.get(i)).corrlation<Math.abs(p))//if the the val with the different att is higher,we'll tack the other att
-                        {
-                            Point ps[] = toPoints(ts.getAttributeData(atts.get(i)), ts.getAttributeData(atts.get(j)));
-                            Line lin_reg = StatLib.linear_reg(ps);
-                            float threshold = findThreshold(ps, lin_reg) * 1.1f; // 10% increase
-                            CorrelatedFeatures c = new CorrelatedFeatures(atts.get(i), atts.get(j), p, lin_reg, threshold);//att1_att2_pearsonCorrelate_null_threshold(the max one)
-
-                            cfmore95.get(atts.get(i)).feature2=atts.get(j);
-                            cfmore95.get(atts.get(i)).corrlation=Math.abs(p);
-                        }
-                    }
-                }
-
-
-                else if((!cfmore95.containsKey(atts.get(i)))&&(0.5<=Math.abs(p))&&(Math.abs(p) <0.95)){// 0.5<val<0.95
-
-                    if(!cfBetween.containsKey(atts.get(i))){
-                        CorrelatedFeatureForAll ca=new CorrelatedFeatureForAll(atts.get(i), atts.get(j),"Welzl", Math.abs(p)) ;
-                        cfBetween.put(atts.get(i),ca);
-                        if(cfless50.containsKey(atts.get(i)))//if ZScore had the attribute we'll put it here instead
-                            cfless50.remove(atts.get(i));
-                    }
-                    else // if contain the attribute we'll take the max
-                    {
-                        if(cfBetween.get(atts.get(i)).corrlation<Math.abs(p))//if the the val with the different att is higher,we'll tack the other att
-                        {
-                            cfBetween.get(atts.get(i)).feature2=atts.get(j);
-                            cfBetween.get(atts.get(i)).corrlation=Math.abs(p);
-                        }
-                    }
-                }
-
-
-                else if((Math.abs(p) <0.5)&&(!cfBetween.containsKey(atts.get(i)))&&(!cfmore95.containsKey(atts.get(i)))){
-                    if(!cfless50.containsKey(atts.get(i))){
-                        CorrelatedFeatureForAll ca=new CorrelatedFeatureForAll(atts.get(i), atts.get(j),"ZScore", Math.abs(p)) ;
-                        cfless50.put(atts.get(i),ca);
-                    }
-                    else // if contain the attribute we'll take the max
-                    {
-                        if(cfless50.get(atts.get(i)).corrlation<Math.abs(p))//if the the val with the different att is higher,we'll tack the other att
-                        {
-                            cfless50.get(atts.get(i)).feature2=atts.get(j);
-                            cfless50.get(atts.get(i)).corrlation=Math.abs(p);
-                        }
-                    }
                 }
             }
         }
@@ -194,9 +114,9 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
 
     @Override
     public List<AnomalyReport> detect(TimeSeries ts) {
-        tsAnomal=ts;
+        tsAnomal = ts;
         ArrayList<AnomalyReport> v = new ArrayList<>();
-
+        System.out.println(cf.size());
         for (CorrelatedFeatures c : cf) {
             ArrayList<Float> x = ts.getAttributeData(c.feature1);
             ArrayList<Float> y = ts.getAttributeData(c.feature2);
@@ -216,24 +136,18 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
 
         return v;
     }
-    public void initDataForGraphTimeChange(){
+
+    public void initDataForGraphTimeChange() {
         valPointX.setValue(tsAnomal.getValueByTime(attribute1.getValue(), timeStep.intValue()));
-//        if ((attribute2.getValue() == null)) { //find a way to leave it as null and not paint it in that case
-//            valPointY.setValue(0);
-//        } else {
-//            valPointY.setValue(tsAnomal.getValueByTime(attribute2.getValue(), timeStep.intValue()));
-//        }
-        if(attribute2.getValue()!=null)
-        valPointY.setValue(tsAnomal.getValueByTime(attribute2.getValue(), timeStep.intValue()));
+        if (attribute2.getValue() != null)
+            valPointY.setValue(tsAnomal.getValueByTime(attribute2.getValue(), timeStep.intValue()));
 
 
     }
-    public void initDataForGraphAttChange(){
-       // attribute2.setValue(getCorrelateFeature(attribute1.getValue()));
-                    //need to update with atta
+    public void initDataForGraphAttChange() {
 
-        regLineForCorrelateAttribute=getRegLine(attribute1.getValue(),attribute2.getValue());
-        valAtt2Y.setValue(tsReg.getMinFromAttribute(attribute1.getValue()));
+        regLineForCorrelateAttribute = getRegLine(attribute1.getValue(), attribute2.getValue());
+        valAtt1X.setValue(tsReg.getMinFromAttribute(attribute1.getValue()));
         valAtt2Y.setValue(regLineForCorrelateAttribute.f(valAtt1X.floatValue()));
         vaAtt1Xend.setValue(tsReg.getMaxFromAttribute(attribute2.getValue()));
         vaAtt2Yend.setValue(regLineForCorrelateAttribute.f(vaAtt1Xend.floatValue()));
@@ -244,20 +158,17 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
         AnchorPane ap = new AnchorPane();
         //Data for BubbleChart
         LineChart<Number, Number> sc = new LineChart<>(new NumberAxis(), new NumberAxis());
-        sc.setPrefHeight(250);
-        sc.setPrefWidth(350);
+        sc.setPrefHeight(210);
+        sc.setPrefWidth(290);
         XYChart.Series pointsNormal = new XYChart.Series();//points for normal Flight
         XYChart.Series pointsAnomal = new XYChart.Series();//points for Anomaly parts
         XYChart.Series regLine = new XYChart.Series();//line
         sc.getData().addAll(pointsNormal, regLine, pointsAnomal);
 
 
-
-
         attribute1.addListener((ob, oldV, newV) -> {//to delete the old graph if attribute has changed
             attribute2.setValue(getCorrelateFeature(attribute1.getValue()));
-            if (attribute2.getValue() != null)
-            {
+            if (attribute2.getValue() != null) {
                 initDataForGraphAttChange();
                 timeStep.addListener((o, ov, nv) -> {
                     initDataForGraphTimeChange();
@@ -312,19 +223,7 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
     public List<CorrelatedFeatures> getNormalModel() {
         return cf;
     }
-    public List<CorrelatedFeatures> getCorrelateMore95lst() {
-        return cfmore95list;
-    }
-    public HashMap<String,CorrelatedFeatureForAll>getCorrelateless50(){
-        return cfless50;
-    }
-    public HashMap<String, CorrelatedFeatureForAll> getCfBetween() {
-        return cfBetween;
-    }
 
-    public HashMap<String, CorrelatedFeatureForAll> getCfmore95() {
-        return cfmore95;
-    }
 
     public String getCorrelateFeature(String attribute1) {
         for (CorrelatedFeatures c : cf) {

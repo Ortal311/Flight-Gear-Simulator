@@ -9,63 +9,63 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="282.0" prefWidth="955.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view_PlayerButtons.PlayerButtonsController">
+<AnchorPane prefHeight="217.0" prefWidth="955.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view_PlayerButtons.PlayerButtonsController">
    <children>
-      <Button layoutX="121.0" layoutY="168.0" mnemonicParsing="false" onAction="#onOpenXML" prefHeight="30.0" prefWidth="100.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 5px;" text="Choose XML" textFill="#123e9e">
+      <Button layoutX="118.0" layoutY="137.0" mnemonicParsing="false" onAction="#onOpenXML" prefHeight="30.0" prefWidth="100.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 5px;" text="Choose XML" textFill="#123e9e">
          <font>
             <Font name="Tahoma Bold" size="13.0" />
          </font></Button>
-      <Button layoutX="9.0" layoutY="168.0" mnemonicParsing="false" onAction="#onOpen" prefHeight="30.0" prefWidth="100.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 5px;" text="Choose CSV" textAlignment="CENTER" textFill="#123e9e">
+      <Button layoutX="6.0" layoutY="137.0" mnemonicParsing="false" onAction="#onOpen" prefHeight="30.0" prefWidth="100.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 5px;" text="Choose CSV" textAlignment="CENTER" textFill="#123e9e">
          <font>
             <Font name="Tahoma Bold" size="13.0" />
          </font></Button>
-      <Button layoutX="9.0" layoutY="209.0" mnemonicParsing="false" onAction="#onPlay" prefHeight="35.0" prefWidth="38.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 7px;" text="▶" textAlignment="CENTER" textFill="#123e9e">
+      <Button layoutX="6.0" layoutY="178.0" mnemonicParsing="false" onAction="#onPlay" prefHeight="35.0" prefWidth="38.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 7px;" text="▶" textAlignment="CENTER" textFill="#123e9e">
          <font>
             <Font size="16.0" />
          </font></Button>
-      <Button layoutX="61.0" layoutY="209.0" mnemonicParsing="false" onAction="#onStop" prefHeight="35.0" prefWidth="40.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 7px;" text="■" textFill="#123e9e">
+      <Button layoutX="58.0" layoutY="178.0" mnemonicParsing="false" onAction="#onStop" prefHeight="35.0" prefWidth="40.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 7px;" text="■" textFill="#123e9e">
          <font>
             <Font size="16.0" />
          </font></Button>
-      <Button layoutX="115.0" layoutY="209.0" mnemonicParsing="false" onAction="#onPause" prefHeight="35.0" prefWidth="40.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 7px;" text="||" textFill="#123e9e">
+      <Button layoutX="112.0" layoutY="178.0" mnemonicParsing="false" onAction="#onPause" prefHeight="35.0" prefWidth="40.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 7px;" text="||" textFill="#123e9e">
          <font>
             <Font name="System Bold" size="15.0" />
          </font></Button>
-      <Button layoutX="223.0" layoutY="209.0" mnemonicParsing="false" onAction="#onForward" prefHeight="35.0" prefWidth="40.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 7px;" text="▶▶" textFill="#123e9e">
+      <Button layoutX="220.0" layoutY="178.0" mnemonicParsing="false" onAction="#onForward" prefHeight="35.0" prefWidth="40.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 7px;" text="▶▶" textFill="#123e9e">
          <font>
             <Font size="12.0" />
          </font></Button>
-      <Button layoutX="169.0" layoutY="209.0" mnemonicParsing="false" onAction="#onRewind" prefHeight="35.0" prefWidth="40.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 7px;" text="◀◀" textFill="#123e9e">
+      <Button layoutX="166.0" layoutY="178.0" mnemonicParsing="false" onAction="#onRewind" prefHeight="35.0" prefWidth="40.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 7px;" text="◀◀" textFill="#123e9e">
          <font>
             <Font size="12.0" />
          </font></Button>
-      <Label layoutX="272.0" layoutY="216.0" text="PlaySpeed:" textFill="#123e9e">
+      <Label layoutX="269.0" layoutY="185.0" text="PlaySpeed:" textFill="#123e9e">
          <font>
             <Font name="Tahoma" size="18.0" />
          </font>
       </Label>
-      <Slider fx:id="sliderTime" layoutX="5.0" layoutY="257.0" max="2174.0" prefHeight="16.0" prefWidth="949.0" />
-      <ChoiceBox fx:id="choiceSpeed" layoutX="365.0" layoutY="215.0" prefHeight="25.0" prefWidth="50.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 5px;" />
-      <TextField fx:id="minutes" layoutX="752.0" layoutY="215.0" prefHeight="25.0" prefWidth="38.0" promptText="00" style="-fx-border-color: #123e9e#123e9e; -fx-border-radius: 5px;" />
-      <TextField fx:id="miliSec" layoutX="850.0" layoutY="215.0" prefHeight="25.0" prefWidth="38.0" promptText="00" style="-fx-border-color: #123e9e#123e9e; -fx-border-radius: 5px;" />
-      <TextField fx:id="seconds" layoutX="801.0" layoutY="215.0" prefHeight="25.0" prefWidth="38.0" promptText="00" style="-fx-border-color: #123e9e#123e9e; -fx-border-radius: 5px;" />
-      <Text fill="#123e9e" layoutX="792.0" layoutY="234.0" strokeType="OUTSIDE" strokeWidth="0.0" text=":">
+      <Slider fx:id="sliderTime" layoutX="2.0" layoutY="226.0" max="2174.0" prefHeight="16.0" prefWidth="949.0" />
+      <ChoiceBox fx:id="choiceSpeed" layoutX="362.0" layoutY="184.0" prefHeight="25.0" prefWidth="50.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 5px;" />
+      <TextField fx:id="minutes" layoutX="749.0" layoutY="184.0" prefHeight="25.0" prefWidth="38.0" promptText="00" style="-fx-border-color: #123e9e#123e9e; -fx-border-radius: 5px;" />
+      <TextField fx:id="miliSec" layoutX="847.0" layoutY="184.0" prefHeight="25.0" prefWidth="38.0" promptText="00" style="-fx-border-color: #123e9e#123e9e; -fx-border-radius: 5px;" />
+      <TextField fx:id="seconds" layoutX="798.0" layoutY="184.0" prefHeight="25.0" prefWidth="38.0" promptText="00" style="-fx-border-color: #123e9e#123e9e; -fx-border-radius: 5px;" />
+      <Text fill="#123e9e" layoutX="789.0" layoutY="203.0" strokeType="OUTSIDE" strokeWidth="0.0" text=":">
          <font>
             <Font name="Tahoma" size="19.0" />
          </font>
       </Text>
-      <Text fill="#123e9e" layoutX="841.0" layoutY="234.0" strokeType="OUTSIDE" strokeWidth="0.0" text=":">
+      <Text fill="#123e9e" layoutX="838.0" layoutY="203.0" strokeType="OUTSIDE" strokeWidth="0.0" text=":">
          <font>
             <Font name="Tahoma" size="19.0" />
          </font>
       </Text>
-      <Button layoutX="234.0" layoutY="169.0" mnemonicParsing="false" onAction="#onAnomalyDetector" prefHeight="30.0" prefWidth="181.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 5px;" text="Load Anomaly Detector" textFill="#123e9e">
+      <Button layoutX="231.0" layoutY="138.0" mnemonicParsing="false" onAction="#onAnomalyDetector" prefHeight="30.0" prefWidth="181.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 5px;" text="Load Anomaly Detector" textFill="#123e9e">
          <font>
             <Font name="Tahoma Bold" size="13.0" />
          </font>
       </Button>
-      <ChoiceBox fx:id="choiceAlgo" layoutX="6.0" layoutY="31.0" prefWidth="200.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 5px;" />
-      <Label layoutX="8.0" layoutY="6.0" text="Choose an algorithm:" textFill="#123e9e">
+      <ChoiceBox fx:id="choiceAlgo" layoutX="9.0" layoutY="33.0" prefWidth="200.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 5px;" />
+      <Label layoutX="11.0" layoutY="8.0" text="Choose an algorithm:" textFill="#123e9e">
          <font>
             <Font name="Tahoma" size="18.0" />
          </font>

@@ -33,6 +33,8 @@ public class ZScoreAlgorithm implements AnomalyDetector {
     public StringProperty Attribute = new SimpleStringProperty();
     public DoubleProperty timeStep = new SimpleDoubleProperty();
 
+    public Line regLineForCorrelateAttribute;
+
     public ZScoreAlgorithm() {
         this.tx = new Vector<>();
         this.ZScoreMap = new HashMap<>();
@@ -151,8 +153,8 @@ public class ZScoreAlgorithm implements AnomalyDetector {
         AnchorPane ap = new AnchorPane();
         //line Chart, child of Anchor
         LineChart<Number, Number> sc = new LineChart<>(new NumberAxis(), new NumberAxis());
-        sc.setPrefHeight(250);
-        sc.setPrefWidth(350);
+        sc.setPrefHeight(210);
+        sc.setPrefWidth(290);
         XYChart.Series line = new XYChart.Series();
         XYChart.Series lineAnomal = new XYChart.Series();
         sc.getData().addAll(line,lineAnomal);
