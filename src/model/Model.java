@@ -73,19 +73,17 @@ public class Model extends Observable implements SimulatorModel {
         ad = new SimpleAnomalyDetector();
 //        ad.learnNormal(ts_reg);
 //        ad.detect(ts_Anomal);
-        new Thread(() -> initData()).start();//needs if to init data at first time
 //        getNormal = ad.getNormalModel();
 
-        zScore=new ZScoreAlgorithm();
-        zScore.learnNormal(ts_reg);
-        System.out.println("before detect Zscore");
-        zScore.detect(ts_Anomal);
+        //zScore=new ZScoreAlgorithm();
+        // zScore.learnNormal(ts_reg);
+        //zScore.detect(ts_Anomal);
 
 
-        hyperALG=new hybridAlgorithm();
+        hyperALG = new hybridAlgorithm();
+        new Thread(() -> initData()).start();//needs if to init data at first time
         hyperALG.learnNormal(ts_reg);
         hyperALG.detect(ts_Anomal);
-
 
 
         if (ad != null)
@@ -124,6 +122,7 @@ public class Model extends Observable implements SimulatorModel {
 //        hyperALG.vaAtt2Yend.bind(vaAtt2Yend);
 
     }
+
     public Callable<AnchorPane> getPainter() {
         //reg
 //        ad=new SimpleAnomalyDetector();
@@ -137,14 +136,14 @@ public class Model extends Observable implements SimulatorModel {
 //        return ()->zScore.paint();
 
         //HyperALG
-        return  ()->hyperALG.paint();
+        return () -> hyperALG.paint();
 
     }
 
     public void setTimeSeries(TimeSeries tsAnomal, TimeSeries tsReg) {
         this.ts_Anomal = tsAnomal;
         this.ts_reg = tsReg;
-//        new Thread(()->initData()).start();
+
     }
 
 
@@ -354,8 +353,6 @@ public class Model extends Observable implements SimulatorModel {
             attributeMap.put(attribute.name, attribute);
         }
     }
-
-
 
 
     public void writeToXML(FlightSetting settings) throws IOException {

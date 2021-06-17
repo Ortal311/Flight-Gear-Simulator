@@ -60,8 +60,6 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
 
     public DoubleProperty timeStep = new SimpleDoubleProperty();
 
-    public List<Double> collectedDataUntilChange = new ArrayList<>();
-
 
     public SimpleAnomalyDetector() {
         cf = new ArrayList<>();
@@ -71,13 +69,12 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
     public void learnNormal(TimeSeries ts) {
         tsReg = ts;
         ArrayList<String> atts = ts.getAttributes();
-        int len = ts.tsNum.get(0).size();
+        int len = ts.ts.get(ts.atts.get(0)).size();
 
         float vals[][] = new float[atts.size()][len];
         for (int i = 0; i < atts.size(); i++) {
             for (int j = 0; j < len; j++) {
 //                vals[i][j] = ts.getAttributeData(atts.get(i)).get(j);
-                System.out.println(i+" "+j);
                 vals[i][j] =ts.getValueByTime(atts.get(i),j);
             }
         }
@@ -95,7 +92,7 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
                 }
             }
         }
-        System.out.println(" the size of cf:"+cf.size());
+        System.out.println(" the size of simple anomaly is: :"+cf.size());
 
     }
 

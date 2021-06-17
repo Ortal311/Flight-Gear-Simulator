@@ -5,18 +5,13 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.AnchorPane;
 import viewModel.TimeSeries;
 
-import java.sql.Time;
 import java.util.*;
-
-import static algo.StatLib.*;
 
 public class ZScoreAlgorithm implements AnomalyDetector {
     Vector<Float> tx;
@@ -78,7 +73,7 @@ public class ZScoreAlgorithm implements AnomalyDetector {
             return 0;
         zScore = Math.abs(x - avg) / sigma;
 
-        System.out.println("zScore: " + zScore + " " + "attribute: " + attribute);
+      //  System.out.println("zScore: " + zScore + " " + "attribute: " + attribute);
         return zScore;
     }
 
@@ -107,12 +102,15 @@ public class ZScoreAlgorithm implements AnomalyDetector {
         //LinkedList<Float> zScored = new LinkedList<>();
         ArrayList<Float> zScored = new ArrayList<>();
         String attribute;
+        int colSize = ts.atts.size();
 
-        for (ArrayList<Float> col : ts.tsNum.values()) {
+        for (int i = 0; i < colSize; i++) {
+            ArrayList<Float> col = ts.tsNum.get(i);
             attribute = ts.atts.get(index);
             avgMap.put(attribute, new ArrayList<>());
-
+          //  System.out.println(col.size());
             for (int j = 0; j < col.size(); j++) {
+
                 zScored.add(calcZScore(col.subList(0, j), attribute));
             }
             tx.add(argMax(zScored));
@@ -134,8 +132,8 @@ public class ZScoreAlgorithm implements AnomalyDetector {
             for (int indexTime = 0; indexTime < col.size(); indexTime++) {
                 if (calcZScore(col.subList(0, indexTime), attribute) > tx.get(indexCol)) {
                     lst.add(new AnomalyReport(attribute, indexTime));
-                    System.out.println("was inside detect ZScore");
-                    System.out.println(attribute + "  " + indexCol);
+//                    System.out.println("was inside detect ZScore");
+//                    System.out.println(attribute + "  " + indexCol);
 
                     if (!ZScoreAnomaly.containsKey(attribute)) {
                         ZScoreAnomaly.put(attribute, new ArrayList<>());

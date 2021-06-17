@@ -19,8 +19,7 @@ import java.util.*;
 
 public class hybridAlgorithm {
 
-    HashMap<String, HashSet<CorrelatedFeatures>> cfAlgo;
-    HashMap<String, String> attALG;
+    HashMap<String, CorrelatedFeatureForAll> attALG;
     HashMap<CorrelatedFeatureForAll, Circle> circlesMap;
     HashMap<String, ArrayList<Integer>> anomalyMapByAtt;
 
@@ -34,14 +33,8 @@ public class hybridAlgorithm {
     public TimeSeries tsRegAnomal;
 
 
-    ArrayList<CorrelatedFeatures> cfmore95list;
-
     //for Hybrid
     HashMap<String, CorrelatedFeatures> cfmore95;
-
-    HashMap<String, CorrelatedFeatureForAll> cfless50;
-
-    HashMap<String, CorrelatedFeatureForAll> cfBetween;
 
     //for ZSore
     public HashMap<String, ArrayList<Float>> ZScoreReg;
@@ -51,7 +44,6 @@ public class hybridAlgorithm {
     public StringProperty attribute2 = new SimpleStringProperty();
 
     public Line regLineForCorrelateAttribute;
-
 
     public DoubleProperty valAtt1X = new SimpleDoubleProperty();//static for line- minValX
     public DoubleProperty valAtt2Y = new SimpleDoubleProperty();//static for line- minValY
@@ -68,10 +60,9 @@ public class hybridAlgorithm {
         circlesMap = new HashMap<>();
         anomalyMapByAtt = new HashMap<>();
 
-        this.cfmore95list = new ArrayList<>();
+        attALG = new HashMap<>();
+
         this.cfmore95 = new HashMap<>();
-        this.cfBetween = new HashMap<>();
-        this.cfless50 = new HashMap<>();
 
         ad = new SimpleAnomalyDetector();
         zScore = new ZScoreAlgorithm();
@@ -92,62 +83,52 @@ public class hybridAlgorithm {
     public void learnNormal(TimeSeries ts) {
 
         findCorrelation(ts);
-        // ad.cf=cfmore95list;
+
 
         WelzlAlgorithm algorithm = new WelzlAlgorithm();
 
+        int indexReg = 0;
+        int indexZS = 0;
 
-        int index = 0;
-        for (String att : cfless50.keySet()) {
-            tsZscore.ts.put(att, ts.ts.get(att));
-            tsZscore.tsNum.put(index++, ts.ts.get(att));
-            tsZscore.atts.add(att);
-        }
-        index = 0;
-        for (String att : cfmore95.keySet()) {
-            String att2 = cfmore95.get(att).feature2;
-            tsReg.ts.put(att, ts.ts.get(att));
+        for (String att : attALG.keySet()) {
             Integer index1 = ts.atts.indexOf(att);
-            tsReg.tsNum.put(index++, ts.tsNum.get(index1));
-            Integer index2 = ts.atts.indexOf(att2);
-            tsReg.ts.put(att2, ts.ts.get(att));
-            tsReg.tsNum.put(index++, ts.ts.get(index2));
 
-            tsReg.atts.add(att);
-            tsReg.atts.add(att2);
+            if (attALG.get(att).nameALG.equals("Regression")) {
+                String att2 = attALG.get(att).feature2;
+                tsReg.ts.put(att, ts.ts.get(att));
+                //Integer index1 = ts.atts.indexOf(att);
+                tsReg.tsNum.put(indexReg++, ts.tsNum.get(index1));
+                Integer index2 = ts.atts.indexOf(att2);
+                tsReg.ts.put(att2, ts.ts.get(att));
+                tsReg.tsNum.put(indexReg++, ts.tsNum.get(index2));
+
+                tsReg.atts.add(att);
+                tsReg.atts.add(att2);
+            } else if (attALG.get(att).nameALG.equals("ZScore")) {
+                tsZscore.ts.put(att, ts.ts.get(att));
+                tsZscore.tsNum.put(indexZS++, ts.tsNum.get(index1));
+                tsZscore.atts.add(att);
+            }
         }
 
         ad.learnNormal(tsReg);
-        for(CorrelatedFeatures cf: ad.cf){
-          //  System.out.println("lala"+ cf.feature1);
-        }
         zScore.learnNormal(tsZscore);
         ZScoreReg = zScore.getZScoreReg();
         ZScoreAnomaly = zScore.getZscoreAnomal();
 
-        attALG = new HashMap<>();
-
-        System.out.println("Regression");
-        for (Map.Entry<String, CorrelatedFeatures> alg : cfmore95.entrySet()) {
-            attALG.put(alg.getKey(), "Regression");
-           // System.out.println(alg.getValue() + " " + alg.getValue().feature1 + " " + alg.getValue().feature2 + " " + alg.getValue().corrlation);
-        }
-        System.out.println("Welze");
-        for (Map.Entry<String, CorrelatedFeatureForAll> alg : cfBetween.entrySet()) {
-            attALG.put(alg.getKey(), alg.getValue().nameALG);
-            //System.out.println(alg.getValue().nameALG + " " + alg.getValue().feature1 + " " + alg.getValue().feature2 + " " + alg.getValue().corrlation);
-        }
-        System.out.println("Zscore");
-        for (Map.Entry<String, CorrelatedFeatureForAll> alg : cfless50.entrySet()) {
-            attALG.put(alg.getKey(), alg.getValue().nameALG);
-            //  System.out.println(alg.getValue().nameALG + " " + alg.getValue().feature1 + " " + alg.getValue().feature2 + " " + alg.getValue().corrlation);
-
-        }
+//        for(String s: attALG.keySet()){
+//            System.out.println(attALG.get(s).feature1+" "+attALG.get(s).feature2+" "+ attALG.get(s).nameALG);
+//        }
         System.out.println("size of all att ALG: " + attALG.size());
+        System.out.println("the size of Zscore " + tsZscore.tsNum.size());
+        System.out.println("the size of Reg: " + tsReg.tsNum.size());
+        System.out.println("the size of wezle ");
         // System.out.println("size of cf is " + cf.size());
 
-        for (String key : cfBetween.keySet()) {//activate welze on all the attribute with 0.5-0.95 correlation
-            circlesMap.put(cfBetween.get(key), algorithm.miniDisk(toListPoints(ts.getAttributeData(cfBetween.get(key).feature1), ts.getAttributeData(cfBetween.get(key).feature2))));
+        for (String key : attALG.keySet()) {//activate welze on all the attribute with 0.5-0.95 correlation
+            if (attALG.get(key).nameALG.equals("Welzl"))
+                circlesMap.put(attALG.get(key), algorithm.miniDisk(toListPoints(ts.getAttributeData(attALG.get(key).feature1), ts.getAttributeData(attALG.get(key).feature2))));
+            System.out.println(attALG.get(key).feature1 + " " + attALG.get(key).feature2);
         }
     }
 
@@ -171,61 +152,49 @@ public class hybridAlgorithm {
                 float threshold;
                 if (Math.abs(p) >= 0.95) {
 
-                    if (!cfmore95.containsKey(atts.get(i))) {
+                    Point ps[] = toPoints(ts.getAttributeData(atts.get(i)), ts.getAttributeData(atts.get(j)));
+                    Line lin_reg = StatLib.linear_reg(ps);
+                    threshold = findThreshold(ps, lin_reg) * 1.1f; // 10% increase
+                    CorrelatedFeatures c = new CorrelatedFeatures(atts.get(i), atts.get(j), p, lin_reg, threshold);//att1_att2_pearsonCorrelate_null_threshold(the max one)
 
-                        Point ps[] = toPoints(ts.getAttributeData(atts.get(i)), ts.getAttributeData(atts.get(j)));
-                        Line lin_reg = StatLib.linear_reg(ps);
-                        threshold = findThreshold(ps, lin_reg) * 1.1f; // 10% increase
-                        CorrelatedFeatures c = new CorrelatedFeatures(atts.get(i), atts.get(j), p, lin_reg, threshold);//att1_att2_pearsonCorrelate_null_threshold(the max one)
 
+                    if (!attALG.containsKey(atts.get(i))) {
+                        attALG.put(atts.get(i), new CorrelatedFeatureForAll(atts.get(i), atts.get(j), "Regression", p)); // override down level if was exist
                         cfmore95.put(atts.get(i), c);
+                    }  // if contain the attribute we'll take the max
 
-
-
-                        if (cfBetween.containsKey(atts.get(i)))//if Wezele had the attribute we'll put it here instead
-                            cfBetween.remove(atts.get(i));
-                        if (cfless50.containsKey(atts.get(i)))
-                            cfless50.remove(atts.get(i));
-
-                    } else // if contain the attribute we'll take the max
+                    else if (attALG.get(atts.get(i)).corrlation < Math.abs(p))//if the the val with the different att is higher,we'll tack the other att
                     {
-                        if (cfmore95.get(atts.get(i)).corrlation < Math.abs(p))//if the the val with the different att is higher,we'll tack the other att
-                        {
-                            Point ps[] = toPoints(ts.getAttributeData(atts.get(i)), ts.getAttributeData(atts.get(j)));
-                            Line lin_reg = StatLib.linear_reg(ps);
-                            threshold = findThreshold(ps, lin_reg) * 1.1f; // 10% increase
-                            CorrelatedFeatures c = new CorrelatedFeatures(atts.get(i), atts.get(j), p, lin_reg, threshold);//att1_att2_pearsonCorrelate_null_threshold(the max one)
-
-                            cfmore95.get(atts.get(i)).feature2 = atts.get(j);
-                            cfmore95.get(atts.get(i)).corrlation = Math.abs(p);
-                        }
+                        attALG.get(atts.get(i)).feature2 = atts.get(j);//change the name of the correlate att
+                        attALG.get(atts.get(i)).corrlation = Math.abs(p);//change the val of correlation
+                        attALG.get(atts.get(i)).nameALG = "Regression";
+                        cfmore95.put(atts.get(i), c);
                     }
-                } else if ((!cfmore95.containsKey(atts.get(i))) && (0.5 <= Math.abs(p)) && (Math.abs(p) < 0.95)) {// 0.5<val<0.95
-
-                    if (!cfBetween.containsKey(atts.get(i))) {
+                } else if ((0.5 <= Math.abs(p)) && (Math.abs(p) < 0.95)) {// 0.5<val<0.95
+                    if (!attALG.containsKey(atts.get(i))) {
                         CorrelatedFeatureForAll ca = new CorrelatedFeatureForAll(atts.get(i), atts.get(j), "Welzl", Math.abs(p));
-                        cfBetween.put(atts.get(i), ca);
-                        if (cfless50.containsKey(atts.get(i)))//if ZScore had the attribute we'll put it here instead
-                            cfless50.remove(atts.get(i));
-                    } else // if contain the attribute we'll take the max
+                        attALG.put(atts.get(i), ca);
+
+                    }  // if contain the attribute we'll take the max
+
+                    else if (attALG.get(atts.get(i)).corrlation < Math.abs(p))//if the the val with the different att is higher,we'll take the other att
                     {
-                        if (cfBetween.get(atts.get(i)).corrlation < Math.abs(p))//if the the val with the different att is higher,we'll tack the other att
-                        {
-                            cfBetween.get(atts.get(i)).feature2 = atts.get(j);
-                            cfBetween.get(atts.get(i)).corrlation = Math.abs(p);
-                        }
+                        attALG.get(atts.get(i)).feature2 = atts.get(j);
+                        attALG.get(atts.get(i)).corrlation = Math.abs(p);
+                        attALG.get(atts.get(i)).nameALG = "Welzl";
+
                     }
-                } else if ((Math.abs(p) < 0.5) && (!cfBetween.containsKey(atts.get(i))) && (!cfmore95.containsKey(atts.get(i)))) {
-                    if (!cfless50.containsKey(atts.get(i))) {
+                } else if (Math.abs(p) < 0.5) {
+                    if (!attALG.containsKey(atts.get(i))) {
                         CorrelatedFeatureForAll ca = new CorrelatedFeatureForAll(atts.get(i), atts.get(j), "ZScore", Math.abs(p));
-                        cfless50.put(atts.get(i), ca);
-                    } else // if contain the attribute we'll take the max
+                        attALG.put(atts.get(i), ca);
+                    }  // if contain the attribute we'll take the max
+                    else if (attALG.get(atts.get(i)).corrlation < Math.abs(p))//if the the val with the different att is higher,we'll tack the other att
                     {
-                        if (cfless50.get(atts.get(i)).corrlation < Math.abs(p))//if the the val with the different att is higher,we'll tack the other att
-                        {
-                            cfless50.get(atts.get(i)).feature2 = atts.get(j);
-                            cfless50.get(atts.get(i)).corrlation = Math.abs(p);
-                        }
+                        attALG.get(atts.get(i)).feature2 = atts.get(j);
+                        attALG.get(atts.get(i)).corrlation = Math.abs(p);
+                        attALG.get(atts.get(i)).nameALG = "ZScore";
+
                     }
                 }
             }
@@ -245,26 +214,30 @@ public class hybridAlgorithm {
 
     public List<AnomalyReport> detect(TimeSeries ts) {
 
-        int index = 0;
-        for (String att : cfless50.keySet()) {
-            tsZscoreAnomal.ts.put(att, ts.ts.get(att));
-            tsZscoreAnomal.tsNum.put(index++, ts.ts.get(att));
-            tsZscoreAnomal.atts.add(att);
-        }
-        index = 0;
-        for (String att : cfmore95.keySet()) {
-            String att2 = cfmore95.get(att).feature2;
+        int indexReg = 0;
+        int indexZS = 0;
 
+        for (String att : attALG.keySet()) {
             Integer index1 = ts.atts.indexOf(att);
-            tsRegAnomal.tsNum.put(index++, ts.tsNum.get(index1));
-            tsRegAnomal.ts.put(att, ts.ts.get(att));
-            tsRegAnomal.atts.add(att);
 
-            Integer index2 = ts.atts.indexOf(att2);
-            tsRegAnomal.ts.put(att2, ts.ts.get(att2));
-            tsRegAnomal.tsNum.put(index++, ts.ts.get(index2));
-            tsRegAnomal.atts.add(att2);
+            if (attALG.get(att).nameALG.equals("Regression")) {
+                String att2 = attALG.get(att).feature2;
+                tsRegAnomal.ts.put(att, ts.ts.get(att));
+                //Integer index1 = ts.atts.indexOf(att);
+                tsRegAnomal.tsNum.put(indexReg++, ts.tsNum.get(index1));
+                Integer index2 = ts.atts.indexOf(att2);
+                tsRegAnomal.ts.put(att2, ts.ts.get(att));
+                tsRegAnomal.tsNum.put(indexReg++, ts.tsNum.get(index2));
+
+                tsRegAnomal.atts.add(att);
+                tsRegAnomal.atts.add(att2);
+            } else if (attALG.get(att).nameALG.equals("ZScore")) {
+                tsZscoreAnomal.ts.put(att, ts.ts.get(att));
+                tsZscoreAnomal.tsNum.put(indexZS++, ts.tsNum.get(index1));
+                tsZscoreAnomal.atts.add(att);
+            }
         }
+
 
         List<AnomalyReport> lst = new ArrayList<>();
 
@@ -274,7 +247,7 @@ public class hybridAlgorithm {
         lst.addAll(ad.detect(tsRegAnomal));
         lst.addAll(zScore.detect(tsZscoreAnomal));
 
-        for (CorrelatedFeatureForAll c : cfBetween.values()) {
+        for (CorrelatedFeatureForAll c : circlesMap.keySet()) {
             ArrayList<Integer> anomalyLst = new ArrayList<>();
             List<Point> ps = toListPoints(ts.getAttributeData(c.feature1), ts.getAttributeData(c.feature2));
 
@@ -286,10 +259,10 @@ public class hybridAlgorithm {
             }
             anomalyMapByAtt.put(c.feature1, anomalyLst);
         }
-        for(AnomalyReport ar : lst){
-            System.out.println("ADI"+ar.description+" "+ ar.timeStep);
-          //  System.out.println(ar.description+" "+ar.timeStep);
-        }
+//        for (AnomalyReport ar : lst) {
+//            System.out.println("ADI" + ar.description + " " + ar.timeStep);
+//              System.out.println(ar.description+" "+ar.timeStep);
+//        }
 
         return lst;
     }
@@ -326,13 +299,13 @@ public class hybridAlgorithm {
 
         //data for CircleALG
 
-       // BubbleChart<Number, Number> circleGraph = new BubbleChart(new NumberAxis(), new NumberAxis());
+        // BubbleChart<Number, Number> circleGraph = new BubbleChart(new NumberAxis(), new NumberAxis());
 
-        NumberAxis X=new NumberAxis();
+        NumberAxis X = new NumberAxis();
         X.setForceZeroInRange(false);
-        NumberAxis Y=new NumberAxis();
+        NumberAxis Y = new NumberAxis();
         Y.setForceZeroInRange(false);
-        BubbleChart<Number, Number> circleGraph=new BubbleChart(X,Y);
+        BubbleChart<Number, Number> circleGraph = new BubbleChart(X, Y);
 
         circleGraph.setAnimated(false);
         circleGraph.setPrefSize(250, 250);
@@ -360,19 +333,13 @@ public class hybridAlgorithm {
         XYChart.Series pointsAnomal = new XYChart.Series();//points for Anomaly parts
         XYChart.Series regLine = new XYChart.Series();//line
         regBoard.getData().addAll(pointsNormal, regLine, pointsAnomal);
-       // pointsAnomal.getNode().setStyle("-fx-stroke: red;");
+        // pointsAnomal.getNode().setStyle("-fx-stroke: red;");
 
         //board.getChildren().add(circleGraph);
         board.getStylesheets().add("style.css");
-        //circleGraph.getStylesheets().add("style.css");
 
-//        public void mylistener(int ov, int olv, int newvv){
-//            //Do....
-//        }
-//        attribute1.addListener((o, ov, nv)->mylistener());
-//        timeStep.add()
         attribute1.addListener((ob, oldV, newV) -> {//to delete the old graph if attribute has changed
-            if(oldV != null && !oldV.equals(newV)){
+            if (oldV != null && !oldV.equals(newV)) {
                 seriesCircle.getData().clear();
                 seriesPoints.getData().clear();
                 seriesPointsAnomal.getData().clear();
@@ -382,118 +349,123 @@ public class hybridAlgorithm {
                 line.getData().clear();
                 lineAnomal.getData().clear();
             }
-            attribute2.setValue(cfmore95.get(attribute1.getValue()).feature2);//MISTAKE !!! SHOULDN'T DETERMINE ACCORD "cfmore95"
-
-               if (attribute2.getValue() != null) {
-
-            timeStep.addListener((o, ov, nv) -> {
-                if (attALG.get(attribute1.getValue().toString()).equals("Welzl")) {
-                    System.out.println("welze has been activated");
-                    sc.setVisible(false);
-                    regBoard.setVisible(false);
-                    circleGraph.setVisible(true);
-
-                    pointsAnomal.getData().clear();
-                    pointsAnomal.getData().clear();
-                    regLine.getData().clear();
-                    line.getData().clear();
-                    lineAnomal.getData().clear();
-
-                    //         if (getCircle(attribute1.getValue()) != null) {//if it's null there is no circle for them, and we'll need to activate a different ALG
-                    double radius = getCircle(attribute1.getValue()).radius;
-                    float x = getCircle(attribute1.getValue()).center.x;
-                    float y = getCircle(attribute1.getValue()).center.y;
-
-                    Platform.runLater(() -> {
-                        //seriesCircle.getData().add(new XYChart.Data(x, y, radius));
-
-                        if (!anomalyMapByAtt.containsKey(attribute1.getValue())) {
-                            seriesCircle.getData().add(new XYChart.Data(x, y, radius));
-
-                            seriesPoints.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue(), (radius / 10)));//points
-                        } else {// if there are anomalies
-                            if (!anomalyMapByAtt.get(attribute1.getValue()).contains(timeStep.intValue())) {
-                                seriesCircle.getData().add(new XYChart.Data(x, y, radius));
-
-                                seriesPoints.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue(), (radius / 10)));//points
-
-                            } else {
-                                seriesCircle.getData().add(new XYChart.Data(x, y, radius));
-
-                                seriesPointsAnomal.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue(), 0.2));//points of anomaly
-
-                            }
-                        }
-                    });
-
-//                    if (!newV.equals(oldV)) {//if change the attribute
-//                        seriesPoints.getData().clear();
-//                        seriesPointsAnomal.getData().clear();
-//                        seriesCircle.getData().clear();
-//                    }
-//                    }
-                } else if (attALG.get(attribute1.getValue().toString()).equals("Regression")) {
+            attribute2.setValue(attALG.get(attribute1.getValue()).feature2);
+            if (attribute2.getValue() != null) {
+                if(attALG.get(newV).nameALG.equals("Regression"))
                     initDataForGraphAttChange();
+
+                timeStep.addListener((o, ov, nv) -> {
+
                     initDataForGraphTimeChange();
+                    if (attALG.get(attribute1.getValue().toString()).nameALG.equals("Welzl")) {
+                        System.out.println("welze has been activated");
+                        sc.setVisible(false);
+                        regBoard.setVisible(false);
+                        circleGraph.setVisible(true);
 
-                    System.out.println("regression has been activated");
-                    sc.setVisible(false);
-                    regBoard.setVisible(true);
-                    circleGraph.setVisible(false);
+                        pointsAnomal.getData().clear();
+                        pointsAnomal.getData().clear();
+                        regLine.getData().clear();
+                        line.getData().clear();
+                        lineAnomal.getData().clear();
+
+                        //         if (getCircle(attribute1.getValue()) != null) {//if it's null there is no circle for them, and we'll need to activate a different ALG
+
+                        double radius = getCircle(attribute1.getValue()).radius;
+                        float x = getCircle(attribute1.getValue()).center.x;
+                        float y = getCircle(attribute1.getValue()).center.y;
+
+                        Platform.runLater(() -> {
+                            //seriesCircle.getData().add(new XYChart.Data(x, y, radius));
+
+                            if (!anomalyMapByAtt.containsKey(attribute1.getValue())) {
+                                seriesCircle.getData().add(new XYChart.Data(x, y, radius));
+                                seriesPoints.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue(), (radius / 10)));//points
+                            } else {// if there are anomalies
+                                if (!anomalyMapByAtt.get(attribute1.getValue()).contains(timeStep.intValue())) {
+                                    seriesCircle.getData().add(new XYChart.Data(x, y, radius));
+                                    seriesPoints.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue(), (radius / 10)));//points
+
+                                } else {
+                                    seriesCircle.getData().add(new XYChart.Data(x, y, radius));
+                                    seriesPointsAnomal.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue(), 0.2));//points of anomaly
+
+                                }
+                            }
+                        });
 
 
 
-                    Platform.runLater(() -> {
-                        if (!ad.anomalyAndTimeStep.containsKey(attribute1.getValue())) {
+                    } else if (attALG.get(attribute1.getValue().toString()).nameALG.equals("Regression")) {
+                       /* initDataForGraphAttChange();
+                        initDataForGraphTimeChange();*/
+
+                        System.out.println("regression has been activated");
+
+                        sc.setVisible(false);
+                        circleGraph.setVisible(false);
+                        regBoard.setVisible(true);
+
+                        seriesCircle.getData().clear();
+                        seriesPoints.getData().clear();
+                        seriesPointsAnomal.getData().clear();
+//                        pointsAnomal.getData().clear();
+//                        pointsNormal.getData().clear();
+//                        regLine.getData().clear();
+
+                        Platform.runLater(() -> {
+                            if (!ad.anomalyAndTimeStep.containsKey(attribute1.getValue())) {
 //                        if (nv.doubleValue() > ov.doubleValue() + 30) {
 //                            series1.getData().remove(0);
 //                        }
-                            pointsNormal.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue()));//points
-                            regLine.getData().add(new XYChart.Data(valAtt1X.doubleValue(), valAtt2Y.doubleValue()));//reg first point
-                            regLine.getData().add(new XYChart.Data(vaAtt1Xend.doubleValue(), vaAtt2Yend.doubleValue()));//reg sec point
-
-                        } else {
-                            if (!ad.anomalyAndTimeStep.get(attribute1.getValue()).contains(timeStep.intValue())) {
                                 pointsNormal.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue()));//points
-
                                 regLine.getData().add(new XYChart.Data(valAtt1X.doubleValue(), valAtt2Y.doubleValue()));//reg first point
                                 regLine.getData().add(new XYChart.Data(vaAtt1Xend.doubleValue(), vaAtt2Yend.doubleValue()));//reg sec point
+
                             } else {
-                                // sc.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
+                                if (!ad.anomalyAndTimeStep.get(attribute1.getValue()).contains(timeStep.intValue())) {
+                                    pointsNormal.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue()));//points
 
-                                pointsAnomal.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue()));//points of anomaly
-                                regLine.getData().add(new XYChart.Data(valAtt1X.doubleValue(), valAtt2Y.doubleValue()));//reg first point
-                                regLine.getData().add(new XYChart.Data(vaAtt1Xend.doubleValue(), vaAtt2Yend.doubleValue()));//reg sec point
+                                    regLine.getData().add(new XYChart.Data(valAtt1X.doubleValue(), valAtt2Y.doubleValue()));//reg first point
+                                    regLine.getData().add(new XYChart.Data(vaAtt1Xend.doubleValue(), vaAtt2Yend.doubleValue()));//reg sec point
+                                } else {
+                                    // sc.setBackground(new Background(new BackgroundFill(Color.RED, CornerRadii.EMPTY, Insets.EMPTY)));
 
-                                //  sc.setBackground(null);
+                                    pointsAnomal.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue()));//points of anomaly
+                                    regLine.getData().add(new XYChart.Data(valAtt1X.doubleValue(), valAtt2Y.doubleValue()));//reg first point
+                                    regLine.getData().add(new XYChart.Data(vaAtt1Xend.doubleValue(), vaAtt2Yend.doubleValue()));//reg sec point
+
+                                    //  sc.setBackground(null);
+                                }
                             }
-                        }
-                    });
-                } else if (attALG.get(attribute1.getValue().toString()).equals("ZScore")) {
-                    System.out.println("ZScore has been activated");
-                    sc.setVisible(true);
-                    regBoard.setVisible(false);
-                    circleGraph.setVisible(false);
+                        });
+                    }
 
-                    seriesCircle.getData().clear();
-                    seriesPoints.getData().clear();
-                    seriesPointsAnomal.getData().clear();
+                    else if (attALG.get(attribute1.getValue().toString()).nameALG.equals("ZScore")) {
+                        System.out.println("ZScore has been activated");
+                        sc.setVisible(true);
+                        regBoard.setVisible(false);
+                        circleGraph.setVisible(false);
 
-                    Platform.runLater(() -> {
-                        if ((ZScoreAnomaly.size() != 0) && !ZScoreAnomaly.containsKey(attribute1.getValue())) {// i dont think it's work
-                            lineAnomal.getData().add(new XYChart.Data<>(timeStep.getValue(), ZScoreAnomaly.get(attribute1.getValue().toString()).get(timeStep.intValue())));
-                        } else {
+                        seriesCircle.getData().clear();
+                        seriesPoints.getData().clear();
+                        seriesPointsAnomal.getData().clear();
 
-                            line.getData().add(new XYChart.Data<>(timeStep.getValue(), ZScoreReg.get(attribute1.getValue().toString()).get(timeStep.intValue())));
-                        }
-                    });
+                        Platform.runLater(() -> {
+                            if ((ZScoreAnomaly.size() != 0) && !ZScoreAnomaly.containsKey(attribute1.getValue())) {// i dont think it's work
+                                lineAnomal.getData().add(new XYChart.Data<>(timeStep.getValue(), ZScoreAnomaly.get(attribute1.getValue().toString()).get(timeStep.intValue())));
+                            } else {
+
+                                line.getData().add(new XYChart.Data<>(timeStep.getValue(), ZScoreReg.get(attribute1.getValue().toString()).get(timeStep.intValue())));
+                            }
+                        });
 
 //                    if (!newV.equals(oldV)) {//if change the attribute
 //                        line.getData().clear();
 //                    }
-                }
-            });
-         }
+                    }
+                });
+            }
         });
 
         board.getChildren().addAll(circleGraph, sc, regBoard);
