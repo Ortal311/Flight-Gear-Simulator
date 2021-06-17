@@ -119,8 +119,7 @@ public class hybridAlgorithm {
 
         ad.learnNormal(tsReg);
         for(CorrelatedFeatures cf: ad.cf){
-            System.out.println("lala"+ cf.feature1);
-
+          //  System.out.println("lala"+ cf.feature1);
         }
         zScore.learnNormal(tsZscore);
         ZScoreReg = zScore.getZScoreReg();
@@ -197,7 +196,6 @@ public class hybridAlgorithm {
                             threshold = findThreshold(ps, lin_reg) * 1.1f; // 10% increase
                             CorrelatedFeatures c = new CorrelatedFeatures(atts.get(i), atts.get(j), p, lin_reg, threshold);//att1_att2_pearsonCorrelate_null_threshold(the max one)
 
-
                             cfmore95.get(atts.get(i)).feature2 = atts.get(j);
                             cfmore95.get(atts.get(i)).corrlation = Math.abs(p);
                         }
@@ -269,7 +267,10 @@ public class hybridAlgorithm {
         }
 
         List<AnomalyReport> lst = new ArrayList<>();
+
         List<AnomalyReport> lstAD = ad.detect(tsRegAnomal);
+        List<AnomalyReport> lstAD2 = ad.detect(tsRegAnomal);
+
         lst.addAll(ad.detect(tsRegAnomal));
         lst.addAll(zScore.detect(tsZscoreAnomal));
 
@@ -324,7 +325,15 @@ public class hybridAlgorithm {
         AnchorPane board = new AnchorPane();
 
         //data for CircleALG
-        BubbleChart<Number, Number> circleGraph = new BubbleChart(new NumberAxis(), new NumberAxis());
+
+       // BubbleChart<Number, Number> circleGraph = new BubbleChart(new NumberAxis(), new NumberAxis());
+
+        NumberAxis X=new NumberAxis();
+        X.setForceZeroInRange(false);
+        NumberAxis Y=new NumberAxis();
+        Y.setForceZeroInRange(false);
+        BubbleChart<Number, Number> circleGraph=new BubbleChart(X,Y);
+
         circleGraph.setAnimated(false);
         circleGraph.setPrefSize(250, 250);
         XYChart.Series<Number, Number> seriesPoints = new XYChart.Series();
@@ -351,7 +360,7 @@ public class hybridAlgorithm {
         XYChart.Series pointsAnomal = new XYChart.Series();//points for Anomaly parts
         XYChart.Series regLine = new XYChart.Series();//line
         regBoard.getData().addAll(pointsNormal, regLine, pointsAnomal);
-        pointsAnomal.getNode().setStyle("-fx-stroke: red;");
+       // pointsAnomal.getNode().setStyle("-fx-stroke: red;");
 
         //board.getChildren().add(circleGraph);
         board.getStylesheets().add("style.css");
@@ -373,7 +382,7 @@ public class hybridAlgorithm {
                 line.getData().clear();
                 lineAnomal.getData().clear();
             }
-            attribute2.setValue(cfmore95.get(attribute1.getValue()).feature2);
+            attribute2.setValue(cfmore95.get(attribute1.getValue()).feature2);//MISTAKE !!! SHOULDN'T DETERMINE ACCORD "cfmore95"
 
                if (attribute2.getValue() != null) {
 
@@ -396,17 +405,20 @@ public class hybridAlgorithm {
                     float y = getCircle(attribute1.getValue()).center.y;
 
                     Platform.runLater(() -> {
-                        seriesCircle.getData().add(new XYChart.Data(x, y, radius));
+                        //seriesCircle.getData().add(new XYChart.Data(x, y, radius));
 
                         if (!anomalyMapByAtt.containsKey(attribute1.getValue())) {
+                            seriesCircle.getData().add(new XYChart.Data(x, y, radius));
 
                             seriesPoints.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue(), (radius / 10)));//points
                         } else {// if there are anomalies
                             if (!anomalyMapByAtt.get(attribute1.getValue()).contains(timeStep.intValue())) {
+                                seriesCircle.getData().add(new XYChart.Data(x, y, radius));
 
                                 seriesPoints.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue(), (radius / 10)));//points
 
                             } else {
+                                seriesCircle.getData().add(new XYChart.Data(x, y, radius));
 
                                 seriesPointsAnomal.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue(), 0.2));//points of anomaly
 
@@ -414,11 +426,11 @@ public class hybridAlgorithm {
                         }
                     });
 
-                    if (!newV.equals(oldV)) {//if change the attribute
-                        seriesPoints.getData().clear();
-                        seriesPointsAnomal.getData().clear();
-                        seriesCircle.getData().clear();
-                    }
+//                    if (!newV.equals(oldV)) {//if change the attribute
+//                        seriesPoints.getData().clear();
+//                        seriesPointsAnomal.getData().clear();
+//                        seriesCircle.getData().clear();
+//                    }
 //                    }
                 } else if (attALG.get(attribute1.getValue().toString()).equals("Regression")) {
                     initDataForGraphAttChange();

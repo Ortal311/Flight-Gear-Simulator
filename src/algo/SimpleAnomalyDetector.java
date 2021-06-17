@@ -138,6 +138,10 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
             }
         }
 
+        for(AnomalyReport ar: v)
+        {
+            System.out.println(ar.description+" "+ar.timeStep);
+        }
         return v;
     }
 
