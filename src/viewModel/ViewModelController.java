@@ -131,7 +131,7 @@ public class ViewModelController extends Observable implements Observer {
     }
     public StringProperty getCorrelateFeature(){
         //  Init the name of the correlate attribute
-        correlateFeature.setValue(m.ad.getCorrelateFeature(chosenAttribute.getValue()));//need to be according to the ALG
+        correlateFeature.setValue(ts_reg.getCorrelateFeature(chosenAttribute.getValue()));  //need to be according to the ALG
         return correlateFeature;
     }
     public ListProperty<Float>getDataOfAtt(String attribute){
@@ -155,6 +155,7 @@ public class ViewModelController extends Observable implements Observer {
             alert.showAndWait();
         } else {
             ts_reg = new TimeSeries(chosen.getName());
+            ts_reg.checkCorrelate(ts_reg);
             if (ts_reg.atts.size() != 42)
                     System.err.println("wrong amount of columns - should be 42");
             else {
