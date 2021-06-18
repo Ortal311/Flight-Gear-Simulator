@@ -75,9 +75,9 @@ public class Model extends Observable implements SimulatorModel {
 //        ad.detect(ts_Anomal);
 //        getNormal = ad.getNormalModel();
 
-        //zScore=new ZScoreAlgorithm();
-        // zScore.learnNormal(ts_reg);
-        //zScore.detect(ts_Anomal);
+//        zScore=new ZScoreAlgorithm();
+//         zScore.learnNormal(ts_reg);
+//        zScore.detect(ts_Anomal);
 
 
         hyperALG = new hybridAlgorithm();
@@ -103,8 +103,7 @@ public class Model extends Observable implements SimulatorModel {
 //        zScore.timeStep.bind(timeStep);
 
         hyperALG.timeStep.bind(timeStep);
-//        hyperALG.valPointX.bind(valPointX);
-//        hyperALG.valPointY.bind(valPointY);
+
     }
 
     public void setVarivablesNamesTOALG() {//Listen to chosen attribute
@@ -114,12 +113,6 @@ public class Model extends Observable implements SimulatorModel {
 //        zScore.Attribute.bind(attribute1);
 
         hyperALG.attribute1.bind(attribute1);
-
-//        hyperALG.attribute2.bind(attribute2);
-//        hyperALG.valAtt1X.bind(valAtt1X);
-//        hyperALG.vaAtt1Xend.bind(vaAtt1Xend);
-//        hyperALG.valAtt2Y.bind(valAtt2Y);
-//        hyperALG.vaAtt2Yend.bind(vaAtt2Yend);
 
     }
 
@@ -133,7 +126,7 @@ public class Model extends Observable implements SimulatorModel {
 
         //zScore
         //zScore=new ZScoreAlgorithm();
-//        return ()->zScore.paint();
+//        return () -> zScore.paint();
 
         //HyperALG
         return () -> hyperALG.paint();

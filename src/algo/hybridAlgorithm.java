@@ -348,7 +348,8 @@ public class hybridAlgorithm {
         XYChart.Series line = new XYChart.Series();
         XYChart.Series lineAnomal = new XYChart.Series();
         sc.getData().addAll(line, lineAnomal);
-        lineAnomal.getNode().setStyle("-fx-stroke: red;");
+        lineAnomal.getNode().setStyle("-fx-stroke: #01aa18;");
+        line.getNode().setStyle("-fx-stroke: #ef2626;");
 
         // Data for Reg
         LineChart<Number, Number> regBoard = new LineChart<>(new NumberAxis(), new NumberAxis());
@@ -404,11 +405,11 @@ public class hybridAlgorithm {
 
                             if (!anomalyMapByAtt.containsKey(attribute1.getValue())) {
                                 seriesCircle.getData().add(new XYChart.Data(x, y, radius));
-                                seriesPoints.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue(), (radius / 10)));//points
+                                seriesPoints.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue(), (radius / 20)));//points
                             } else {// if there are anomalies
                                 if (!anomalyMapByAtt.get(attribute1.getValue()).contains(timeStep.intValue())) {
                                     seriesCircle.getData().add(new XYChart.Data(x, y, radius));
-                                    seriesPoints.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue(), (radius / 10)));//points
+                                    seriesPoints.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue(), (radius / 20)));//points
 
                                 } else {
                                     seriesCircle.getData().add(new XYChart.Data(x, y, radius));
@@ -474,19 +475,21 @@ public class hybridAlgorithm {
 
                         Platform.runLater(() -> {
                             if (!ZScoreAnomaly.containsKey(attribute1.getValue())) {// i dont think it's work
-                                line.getData().add(new XYChart.Data<>(timeStep.getValue(), ZScoreReg.get(attribute1.getValue().toString()).get(timeStep.intValue())));
+                               //line.getData().add(new XYChart.Data<>(timeStep.getValue(), ZScoreReg.get(attribute1.getValue().toString()).get(timeStep.intValue())));
+                                lineAnomal.getData().add(new XYChart.Data<>(timeStep.getValue(), ZScoreReg.get(attribute1.getValue().toString()).get(timeStep.intValue())));
 
                             } else {
                                 if (ZScoreAnomaly.get(attribute1.getValue()).contains(timeStep.intValue()))//if we are at att with anomal and there is anomal in the present time
-                                    lineAnomal.getData().add(new XYChart.Data<>(timeStep.getValue(), ZScoreReg.get(attribute1.getValue().toString()).get(timeStep.intValue())));
+                                    line.getData().add(new XYChart.Data<>(timeStep.getValue(), tsZscoreAnomal.ts.get(attribute1.getValue().toString()).get(timeStep.intValue())));
                                 else
-                                    line.getData().add(new XYChart.Data<>(timeStep.getValue(), ZScoreReg.get(attribute1.getValue().toString()).get(timeStep.intValue())));
+                                    lineAnomal.getData().add(new XYChart.Data<>(timeStep.getValue(), tsZscoreAnomal.ts.get(attribute1.getValue().toString()).get(timeStep.intValue())));
                             }
                         });
 
-//                    if (!newV.equals(oldV)) {//if change the attribute
-//                        line.getData().clear();
-//                    }
+
+                    if (!newV.equals(oldV)) {//if change the attribute
+                        line.getData().clear();
+                    }
                     }
                 });
             }

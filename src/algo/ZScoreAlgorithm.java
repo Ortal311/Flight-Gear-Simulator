@@ -58,7 +58,9 @@ public class ZScoreAlgorithm implements AnomalyDetector {
         x = col.get(colSize - 1);
         if (colSize == 1) {
             arrFloat = ListToArr(col);
-            return Math.abs((x - StatLib.avg(arrFloat))) / StatLib.var(arrFloat);
+            if(StatLib.var(arrFloat) != 0)
+                return Math.abs((x - StatLib.avg(arrFloat))) / StatLib.var(arrFloat);
+            return 0;
         }
 
         arrFloat = ListToArr(col.subList(0, col.size() - 1));
@@ -118,7 +120,6 @@ public class ZScoreAlgorithm implements AnomalyDetector {
             this.ZScoreMap.put(index++, zScored);
 
         }
-
     }
 
     public List<AnomalyReport> detect(TimeSeries data) {
@@ -162,7 +163,7 @@ public class ZScoreAlgorithm implements AnomalyDetector {
             timeStep.addListener((o, ov, nv) -> {
                 Platform.runLater(() -> {
                     if ((ZScoreAnomaly.size() != 0) && !ZScoreAnomaly.containsKey(Attribute.getValue())) {// i dont think it's work
-                        lineAnomal.getData().add(new XYChart.Data<>(timeStep.getValue(), ZScoreAnomaly.get(Attribute.getValue().toString()).get(timeStep.intValue())));
+                        lineAnomal.getData().add(new XYChart.Data<>(timeStep.getValue(), ZScoreReg.get(Attribute.getValue().toString()).get(timeStep.intValue())));
                     } else {
                         line.getData().add(new XYChart.Data<>(timeStep.getValue(), ZScoreReg.get(Attribute.getValue().toString()).get(timeStep.intValue())));
                     }
