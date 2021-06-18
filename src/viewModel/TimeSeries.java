@@ -1,5 +1,9 @@
 package viewModel;
 
+import algo.CorrelatedFeatures;
+import algo.Line;
+import algo.Point;
+import algo.StatLib;
 import com.sun.javafx.collections.ImmutableObservableList;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
@@ -12,6 +16,8 @@ import java.io.IOException;
 import java.util.*;
 
 public class TimeSeries {
+
+    public ArrayList<CorrelatedFeatures> cf;
 
     public Map<String, ArrayList<Float>> ts;
     public Map<Integer, ArrayList<Float>> tsNum;
@@ -120,6 +126,60 @@ public class TimeSeries {
         List<Float>lst= ts.get(s).subList(0,index);
         dataUntilIndex.addAll(lst);
         return  dataUntilIndex;
+    }
+
+    public void checkCorrelate(TimeSeries ts) {
+        cf = new ArrayList<>();
+        ArrayList<String> atts = ts.getAttributes();
+        int len = ts.ts.get(ts.atts.get(0)).size();
+
+        float vals[][] = new float[atts.size()][len];
+        for (int i = 0; i < atts.size(); i++) {
+            for (int j = 0; j < len; j++) {
+//                vals[i][j] = ts.getAttributeData(atts.get(i)).get(j);
+                vals[i][j] =ts.getValueByTime(atts.get(i),j);
+            }
+        }
+
+        for (int i = 0; i < atts.size(); i++) {
+            for (int j = i + 1; j < atts.size(); j++) {
+                float p = StatLib.pearson(vals[i], vals[j]);//for the pearson
+
+                if (Math.abs(p) > 0.9) {//only if above o.
+                    Point ps[] = toPoints(ts.getAttributeData(atts.get(i)), ts.getAttributeData(atts.get(j)));
+                    Line lin_reg = StatLib.linear_reg(ps);
+                    float threshold = findThreshold(ps, lin_reg) * 1.1f; // 10% increase
+                    CorrelatedFeatures c = new CorrelatedFeatures(atts.get(i), atts.get(j), p, lin_reg, threshold);
+                    cf.add(c);
+                }
+            }
+        }
+        System.out.println(" the size of simple anomaly is: :"+cf.size());
+
+    }
+
+    private Point[] toPoints(ArrayList<Float> x, ArrayList<Float> y) {
+        Point[] ps = new Point[x.size()];
+        for (int i = 0; i < ps.length; i++)
+            ps[i] = new Point(x.get(i), y.get(i));
+        return ps;
+    }
+
+    private float findThreshold(Point ps[], Line rl) {
+        float max = 0;
+        for (int i = 0; i < ps.length; i++) {
+            float d = Math.abs(ps[i].y - rl.f(ps[i].x));
+            if (d > max)
+                max = d;
+        }
+        return max;
+    }
+    public String getCorrelateFeature(String attribute1) {
+        for (CorrelatedFeatures c : cf) {
+            if (c.feature1.equals(attribute1))
+                return c.feature2;
+        }
+        return null;
     }
 
 
