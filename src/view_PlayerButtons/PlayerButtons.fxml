@@ -11,11 +11,11 @@
 
 <AnchorPane prefHeight="217.0" prefWidth="955.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view_PlayerButtons.PlayerButtonsController">
    <children>
-      <Button layoutX="118.0" layoutY="137.0" mnemonicParsing="false" onAction="#onOpenXML" prefHeight="30.0" prefWidth="100.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 5px;" text="Choose XML" textFill="#123e9e">
+      <Button layoutX="8.0" layoutY="139.0" mnemonicParsing="false" onAction="#onOpenXML" prefHeight="31.0" prefWidth="105.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 5px;" text="Choose XML" textFill="#123e9e">
          <font>
             <Font name="Tahoma Bold" size="13.0" />
          </font></Button>
-      <Button layoutX="6.0" layoutY="137.0" mnemonicParsing="false" onAction="#onOpen" prefHeight="30.0" prefWidth="100.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 5px;" text="Choose CSV" textAlignment="CENTER" textFill="#123e9e">
+      <Button layoutX="8.0" layoutY="102.0" mnemonicParsing="false" onAction="#onOpenCSVTrain" prefHeight="31.0" prefWidth="142.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 5px;" text="Choose CSV Train" textAlignment="CENTER" textFill="#123e9e">
          <font>
             <Font name="Tahoma Bold" size="13.0" />
          </font></Button>
@@ -59,7 +59,7 @@
             <Font name="Tahoma" size="19.0" />
          </font>
       </Text>
-      <Button layoutX="231.0" layoutY="138.0" mnemonicParsing="false" onAction="#onAnomalyDetector" prefHeight="30.0" prefWidth="181.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 5px;" text="Load Anomaly Detector" textFill="#123e9e">
+      <Button layoutX="120.0" layoutY="139.0" mnemonicParsing="false" onAction="#onAnomalyDetector" prefHeight="31.0" prefWidth="181.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 5px;" text="Load Anomaly Detector" textFill="#123e9e">
          <font>
             <Font name="Tahoma Bold" size="13.0" />
          </font>
@@ -70,5 +70,10 @@
             <Font name="Tahoma" size="18.0" />
          </font>
       </Label>
+      <Button layoutX="159.0" layoutY="102.0" mnemonicParsing="false" onAction="#onOpenCSVTest" prefHeight="31.0" prefWidth="142.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 5px;" text="Choose CSV Test" textAlignment="CENTER" textFill="#123e9e">
+         <font>
+            <Font name="Tahoma Bold" size="13.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>

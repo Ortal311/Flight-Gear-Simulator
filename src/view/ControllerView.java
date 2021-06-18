@@ -77,7 +77,8 @@ public class ControllerView extends Pane implements Observer {
         timeBoard.roll.bind(vmc.roll);
         timeBoard.yaw.bind(vmc.yaw);
 
-        playerButtons.onOpen.addListener((o, ov, nv) -> vmc.openFile());
+        playerButtons.onOpenCSVTrain.addListener((o, ov, nv) -> vmc.openCSVTrainFile());
+        playerButtons.onOpenCSVTest.addListener((o, ov, nv) -> vmc.openCSVTestFile());
         playerButtons.onOpenXML.addListener((o, ov, nv) -> vmc.openXMLFile());
         playerButtons.onPlay.addListener((o, ov, nv) -> vmc.play());
 

@@ -28,11 +28,12 @@ public class PlayerButtonsController {
     TextField minutes;
 
     // public DoubleProperty rate;
-    public BooleanProperty onOpen, onOpenXML, onPlay, onPause, onSpeed, onStop,
+    public BooleanProperty onOpenCSVTrain, onOpenCSVTest, onOpenXML, onPlay, onPause, onSpeed, onStop,
             onRewind, onForward,onAnomalyDetector;
 
     public PlayerButtonsController() {
-        onOpen= new SimpleBooleanProperty();
+        onOpenCSVTrain = new SimpleBooleanProperty();
+        onOpenCSVTest = new SimpleBooleanProperty();
         onOpenXML= new SimpleBooleanProperty();
         onAnomalyDetector=new SimpleBooleanProperty();
         onPlay= new SimpleBooleanProperty();
@@ -42,7 +43,8 @@ public class PlayerButtonsController {
         onRewind= new SimpleBooleanProperty();
         onForward= new SimpleBooleanProperty();
 
-        onOpen.setValue(false);
+        onOpenCSVTest.setValue(false);
+        onOpenCSVTrain.setValue(false);
         onOpenXML.setValue(false);
         onAnomalyDetector.setValue(false);
         onPlay.setValue(false);
@@ -60,13 +62,22 @@ public class PlayerButtonsController {
         choiceAlgo.setItems(algoList);
     }
 
-    public void onOpen() {
-        System.out.println(onOpen.getValue());
-        if(onOpen.getValue()){
-            onOpen.setValue(false);
+    public void onOpenCSVTrain() {
+        System.out.println(onOpenCSVTrain.getValue());
+        if(onOpenCSVTrain.getValue()){
+            onOpenCSVTrain.setValue(false);
         }
         else {
-            onOpen.setValue(true);
+            onOpenCSVTrain.setValue(true);
+        }
+    }
+
+    public void onOpenCSVTest() {
+        if(onOpenCSVTest.getValue()){
+            onOpenCSVTest.setValue(false);
+        }
+        else {
+            onOpenCSVTest.setValue(true);
         }
     }
 
@@ -95,17 +106,6 @@ public class PlayerButtonsController {
             onPlay.setValue(true);
         }
     }
-
-//    public void onSpeed() {
-//        // rate = (DoubleProperty) choiceSpeed.getValue();
-//        // vmc.rate.bind(choiceSpeed.valueProperty());
-//
-//        // rate.bind(vmc.rate);
-//
-//        //this.vmc
-//
-//    }
-
 
     public void onPause() {
         if(onPause.getValue()){
@@ -142,5 +142,4 @@ public class PlayerButtonsController {
             onForward.setValue(true);
         }
     }
-
 }

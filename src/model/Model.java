@@ -133,12 +133,12 @@ public class Model extends Observable implements SimulatorModel {
 
     }
 
-    public void setTimeSeries(TimeSeries tsAnomal, TimeSeries tsReg) {
-        this.ts_Anomal = tsAnomal;
-        this.ts_reg = tsReg;
-
+    public void setTimeSeries(TimeSeries ts, String tsType) {
+        if(tsType.equals("Train"))
+            this.ts_reg = ts;
+        else if(tsType.equals("Test"))
+            this.ts_Anomal = ts;
     }
-
 
     // public SimpleAnomalyDetector  ad = new SimpleAnomalyDetector();
 

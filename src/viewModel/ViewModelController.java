@@ -9,7 +9,6 @@ import javafx.stage.FileChooser;
 import model.Model;
 
 import java.io.File;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.Callable;
@@ -28,14 +27,15 @@ public class ViewModelController extends Observable implements Observer {
     public ObservableList<String> attributeList;
 
     public int numberOfSpecAttribute, numberOfCorrelateAttribute;
-    public Boolean xmlFile, csvFile, algoFile,openedCSV=false;
+    public Boolean xmlFile, csvTestFile, csvTrainFile, algoFile;
 
     public ViewModelController(Model m) {
         this.m = m;
         clock = new Clock();
         m.addObserver(this);    //add Model as Observable
         xmlFile = false;
-        csvFile = false;
+        csvTestFile = false;
+        csvTrainFile = false;
         algoFile = false;
 
         timeStamp = new SimpleDoubleProperty();
@@ -82,14 +82,13 @@ public class ViewModelController extends Observable implements Observer {
 
         timeStamp.addListener((o, ov, nv) -> {
             updateDisplayVariables(nv.intValue());
-            if( xmlFile && algoFile && openedCSV);
-                m.setVarivablesTOALG();//updating the date for the alg graph
-
+            if( xmlFile && algoFile && csvTestFile && csvTrainFile);
+                m.setVarivablesTOALG();     //updating the date for the alg graph
         });
 
         chosenAttribute.addListener((o, ov, nv) -> {
             m.attribute1.bind(chosenAttribute);
-            if(xmlFile && algoFile && openedCSV)
+            if(xmlFile && algoFile && csvTestFile && csvTrainFile)
                 m.setVarivablesNamesTOALG();
         });
     }
@@ -140,52 +139,62 @@ public class ViewModelController extends Observable implements Observer {
     }
 
     //  Basic Functions- Buttons
-    public void openFile() {
-        //for reg flight
+    public void openCSVTrainFile() {
+        System.out.println("trainFile");
         FileChooser fc = new FileChooser();
-        fc.setTitle("open CSV file");
+        fc.setTitle("open CSV train file");
         fc.setInitialDirectory(new File("./"));
-        // File chosen = fc.showOpenDialog(null);
-        List<File> chosen = fc.showOpenMultipleDialog(null);
-        if (chosen != null && chosen.size() == 2) {
-            System.out.println("the name of the file is:" + chosen.get(0).getName());
-            System.out.println("the name of the file is:" + chosen.get(1).getName());
+        File chosen = fc.showOpenDialog(null);
 
-            // if (chosen.getName().contains(".csv"))  //checking the file
-            if (chosen.get(0).getName().contains(".csv"))  //checking the file
-            {
-                if (chosen.get(0).getName().equals("reg_flight.csv")) {
-                    ts_reg = new TimeSeries(chosen.get(0).getName());
-                    ts_Anomal = new TimeSeries(chosen.get(1).getName());
-                } else {
-                    ts_reg = new TimeSeries(chosen.get(1).getName());
-                    ts_Anomal = new TimeSeries(chosen.get(0).getName());
-                }
-
-                //simpleAnomalyDetector.learnNormal(ts);
-                //if (ts.cols.size() != 42)
-                if (ts_reg.atts.size() != 42)
+        if (!chosen.getName().contains(".csv"))  //checking the file
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Wrong file chosen");
+            alert.setContentText("Please choose a CSV file");
+            alert.showAndWait();
+        } else {
+            ts_reg = new TimeSeries(chosen.getName());
+            if (ts_reg.atts.size() != 42)
                     System.err.println("wrong amount of columns - should be 42");
-                else{
-                    m.setTimeSeries(ts_Anomal,ts_reg);
+            else {
+                    m.setTimeSeries(ts_reg, "Train");
                     //m.initData();
-                }
-            } else {
-                //System.err.println("wrong file, choose csv file");
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setHeaderText("Wrong file chosen");
-                alert.setContentText("please choose a csv file");
-                alert.showAndWait();
             }
-            attributeList.addAll(ts_Anomal.getAttributes());
-            sizeTS.setValue(ts_Anomal.getSize());
-            altimeter.setValue("0");
-            airSpeed.setValue("0");
-            fd.setValue("0");
-            this.csvFile = true;
         }
-        openedCSV = true;
+        this.csvTrainFile = true;
+    }
+
+    public void openCSVTestFile() {
+        System.out.println("testFile");
+        FileChooser fc = new FileChooser();
+        fc.setTitle("open CSV test file");
+        fc.setInitialDirectory(new File("./"));
+        File chosen = fc.showOpenDialog(null);
+
+        if (!chosen.getName().contains(".csv"))  //checking the file
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Wrong file chosen");
+            alert.setContentText("Please choose a CSV file");
+            alert.showAndWait();
+        } else {
+            ts_Anomal = new TimeSeries(chosen.getName());
+            if (ts_Anomal.atts.size() != 42)
+                System.err.println("wrong amount of columns - should be 42");
+            else {
+                m.setTimeSeries(ts_Anomal, "Test");
+                //m.initData();
+            }
+        }
+
+        attributeList.addAll(ts_Anomal.getAttributes());
+        sizeTS.setValue(ts_Anomal.getSize());
+        altimeter.setValue("0");
+        airSpeed.setValue("0");
+        fd.setValue("0");
+        this.csvTestFile = true;
     }
 
     public void openXMLFile() {
@@ -197,7 +206,7 @@ public class ViewModelController extends Observable implements Observer {
     }
 
     public void play() {
-        if (csvFile && xmlFile && algoFile) {
+        if (csvTestFile && csvTrainFile && xmlFile && algoFile) {
             this.m.playFile();
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
