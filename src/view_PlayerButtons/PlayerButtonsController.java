@@ -29,19 +29,19 @@ public class PlayerButtonsController {
 
     // public DoubleProperty rate;
     public BooleanProperty onOpenCSVTrain, onOpenCSVTest, onOpenXML, onPlay, onPause, onSpeed, onStop,
-            onRewind, onForward,onAnomalyDetector;
+            onRewind, onForward, onAnomalyDetector;
 
     public PlayerButtonsController() {
         onOpenCSVTrain = new SimpleBooleanProperty();
         onOpenCSVTest = new SimpleBooleanProperty();
-        onOpenXML= new SimpleBooleanProperty();
-        onAnomalyDetector=new SimpleBooleanProperty();
-        onPlay= new SimpleBooleanProperty();
-        onPause= new SimpleBooleanProperty();
-        onSpeed= new SimpleBooleanProperty();
-        onStop= new SimpleBooleanProperty();
-        onRewind= new SimpleBooleanProperty();
-        onForward= new SimpleBooleanProperty();
+        onOpenXML = new SimpleBooleanProperty();
+        onAnomalyDetector = new SimpleBooleanProperty();
+        onPlay = new SimpleBooleanProperty();
+        onPause = new SimpleBooleanProperty();
+        onSpeed = new SimpleBooleanProperty();
+        onStop = new SimpleBooleanProperty();
+        onRewind = new SimpleBooleanProperty();
+        onForward = new SimpleBooleanProperty();
 
         onOpenCSVTest.setValue(false);
         onOpenCSVTrain.setValue(false);

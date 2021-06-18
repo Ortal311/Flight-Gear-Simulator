@@ -4,11 +4,8 @@ import algo.CorrelatedFeatures;
 import algo.Line;
 import algo.Point;
 import algo.StatLib;
-import com.sun.javafx.collections.ImmutableObservableList;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -26,11 +23,11 @@ public class TimeSeries {
     int dataRowSize;
 
     public TimeSeries(){
-        this.ts=new HashMap<>();
-        this.tsNum=new HashMap<>();
-        this.rows=new ArrayList<>();
-        this.atts=new ArrayList<>();
-        this.dataRowSize=0;
+        this.ts = new HashMap<>();
+        this.tsNum = new HashMap<>();
+        this.rows = new ArrayList<>();
+        this.atts = new ArrayList<>();
+        this.dataRowSize = 0;
     }
 
     public TimeSeries(String csvFileName) {
@@ -92,14 +89,6 @@ public class TimeSeries {
         return ts.get(index).get(time);
     }
 
-    public Map<String, ArrayList<Float>> getTs() {
-        return ts;
-    }
-
-    public ArrayList<String> getAtts() {
-        return atts;
-    }
-
     public float getMinFromAttribute(String val) {
         ArrayList<Float> lst = ts.get(val);
 
@@ -121,6 +110,7 @@ public class TimeSeries {
         }
         return maxVal;
     }
+
     public ListProperty<Float> getDataOfAttUntilIndex(String s, int index){
         ListProperty<Float>dataUntilIndex= new SimpleListProperty<>();
         List<Float>lst= ts.get(s).subList(0,index);
@@ -181,11 +171,4 @@ public class TimeSeries {
         }
         return null;
     }
-
-
-    //    public List<String> getAttributes() {
-//        return new LinkedList<>(this.map.keySet());
-//    }
-
-
 }

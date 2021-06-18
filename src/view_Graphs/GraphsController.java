@@ -1,39 +1,27 @@
 package view_Graphs;
 
-import algo.Point;
 import javafx.application.Platform;
 import javafx.beans.property.*;
 import javafx.fxml.FXML;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.chart.*;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Line;
 
 public class GraphsController {
 
     @FXML
-    private LineChart<String, Number> chosenAttributeGraph, mostCorrelatedAttribute, anomalyDetectionGraph;
+    private LineChart<String, Number> chosenAttributeGraph, mostCorrelatedAttribute;
 
     public StringProperty selectedAttribute, correlatedAttribute;
-    public DoubleProperty value, graphSpeed, timeStamp, valueCorrelate;
-    public IntegerProperty sizeTS;
-
-    public ListProperty<Float> lst = new SimpleListProperty<>();
+    public DoubleProperty value, timeStamp, valueCorrelate;
 
     public GraphsController() {
         this.selectedAttribute = new SimpleStringProperty();
         this.correlatedAttribute = new SimpleStringProperty();
-        this.value = new SimpleDoubleProperty();// also the val of X Axis
-        this.valueCorrelate = new SimpleDoubleProperty();// also the val of Y Axis
+        this.value = new SimpleDoubleProperty();    // also the val of X Axis
+        this.valueCorrelate = new SimpleDoubleProperty();   // also the val of Y Axis
         this.timeStamp = new SimpleDoubleProperty();
     }
 
     public void init() {
-
         selectedAttribute.setValue("0");
         correlatedAttribute.setValue("0");
         value.setValue(0);
@@ -55,14 +43,10 @@ public class GraphsController {
                     if (correlatedAttribute.getValue() != null)
                         series2.getData().add(new XYChart.Data<>(timeStamp.getValue().toString(), valueCorrelate.doubleValue()));
                 });
-                // note if we move the slider the condition will be T cuz it'll also go a bit backward
-//                if (nv.doubleValue() < ov.doubleValue()) {// if we go back in time
-//                    series1.getData().clear();
-//                    series2.getData().clear();
-//                }
             });
+
             if (correlatedAttribute.getValue() == null) series2.getData().clear();
-            if ((newVal != null) && (!newVal.equals(oldval))) {//if change the attribute
+            if ((newVal != null) && (!newVal.equals(oldval))) {     //if change the attribute
                 series1.getData().clear();
                 series2.getData().clear();
             }
@@ -70,6 +54,5 @@ public class GraphsController {
 
         chosenAttributeGraph.setCreateSymbols(false);
         mostCorrelatedAttribute.setCreateSymbols(false);
-
     }
 }

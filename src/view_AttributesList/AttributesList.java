@@ -2,9 +2,7 @@ package view_AttributesList;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.AnchorPane;
@@ -26,13 +24,10 @@ public class AttributesList extends AnchorPane {
             AnchorPane list = fxl.load(getClass().getResource("AttributesList.fxml").openStream());
             alc = fxl.getController();
 
-         // lst.addListener((ListChangeListener) change -> alc.lv.setItems(change.getList()));
-
         chosenAttribute.bind(alc.lv.getSelectionModel().selectedItemProperty());
 
             this.getChildren().add(list);
         } catch (IOException e) {
         }
     }
-
 }

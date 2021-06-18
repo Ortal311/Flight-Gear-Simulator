@@ -82,10 +82,12 @@ public class ControllerView extends Pane implements Observer {
         playerButtons.onOpenCSVTest.addListener((o, ov, nv) -> vmc.openCSVTestFile());
         playerButtons.onOpenXML.addListener((o, ov, nv) -> vmc.openXMLFile());
         playerButtons.onPlay.addListener((o, ov, nv) -> vmc.play());
+        playerButtons.onPause.addListener((o, ov, nv) -> vmc.pause());
+        playerButtons.onStop.addListener((o, ov, nv) -> vmc.stop());
+        playerButtons.onRewind.addListener((o, ov, nv) -> vmc.rewind());
+        playerButtons.onForward.addListener((o, ov, nv) -> vmc.forward());
 
-        //graphs.DataOfAttUntilIndex.bind(vmc.getDataOfAtt());
-
-       vmc.choiceALG.addListener((o, ov, nv) -> {
+        vmc.choiceALG.addListener((o, ov, nv) -> {
             vmc.loadAnomalyDetector();
             try {
                 adAnchorePane.getChildren().setAll(vmc.getPainter().call());
@@ -94,13 +96,6 @@ public class ControllerView extends Pane implements Observer {
                 e.printStackTrace();
             }
         });
-
-        playerButtons.onPause.addListener((o, ov, nv) -> vmc.pause());
-        playerButtons.onStop.addListener((o, ov, nv) -> vmc.stop());
-        playerButtons.onRewind.addListener((o, ov, nv) -> vmc.rewind());
-        playerButtons.onForward.addListener((o, ov, nv) -> vmc.forward());
-
-        //  vmc.attributeList.addListener((ListChangeListener) change -> attributesList.lst.addAll(change.getList()));
 
         attributesList.alc.lv.setItems(vmc.attributeList);
 

@@ -4,7 +4,6 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.BorderPane;
-import viewModel.ViewModelController;
 
 import java.io.IOException;
 
@@ -19,26 +18,21 @@ public class MyJoystick extends BorderPane {
         super();
         FXMLLoader fxl = new FXMLLoader();
         aileron = new SimpleDoubleProperty();
-        elevators= new SimpleDoubleProperty();
-        rudder= new SimpleDoubleProperty();
-        throttle= new SimpleDoubleProperty();
+        elevators = new SimpleDoubleProperty();
+        rudder = new SimpleDoubleProperty();
+        throttle = new SimpleDoubleProperty();
         try {
-            BorderPane joy= fxl.load(getClass().getResource("MyJoystick.fxml").openStream());
-            mjc= fxl.getController();
+            BorderPane joy = fxl.load(getClass().getResource("MyJoystick.fxml").openStream());
+            mjc = fxl.getController();
 
             mjc.rudder.valueProperty().bind(rudder);
             mjc.throttle.valueProperty().bind(throttle);
+
             //add aileron and elevators
             mjc.jx.bind(aileron);
             mjc.jy.bind(throttle);
-            //aileron.bind(mjc.jx);
-           // throttle.bind(mjc.jy);
-
             this.getChildren().add(joy);
-           // mjc.paint();
+
         } catch (IOException e) {}
-
-
-
     }
 }

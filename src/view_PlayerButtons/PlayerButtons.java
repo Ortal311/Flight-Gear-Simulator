@@ -15,9 +15,9 @@ public class PlayerButtons extends AnchorPane {
     public PlayerButtons() {
         super();
         FXMLLoader fxl = new FXMLLoader();
-        sliderTime= new SimpleDoubleProperty();
+        sliderTime = new SimpleDoubleProperty();
         choiceSpeed = new SimpleDoubleProperty();
-        choiceALG=new SimpleStringProperty();
+        choiceALG = new SimpleStringProperty();
 
         miliSec = new SimpleStringProperty();
         seconds = new SimpleStringProperty();
@@ -58,7 +58,6 @@ public class PlayerButtons extends AnchorPane {
             pbc.sliderTime.valueProperty().bindBidirectional(sliderTime);
             choiceSpeed.bind(pbc.choiceSpeed.valueProperty());
             choiceALG.bind(pbc.choiceAlgo.getSelectionModel().selectedItemProperty());
-           // choiceALG.bind(pbc.choiceSpeed.valueProperty());
 
             onOpenCSVTrain.bind(pbc.onOpenCSVTrain);
             onOpenCSVTest.bind(pbc.onOpenCSVTest);

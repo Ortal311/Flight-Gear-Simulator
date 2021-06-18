@@ -26,7 +26,7 @@ public class ViewModelController extends Observable implements Observer {
 
     public ObservableList<String> attributeList;
 
-    public int numberOfSpecAttribute, numberOfCorrelateAttribute;
+    public int numberOfCorrelateAttribute;
     public Boolean xmlFile, csvTestFile, csvTrainFile, algoFile;
 
     public ViewModelController(Model m) {
@@ -111,7 +111,6 @@ public class ViewModelController extends Observable implements Observer {
         roll.setValue(ts_Anomal.getValueByTime(m.attributeMap.get("roll").associativeName, time));
         yaw.setValue(ts_Anomal.getValueByTime(m.attributeMap.get("yaw").associativeName, time));
 
-
         /*
             To update the specific chosen attribute
             getting the number of the chosen attribute
@@ -120,14 +119,12 @@ public class ViewModelController extends Observable implements Observer {
          */
         valueAxis.setValue(ts_Anomal.getValueByTime(chosenAttribute.getValue(), time));
 
-//        //  Init the name of the correlate attribute
-//        correlateFeature.setValue(m.ad.getCorrelateFeature(chosenAttribute.getValue()));//need to be according to the ALG
+        //  Init the name of the correlate attribute
         correlateFeature=getCorrelateFeature();
 
         //  Getting the col's number of the correlate attribute
         if (correlateFeature.getValue() != null) {
             valueCorrelate.setValue(ts_Anomal.getValueByTime(correlateFeature.getValue(), time));
-
         } else {
             numberOfCorrelateAttribute = 0;
             valueCorrelate.setValue(0);
@@ -137,9 +134,6 @@ public class ViewModelController extends Observable implements Observer {
         //  Init the name of the correlate attribute
         correlateFeature.setValue(ts_reg.getCorrelateFeature(chosenAttribute.getValue()));  //need to be according to the ALG
         return correlateFeature;
-    }
-    public ListProperty<Float>getDataOfAtt(String attribute){
-        return ts_Anomal.getDataOfAttUntilIndex(attribute,timeStamp.intValue());
     }
 
     //  Basic Functions- Buttons
@@ -164,7 +158,6 @@ public class ViewModelController extends Observable implements Observer {
                     System.err.println("wrong amount of columns - should be 42");
             else {
                     m.setTimeSeries(ts_reg, "Train");
-                    //m.initData();
             }
         }
         this.csvTrainFile = true;
@@ -190,7 +183,6 @@ public class ViewModelController extends Observable implements Observer {
                 System.err.println("wrong amount of columns - should be 42");
             else {
                 m.setTimeSeries(ts_Anomal, "Test");
-                //m.initData();
             }
         }
 
@@ -204,10 +196,6 @@ public class ViewModelController extends Observable implements Observer {
 
     public void openXMLFile() {
         xmlFile = m.openXML();
-//        if(xmlFile) {
-//            pitchMax.setValue(m.attributeMap.get("pitch").getMax());
-//            pitchMin.setValue(m.attributeMap.get("pitch").getMin());
-//        }
     }
 
     public void play() {
@@ -221,6 +209,7 @@ public class ViewModelController extends Observable implements Observer {
             alert.showAndWait();
         }
     }
+
     public void pause() {
         this.m.pauseFile();
     }
@@ -253,10 +242,6 @@ public class ViewModelController extends Observable implements Observer {
         else if (choiceSpeed.doubleValue() == 2.5) m.properties.setPlaySpeed(20);
         else m.properties.setPlaySpeed(100);
     }
-//    public void ALGPlay(){
-//        System.out.println("inside ALGPlay");
-//        System.out.println(choiceALG.getValue());
-//    }
 
     public Callable<AnchorPane> getPainter(){return m.getPainter();}
 
