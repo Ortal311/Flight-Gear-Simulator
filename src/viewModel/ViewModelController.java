@@ -132,7 +132,9 @@ public class ViewModelController extends Observable implements Observer {
     }
     public StringProperty getCorrelateFeature(){
         //  Init the name of the correlate attribute
-        correlateFeature.setValue(m.ad.getCorrelateFeature(chosenAttribute.getValue()));//need to be according to the ALG
+       // correlateFeature.setValue(m.ad.getCorrelateFeature(chosenAttribute.getValue()));//need to be according to the ALG
+
+        correlateFeature.setValue(ts_reg.getCorrelateFeature(chosenAttribute.getValue()));
         return correlateFeature;
     }
     public ListProperty<Float>getDataOfAtt(String attribute){
@@ -157,9 +159,12 @@ public class ViewModelController extends Observable implements Observer {
                 if (chosen.get(0).getName().equals("reg_flight.csv")) {
                     ts_reg = new TimeSeries(chosen.get(0).getName());
                     ts_Anomal = new TimeSeries(chosen.get(1).getName());
+
+                    ts_reg.checkCorrelate(ts_reg);//to check the correlation
                 } else {
                     ts_reg = new TimeSeries(chosen.get(1).getName());
                     ts_Anomal = new TimeSeries(chosen.get(0).getName());
+                    ts_reg.checkCorrelate(ts_reg);
                 }
 
                 //simpleAnomalyDetector.learnNormal(ts);

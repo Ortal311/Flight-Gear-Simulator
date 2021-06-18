@@ -363,6 +363,10 @@ public class hybridAlgorithm {
         //board.getChildren().add(circleGraph);
         board.getStylesheets().add("style.css");
 
+        sc.setVisible(false);
+        regBoard.setVisible(false);
+        circleGraph.setVisible(false);
+
         attribute1.addListener((ob, oldV, newV) -> {//to delete the old graph if attribute has changed
             if (oldV != null && !oldV.equals(newV)) {
                 seriesCircle.getData().clear();
