@@ -32,6 +32,8 @@ public class hybridAlgorithm {
     public TimeSeries tsReg;
     public TimeSeries tsRegAnomal;
 
+    public TimeSeries tsWezleAnomal;
+
 
     //for Hybrid
     HashMap<String, CorrelatedFeatures> cfmore95;
@@ -71,6 +73,8 @@ public class hybridAlgorithm {
         tsRegAnomal = new TimeSeries();
         tsZscore = new TimeSeries();
         tsZscoreAnomal = new TimeSeries();
+
+        tsWezleAnomal = new TimeSeries();
     }
 
     private List<Point> toListPoints(List<Float> x, List<Float> y) {
@@ -216,6 +220,7 @@ public class hybridAlgorithm {
 
         int indexReg = 0;
         int indexZS = 0;
+        int indexWZ = 0;
 
         for (String att : attALG.keySet()) {
             Integer index1 = ts.atts.indexOf(att);
@@ -235,14 +240,21 @@ public class hybridAlgorithm {
                 tsZscoreAnomal.ts.put(att, ts.ts.get(att));
                 tsZscoreAnomal.tsNum.put(indexZS++, ts.tsNum.get(index1));
                 tsZscoreAnomal.atts.add(att);
+            } else if (attALG.get(att).nameALG.equals("Welzl")) {
+                String att2 = attALG.get(att).feature2;
+                tsWezleAnomal.ts.put(att, ts.ts.get(att));
+                tsWezleAnomal.tsNum.put(indexWZ++, ts.tsNum.get(index1));
+                Integer index2 = ts.atts.indexOf(att2);
+                tsWezleAnomal.ts.put(att2, ts.ts.get(att));
+                tsWezleAnomal.tsNum.put(indexWZ++, ts.tsNum.get(index2));
+
+                tsWezleAnomal.atts.add(att);
+                tsWezleAnomal.atts.add(att2);
             }
         }
 
 
         List<AnomalyReport> lst = new ArrayList<>();
-
-        List<AnomalyReport> lstAD = ad.detect(tsRegAnomal);
-        List<AnomalyReport> lstAD2 = ad.detect(tsRegAnomal);
 
         lst.addAll(ad.detect(tsRegAnomal));
         lst.addAll(zScore.detect(tsZscoreAnomal));
@@ -276,9 +288,21 @@ public class hybridAlgorithm {
     }
 
     public void initDataForGraphTimeChange() {
-        valPointX.setValue(tsRegAnomal.getValueByTime(attribute1.getValue(), timeStep.intValue()));
-        if (attribute2.getValue() != null)
-            valPointY.setValue(tsRegAnomal.getValueByTime(attribute2.getValue(), timeStep.intValue()));
+
+
+        if (attALG.get(attribute1.getValue()).nameALG.equals("Regression")) {
+            valPointX.setValue(tsRegAnomal.getValueByTime(attribute1.getValue(), timeStep.intValue()));
+            if (attribute2.getValue() != null)
+                valPointY.setValue(tsRegAnomal.getValueByTime(attribute2.getValue(), timeStep.intValue()));
+        } else if (attALG.get(attribute1.getValue()).nameALG.equals("Welzl")) {
+            valPointX.setValue(tsWezleAnomal.getValueByTime(attribute1.getValue(), timeStep.intValue()));
+            if (attribute2.getValue() != null)
+                valPointY.setValue(tsWezleAnomal.getValueByTime(attribute2.getValue(), timeStep.intValue()));
+
+        }
+//        else if (attALG.get(attribute1).nameALG.equals("Welzl")){
+//
+//        }
 
     }
 
@@ -351,7 +375,7 @@ public class hybridAlgorithm {
             }
             attribute2.setValue(attALG.get(attribute1.getValue()).feature2);
             if (attribute2.getValue() != null) {
-                if(attALG.get(newV).nameALG.equals("Regression"))
+                if (attALG.get(newV).nameALG.equals("Regression"))
                     initDataForGraphAttChange();
 
                 timeStep.addListener((o, ov, nv) -> {
@@ -393,7 +417,6 @@ public class hybridAlgorithm {
                                 }
                             }
                         });
-
 
 
                     } else if (attALG.get(attribute1.getValue().toString()).nameALG.equals("Regression")) {
@@ -439,9 +462,7 @@ public class hybridAlgorithm {
                                 }
                             }
                         });
-                    }
-
-                    else if (attALG.get(attribute1.getValue().toString()).nameALG.equals("ZScore")) {
+                    } else if (attALG.get(attribute1.getValue().toString()).nameALG.equals("ZScore")) {
                         System.out.println("ZScore has been activated");
                         sc.setVisible(true);
                         regBoard.setVisible(false);
@@ -452,11 +473,14 @@ public class hybridAlgorithm {
                         seriesPointsAnomal.getData().clear();
 
                         Platform.runLater(() -> {
-                            if ((ZScoreAnomaly.size() != 0) && !ZScoreAnomaly.containsKey(attribute1.getValue())) {// i dont think it's work
-                                lineAnomal.getData().add(new XYChart.Data<>(timeStep.getValue(), ZScoreAnomaly.get(attribute1.getValue().toString()).get(timeStep.intValue())));
-                            } else {
-
+                            if (!ZScoreAnomaly.containsKey(attribute1.getValue())) {// i dont think it's work
                                 line.getData().add(new XYChart.Data<>(timeStep.getValue(), ZScoreReg.get(attribute1.getValue().toString()).get(timeStep.intValue())));
+
+                            } else {
+                                if (ZScoreAnomaly.get(attribute1.getValue()).contains(timeStep.intValue()))//if we are at att with anomal and there is anomal in the present time
+                                    lineAnomal.getData().add(new XYChart.Data<>(timeStep.getValue(), ZScoreReg.get(attribute1.getValue().toString()).get(timeStep.intValue())));
+                                else
+                                    line.getData().add(new XYChart.Data<>(timeStep.getValue(), ZScoreReg.get(attribute1.getValue().toString()).get(timeStep.intValue())));
                             }
                         });
 
