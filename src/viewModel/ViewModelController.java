@@ -21,7 +21,7 @@ public class ViewModelController extends Observable implements Observer {
     public DoubleProperty timeStamp, throttle, rudder, aileron,
             elevators, sliderTime, choiceSpeed, pitch, roll, yaw, timeStampGraph;
     public DoubleProperty valueAxis, valueCorrelate;
-    public StringProperty timeFlight, chosenAttribute, correlateFeature, altimeter, airSpeed, fd;
+    public StringProperty timeFlight, chosenAttribute, correlateFeature, altimeter, airSpeed, fd,choiceALG;
     public IntegerProperty sizeTS;
 
     public ObservableList<String> attributeList;
@@ -45,6 +45,7 @@ public class ViewModelController extends Observable implements Observer {
         throttle = new SimpleDoubleProperty();
         sliderTime = new SimpleDoubleProperty();
         choiceSpeed = new SimpleDoubleProperty();
+        choiceALG=new SimpleStringProperty();
         pitch = new SimpleDoubleProperty();
         roll = new SimpleDoubleProperty();
         yaw = new SimpleDoubleProperty();
@@ -73,6 +74,9 @@ public class ViewModelController extends Observable implements Observer {
         choiceSpeed.addListener((o, ov, nv) -> {
             speedPlay();
         });
+//        choiceALG.addListener((o, ov, nv) -> {
+//            loadAnomalyDetector();
+//        });
 
         sliderTime.addListener((o, ov, nv) -> {
             timeStamp.setValue(nv.doubleValue());
@@ -234,7 +238,7 @@ public class ViewModelController extends Observable implements Observer {
     }
 
     public void loadAnomalyDetector() {
-        algoFile = m.loadAnomalyDetector();
+        algoFile = m.loadAnomalyDetector(choiceALG.getValue());
 
 //        if(algoFile)
 //        {
@@ -249,6 +253,10 @@ public class ViewModelController extends Observable implements Observer {
         else if (choiceSpeed.doubleValue() == 2.5) m.properties.setPlaySpeed(20);
         else m.properties.setPlaySpeed(100);
     }
+//    public void ALGPlay(){
+//        System.out.println("inside ALGPlay");
+//        System.out.println(choiceALG.getValue());
+//    }
 
     public Callable<AnchorPane> getPainter(){return m.getPainter();}
 

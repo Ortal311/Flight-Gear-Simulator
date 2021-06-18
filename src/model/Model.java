@@ -64,12 +64,12 @@ public class Model extends Observable implements SimulatorModel {
     public Line regLineForCorrelateAttribute;
 
 
-    public Boolean loadAnomalyDetector() {//String input
+    public Boolean loadAnomalyDetector(String nameALG) {//String input
 //        URLClassLoader urlClassLoader= URLClassLoader.newInstance(new URL[]{new URL("file://"+input)});
 //        Class<?>c=urlClassLoader.loadClass(urlClassLoader.getName());
 //        SimpleAnomalyDetector ad=(SimpleAnomalyDetector) c.newInstance();
 
-        //
+
         ad = new SimpleAnomalyDetector();
 //        ad.learnNormal(ts_reg);
 //        ad.detect(ts_Anomal);

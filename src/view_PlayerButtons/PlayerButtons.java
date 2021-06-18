@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class PlayerButtons extends AnchorPane {
     public DoubleProperty sliderTime, choiceSpeed;
-    public  StringProperty timeFlight, miliSec, seconds, minutes;
+    public  StringProperty timeFlight, miliSec, seconds, minutes,choiceALG;
     public BooleanProperty onOpenCSVTrain, onOpenCSVTest, onOpenXML, onPlay, onPause, onSpeed, onStop,
             onRewind, onForward,onAnomalyDetector;
 
@@ -17,6 +17,7 @@ public class PlayerButtons extends AnchorPane {
         FXMLLoader fxl = new FXMLLoader();
         sliderTime= new SimpleDoubleProperty();
         choiceSpeed = new SimpleDoubleProperty();
+        choiceALG=new SimpleStringProperty();
 
         miliSec = new SimpleStringProperty();
         seconds = new SimpleStringProperty();
@@ -55,7 +56,9 @@ public class PlayerButtons extends AnchorPane {
             pbc.minutes.textProperty().bind(minutes);
 
             pbc.sliderTime.valueProperty().bindBidirectional(sliderTime);
-            choiceSpeed.bind((pbc.choiceSpeed.valueProperty()));
+            choiceSpeed.bind(pbc.choiceSpeed.valueProperty());
+            choiceALG.bind(pbc.choiceAlgo.getSelectionModel().selectedItemProperty());
+           // choiceALG.bind(pbc.choiceSpeed.valueProperty());
 
             onOpenCSVTrain.bind(pbc.onOpenCSVTrain);
             onOpenCSVTest.bind(pbc.onOpenCSVTest);
