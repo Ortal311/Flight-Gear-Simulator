@@ -42,10 +42,11 @@ public class GraphsController {
                     series1.getData().add(new XYChart.Data<>(timeStamp.getValue().toString(), value.doubleValue()));
                     if (correlatedAttribute.getValue() != null)
                         series2.getData().add(new XYChart.Data<>(timeStamp.getValue().toString(), valueCorrelate.doubleValue()));
+                   else
+                        series2.getData().clear();
                 });
             });
 
-            if (correlatedAttribute.getValue() == null) series2.getData().clear();
             if ((newVal != null) && (!newVal.equals(oldval))) {     //if change the attribute
                 series1.getData().clear();
                 series2.getData().clear();
