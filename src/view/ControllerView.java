@@ -42,9 +42,9 @@ public class ControllerView extends Pane implements Observer {
         myJoystick.setLayoutY(20);
         attributesList.setLayoutX(18);
         attributesList.setLayoutY(25);
-        playerButtons.setLayoutY(375);
+        playerButtons.setLayoutY(470);
         playerButtons.setLayoutX(9);
-        timeBoard.setLayoutX(445);
+        timeBoard.setLayoutX(455);
         timeBoard.setLayoutY(285);
         graphs.setLayoutX(250);
         graphs.setLayoutY(15);
@@ -75,8 +75,14 @@ public class ControllerView extends Pane implements Observer {
         timeBoard.altimeter.bind(vmc.altimeter);
         timeBoard.fd.bind(vmc.fd);
         timeBoard.pitch.bind(vmc.pitch);
+        timeBoard.pitchMax.bind(vmc.pitchMax);
+        timeBoard.pitchMin.bind(vmc.pitchMin);
         timeBoard.roll.bind(vmc.roll);
+        timeBoard.rollMax.bind(vmc.rollMax);
+        timeBoard.rollMin.bind(vmc.rollMin);
         timeBoard.yaw.bind(vmc.yaw);
+        timeBoard.yawMax.bind(vmc.yawMax);
+        timeBoard.yawMin.bind(vmc.yawMin);
 
         playerButtons.onOpenCSVTrain.addListener((o, ov, nv) -> vmc.openCSVTrainFile());
         playerButtons.onOpenCSVTest.addListener((o, ov, nv) -> vmc.openCSVTestFile());

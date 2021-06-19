@@ -19,7 +19,7 @@ public class ViewModelController extends Observable implements Observer {
     public Clock clock;
     public TimeSeries ts_reg, ts_Anomal;    //ts-reg
     public DoubleProperty timeStamp, throttle, rudder, aileron,
-            elevators, sliderTime, choiceSpeed, pitch, roll, yaw, timeStampGraph;
+            elevators, sliderTime, choiceSpeed, pitch, pitchMax, pitchMin, roll, rollMax, rollMin, yaw, yawMax, yawMin, timeStampGraph;
     public DoubleProperty valueAxis, valueCorrelate;
     public StringProperty timeFlight, chosenAttribute, correlateFeature, altimeter, airSpeed, fd,choiceALG;
     public IntegerProperty sizeTS;
@@ -46,11 +46,16 @@ public class ViewModelController extends Observable implements Observer {
         sliderTime = new SimpleDoubleProperty();
         choiceSpeed = new SimpleDoubleProperty();
         choiceALG=new SimpleStringProperty();
+
         pitch = new SimpleDoubleProperty();
+        pitchMax = new SimpleDoubleProperty();
+        pitchMin = new SimpleDoubleProperty();
         roll = new SimpleDoubleProperty();
+        rollMax = new SimpleDoubleProperty();
+        rollMin = new SimpleDoubleProperty();
         yaw = new SimpleDoubleProperty();
-        roll = new SimpleDoubleProperty();
-        yaw = new SimpleDoubleProperty();
+        yawMax = new SimpleDoubleProperty();
+        yawMin = new SimpleDoubleProperty();
 
         valueAxis = new SimpleDoubleProperty();
         valueCorrelate = new SimpleDoubleProperty();
@@ -193,6 +198,12 @@ public class ViewModelController extends Observable implements Observer {
 
     public void openXMLFile() {
         xmlFile = m.openXML();
+        pitchMax.setValue(m.attributeMap.get("pitch").getMax());
+        pitchMin.setValue(m.attributeMap.get("pitch").getMin());
+        rollMax.setValue(m.attributeMap.get("roll").getMax());
+        rollMin.setValue(m.attributeMap.get("roll").getMin());
+        yawMax.setValue(m.attributeMap.get("yaw").getMax());
+        yawMin.setValue(m.attributeMap.get("yaw").getMin());
     }
 
     public void play() {
