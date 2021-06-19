@@ -58,7 +58,6 @@ public class PlayerButtonsController {
     }
 
     public void onOpenCSVTrain() {
-        System.out.println(onOpenCSVTrain.getValue());
         if(onOpenCSVTrain.getValue()){
             onOpenCSVTrain.setValue(false);
         }

@@ -1,22 +1,17 @@
 package algo;
-import viewModel.TimeSeries;
 
 import java.lang.Math;
-import java.util.ArrayList;
-import java.util.List;
 
 public class StatLib {
 
-
-
-    // simple average
+    // Simple average
     public static float avg(float[] x){
         float sum=0;
         for(int i=0;i<x.length;sum+=x[i],i++);
         return sum/x.length;
     }
 
-    // returns the variance of X and Y
+    // Returns the variance of X and Y
     public static float var(float[] x){
         float av=avg(x);
         float sum=0;
@@ -33,14 +28,11 @@ public class StatLib {
             sum+=x[i]*y[i];
         }
         sum/=x.length;
-
         return sum - avg(x)*avg(y);
     }
 
-
     // returns the Pearson correlation coefficient of X and Y
     public static float pearson(float[] x, float[] y){
-
         if(var(x) < 0 || var(y) < 0)
             return 0;
         if(Math.sqrt(var(x))*Math.sqrt(var(y)) == 0)
@@ -58,7 +50,6 @@ public class StatLib {
         }
         float a=cov(x,y)/var(x);
         float b=avg(y) - a*(avg(x));
-
         return new Line(a,b);
     }
 

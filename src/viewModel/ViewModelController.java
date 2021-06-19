@@ -171,7 +171,6 @@ public class ViewModelController extends Observable implements Observer {
     }
 
     public void openCSVTestFile() {
-        System.out.println("testFile");
         FileChooser fc = new FileChooser();
         fc.setTitle("open CSV test file");
         fc.setInitialDirectory(new File("./"));

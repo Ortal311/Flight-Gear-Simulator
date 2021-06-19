@@ -97,7 +97,6 @@ public class ControllerView extends Pane implements Observer {
                 try {
                     adAnchorePane.getChildren().setAll(vmc.getPainter().call());
                 } catch (Exception e) {
-                    System.err.println("alg painter is null");
                     e.printStackTrace();
                 }
             }

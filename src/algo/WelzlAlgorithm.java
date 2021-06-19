@@ -7,7 +7,7 @@ import java.util.Random;
 public class WelzlAlgorithm {
     private Random rand = new Random();
 
-    public Circle miniDisk(final List<Point> ps) {
+    public Circle welzl(final List<Point> ps) {
         return welzlHelper(ps, new ArrayList<>());
     }
 

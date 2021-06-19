@@ -15,25 +15,23 @@ import java.util.*;
 
 public class ZScoreAlgorithm implements AnomalyDetector {
     Vector<Float> tx;
-    //HashMap<Integer, LinkedList<Float>> ZScoreMap;//original
-    public HashMap<Integer, ArrayList<Float>> ZScoreMap;
 
-    //HashMap<String,LinkedList<Float>>ZScoreReg=new HashMap<>();
-    public HashMap<String, ArrayList<Float>> ZScoreReg = new HashMap<>();
-    //HashMap<String,LinkedList<Integer>>ZScoreAnomaly=new HashMap<>();
-    public HashMap<String, ArrayList<Integer>> ZScoreAnomaly = new HashMap<>();
+    public HashMap<Integer, ArrayList<Float>> ZScoreMap;
+    public HashMap<String, ArrayList<Float>> ZScoreReg;
+    public HashMap<String, ArrayList<Integer>> ZScoreAnomaly;
 
     public HashMap<String, ArrayList<Float>> avgMap;
 
     public StringProperty Attribute = new SimpleStringProperty();
     public DoubleProperty timeStep = new SimpleDoubleProperty();
 
-    public Line regLineForCorrelateAttribute;
 
     public ZScoreAlgorithm() {
         this.tx = new Vector<>();
         this.ZScoreMap = new HashMap<>();
-        avgMap = new HashMap<>();
+        this.avgMap = new HashMap<>();
+        this.ZScoreReg = new HashMap<>();
+        this.ZScoreAnomaly = new HashMap<>();
     }
 
     public float[] ListToArr(List<Float> lst) {
@@ -45,7 +43,7 @@ public class ZScoreAlgorithm implements AnomalyDetector {
         return res;
     }
 
-    public float calcZScore(List<Float> col, String attribute) {
+    public float calcZScore(List<Float> col) {
         float avg, sigma, zScore, var;
         float[] arrFloat;
         int colSize = col.size();
@@ -75,7 +73,6 @@ public class ZScoreAlgorithm implements AnomalyDetector {
             return 0;
         zScore = Math.abs(x - avg) / sigma;
 
-      //  System.out.println("zScore: " + zScore + " " + "attribute: " + attribute);
         return zScore;
     }
 
@@ -101,7 +98,7 @@ public class ZScoreAlgorithm implements AnomalyDetector {
     @Override
     public void learnNormal(TimeSeries ts) {
         int index = 0;
-        //LinkedList<Float> zScored = new LinkedList<>();
+
         ArrayList<Float> zScored = new ArrayList<>();
         String attribute;
         int colSize = ts.atts.size();
@@ -110,20 +107,18 @@ public class ZScoreAlgorithm implements AnomalyDetector {
             ArrayList<Float> col = ts.tsNum.get(i);
             attribute = ts.atts.get(index);
             avgMap.put(attribute, new ArrayList<>());
-          //  System.out.println(col.size());
+
             for (int j = 0; j < col.size(); j++) {
 
-                zScored.add(calcZScore(col.subList(0, j), attribute));
+                zScored.add(calcZScore(col.subList(0, j)));
             }
             tx.add(argMax(zScored));
             this.ZScoreReg.put(attribute, zScored);
             this.ZScoreMap.put(index++, zScored);
-
         }
     }
 
     public List<AnomalyReport> detect(TimeSeries data) {
-        System.out.println("inside begging of detect Zscore 1");
         List<AnomalyReport> lst = new LinkedList<>();
         String attribute;
 
@@ -131,10 +126,8 @@ public class ZScoreAlgorithm implements AnomalyDetector {
             ArrayList<Float> col = data.tsNum.get(indexCol);
             attribute = data.atts.get(indexCol);
             for (int indexTime = 0; indexTime < col.size(); indexTime++) {
-                if (calcZScore(col.subList(0, indexTime), attribute) > tx.get(indexCol)) {
+                if (calcZScore(col.subList(0, indexTime)) > tx.get(indexCol)) {
                     lst.add(new AnomalyReport(attribute, indexTime));
-//                    System.out.println("was inside detect ZScore");
-//                    System.out.println(attribute + "  " + indexCol);
 
                     if (!ZScoreAnomaly.containsKey(attribute)) {
                         ZScoreAnomaly.put(attribute, new ArrayList<>());
@@ -157,7 +150,7 @@ public class ZScoreAlgorithm implements AnomalyDetector {
         XYChart.Series line = new XYChart.Series();
         XYChart.Series lineAnomal = new XYChart.Series();
         sc.getData().addAll(line,lineAnomal);
-        lineAnomal.getNode().setStyle("-fx-stroke: red;");
+        lineAnomal.getNode().setStyle("-fx-stroke: #01aa18;");
 
         Attribute.addListener((ob, oldV, newV) -> {//to delete the old graph if attribute has changed
             timeStep.addListener((o, ov, nv) -> {
@@ -173,7 +166,7 @@ public class ZScoreAlgorithm implements AnomalyDetector {
                 });
             });
 
-            if (!newV.equals(oldV)) {//if change the attribute
+            if (!newV.equals(oldV)) {   //if change the attribute
                 lineAnomal.getData().clear();
             }
         });

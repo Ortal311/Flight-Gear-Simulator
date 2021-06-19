@@ -4,7 +4,6 @@ class Circle {
 
     private static final double MULTIPLICATIVE_EPSILON = 1 + 1e-14;
 
-
     public Point center;
     public double radius;
 
@@ -57,16 +56,9 @@ class Circle {
         }
     }
 
-//    public boolean isInside(final Point p) {
-//        return p.distanceSquaredTo(center) <= Math.pow(radius, 2);
-//    }
-
-
     public boolean isInside(Point p) {
         return center.distanceTo(p) <= radius * MULTIPLICATIVE_EPSILON;
     }
-
-
 
     @Override
     public String toString() {

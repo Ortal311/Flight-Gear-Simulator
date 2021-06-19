@@ -45,6 +45,10 @@ public class GraphsController {
                    else
                         series2.getData().clear();
                 });
+                if(ov != null && nv.intValue() < ov.intValue()) {
+                    series1.getData().clear();
+                    series2.getData().clear();
+                }
             });
 
             if ((newVal != null) && (!newVal.equals(oldval))) {     //if change the attribute

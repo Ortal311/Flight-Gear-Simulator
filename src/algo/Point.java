@@ -20,7 +20,6 @@ public class Point {
     public double distanceSquaredTo(final Point p) {
         final double DX = getX() - p.getX();
         final double DY = getY() - p.getY();
-
         return DX * DX + DY * DY;
     }
 

@@ -31,7 +31,6 @@ public class TimeSeries {
     }
 
     public TimeSeries(String csvFileName) {
-        System.out.println("init TS");
         ts = new HashMap<>();
         tsNum = new HashMap<>();
         rows = new ArrayList<>();
@@ -144,8 +143,6 @@ public class TimeSeries {
                 }
             }
         }
-        System.out.println(" the size of simple anomaly is: :"+cf.size());
-
     }
 
     private Point[] toPoints(ArrayList<Float> x, ArrayList<Float> y) {

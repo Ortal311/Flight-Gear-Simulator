@@ -2,36 +2,24 @@ package model;
 
 public class Options {
 
-    boolean stop;
-    boolean pause;
-    boolean rewind;
-    boolean forward;
-    boolean plus15;
-    boolean minus15;
-    boolean scroll;
-    double playSpeed;
-
-    public boolean isPlus15() {
-        return plus15;
-    }
-
-    public void setPlus15(boolean plus15) {
-        this.plus15 = plus15;
-    }
-
-    public boolean isMinus15() {
-        return minus15;
-    }
-
-    public void setMinus15(boolean minus15) {
-        this.minus15 = minus15;
-    }
+    public boolean stop, afterStop;
+    public boolean pause, afterPause;
+    public boolean rewind, afterRewind;
+    public boolean forward, afterForward;
+    public boolean plus15;
+    public boolean minus15;
+    public boolean scroll;
+    public double playSpeed;
 
     public Options() {
         this.stop = false;
+        this.afterStop = false;
         this.pause = false;
+        this.afterPause = false;
         this.rewind = false;
+        this.afterRewind = false;
         this.forward = false;
+        this.afterForward = false;
         this.plus15 = false;
         this.minus15 = false;
         this.scroll = false;
@@ -46,40 +34,11 @@ public class Options {
         this.pause = pause;
     }
 
-    public void setRewind(boolean rewind) {
-        this.rewind = rewind;
-    }
-
-    public void setForward(boolean forward) {
-        this.forward = forward;
-    }
-
-    public void setPlaySpeed(double playSpeed) {
-        if(playSpeed==0.5)playSpeed=150;
-        else if(playSpeed==1.5)playSpeed=75;
-        else if(playSpeed==2)playSpeed=50;
-        else if(playSpeed==0.5)playSpeed=25;
-        else playSpeed=100;
-        this.playSpeed = playSpeed;
-    }
-
     public boolean isStop() {
         return stop;
     }
 
-    public boolean isPause() {
-        return pause;
-    }
-
-    public boolean isRewind() {
-        return rewind;
-    }
-
     public boolean isForward() {
         return forward;
-    }
-
-    public double getPlaySpeed() {
-        return playSpeed;
     }
 }

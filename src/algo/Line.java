@@ -12,5 +12,4 @@ public class Line {
     public float f(float x){
         return a * x + b;
     }
-
 }
