@@ -174,6 +174,7 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
         attribute1.addListener((ob, oldV, newV) -> {//to delete the old graph if attribute has changed
             attribute2.setValue(getCorrelateFeature(attribute1.getValue()));
             if (attribute2.getValue() != null) {
+                sc.setVisible(true);
                 initDataForGraphAttChange();
                 timeStep.addListener((o, ov, nv) -> {
                     initDataForGraphTimeChange();
@@ -212,6 +213,12 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
 //                series1.getData().clear();
 //                series2.getData().clear();
 //            }
+            }
+            else if (attribute2.getValue() == null) {// if the new att doesn't have correlate
+//                pointsAnomal.getData().clear();
+//                pointsNormal.getData().clear();
+//                regLine.getData().clear();
+                sc.setVisible(false);
             }
         });
 
