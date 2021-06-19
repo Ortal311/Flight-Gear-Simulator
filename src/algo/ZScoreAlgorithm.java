@@ -162,15 +162,19 @@ public class ZScoreAlgorithm implements AnomalyDetector {
         Attribute.addListener((ob, oldV, newV) -> {//to delete the old graph if attribute has changed
             timeStep.addListener((o, ov, nv) -> {
                 Platform.runLater(() -> {
-                    if ((ZScoreAnomaly.size() != 0) && !ZScoreAnomaly.containsKey(Attribute.getValue())) {// i dont think it's work
+                    if (!ZScoreAnomaly.containsKey(Attribute.getValue())) {// i dont think it's work
                         lineAnomal.getData().add(new XYChart.Data<>(timeStep.getValue(), ZScoreReg.get(Attribute.getValue().toString()).get(timeStep.intValue())));
                     } else {
-                        line.getData().add(new XYChart.Data<>(timeStep.getValue(), ZScoreReg.get(Attribute.getValue().toString()).get(timeStep.intValue())));
+                        if (ZScoreAnomaly.get(Attribute.getValue()).contains(timeStep.intValue()))//if we are at att with anomal and there is anomal in the present time
+                            line.getData().add(new XYChart.Data<>(timeStep.getValue(), ZScoreReg.get(Attribute.getValue().toString()).get(timeStep.intValue())));
+                        else
+                            lineAnomal.getData().add(new XYChart.Data<>(timeStep.getValue(), ZScoreReg.get(Attribute.getValue().toString()).get(timeStep.intValue())));
                     }
                 });
             });
+
             if (!newV.equals(oldV)) {//if change the attribute
-                line.getData().clear();
+                lineAnomal.getData().clear();
             }
         });
         sc.setAnimated(false);

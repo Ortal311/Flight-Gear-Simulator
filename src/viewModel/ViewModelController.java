@@ -74,9 +74,6 @@ public class ViewModelController extends Observable implements Observer {
         choiceSpeed.addListener((o, ov, nv) -> {
             speedPlay();
         });
-//        choiceALG.addListener((o, ov, nv) -> {
-//            loadAnomalyDetector();
-//        });
 
         sliderTime.addListener((o, ov, nv) -> {
             timeStamp.setValue(nv.doubleValue());
@@ -86,13 +83,13 @@ public class ViewModelController extends Observable implements Observer {
 
         timeStamp.addListener((o, ov, nv) -> {
             updateDisplayVariables(nv.intValue());
-            if( xmlFile && algoFile && csvTestFile && csvTrainFile);
+            if(algoFile == true)
                 m.setVarivablesTOALG();     //updating the date for the alg graph
         });
 
         chosenAttribute.addListener((o, ov, nv) -> {
             m.attribute1.bind(chosenAttribute);
-            if(xmlFile && algoFile && csvTestFile && csvTrainFile)
+            if(algoFile == true)
                 m.setVarivablesNamesTOALG();
         });
     }
@@ -199,7 +196,7 @@ public class ViewModelController extends Observable implements Observer {
     }
 
     public void play() {
-        if (csvTestFile && csvTrainFile && xmlFile && algoFile) {
+        if (csvTestFile && csvTrainFile && xmlFile) {
             this.m.playFile();
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -227,12 +224,27 @@ public class ViewModelController extends Observable implements Observer {
     }
 
     public void loadAnomalyDetector() {
-        algoFile = m.loadAnomalyDetector(choiceALG.getValue());
 
-//        if(algoFile)
-//        {
-//            m.getPainter();
-//        }
+        FileChooser fc = new FileChooser();
+        fc.setTitle("open ALG");
+        fc.setInitialDirectory(new File("./"));
+        File chosen = fc.showOpenDialog(null);
+
+        if (!chosen.getName().contains(".class"))  //checking the file
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Wrong file chosen");
+            alert.setContentText("Please choose algorithm file");
+            alert.showAndWait();
+        }
+
+        try {
+           m.loadAnomalyDetector(chosen.getPath(),chosen.getName().toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        algoFile = true;
     }
 
     public void speedPlay() {

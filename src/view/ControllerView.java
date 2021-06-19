@@ -62,7 +62,7 @@ public class ControllerView extends Pane implements Observer {
         playerButtons.minutes.bind(vmc.clock.minutes.asString());
         playerButtons.sliderTime.bindBidirectional(vmc.sliderTime);
         vmc.choiceSpeed.bind(playerButtons.choiceSpeed);
-        vmc.choiceALG.bind(playerButtons.choiceALG);
+
 
         graphs.value.bind(vmc.valueAxis);
         graphs.valueCorrelate.bind(vmc.valueCorrelate);
@@ -86,8 +86,7 @@ public class ControllerView extends Pane implements Observer {
         playerButtons.onStop.addListener((o, ov, nv) -> vmc.stop());
         playerButtons.onRewind.addListener((o, ov, nv) -> vmc.rewind());
         playerButtons.onForward.addListener((o, ov, nv) -> vmc.forward());
-
-        vmc.choiceALG.addListener((o, ov, nv) -> {
+        playerButtons.onAnomalyDetector.addListener((o, ov, nv)-> {
             vmc.loadAnomalyDetector();
             try {
                 adAnchorePane.getChildren().setAll(vmc.getPainter().call());
@@ -95,6 +94,7 @@ public class ControllerView extends Pane implements Observer {
                 System.err.println("alg painter is null");
                 e.printStackTrace();
             }
+
         });
 
         attributesList.alc.lv.setItems(vmc.attributeList);

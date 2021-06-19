@@ -16,6 +16,8 @@ import java.beans.XMLDecoder;
 import java.beans.XMLEncoder;
 import java.io.*;
 import java.net.Socket;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -36,7 +38,8 @@ public class Model extends Observable implements SimulatorModel {
     public static boolean afterStop = false;
     public static boolean afterRewind = false;
     public static boolean afterForward = false;
-    public boolean isConnect;
+    public boolean isConnect, algFile = false;
+    public String algName;
 
     //public AnomalyDetector ad;
     public SimpleAnomalyDetector ad;
@@ -45,7 +48,6 @@ public class Model extends Observable implements SimulatorModel {
 
     public AnchorPane APref;
 
-    List<CorrelatedFeatures> getNormal;
 
     public StringProperty attribute1 = new SimpleStringProperty();
     public StringProperty attribute2 = new SimpleStringProperty();
@@ -64,13 +66,35 @@ public class Model extends Observable implements SimulatorModel {
     public Line regLineForCorrelateAttribute;
 
 
-    public Boolean loadAnomalyDetector(String nameALG) {//String input
-//        URLClassLoader urlClassLoader= URLClassLoader.newInstance(new URL[]{new URL("file://"+input)});
-//        Class<?>c=urlClassLoader.loadClass(urlClassLoader.getName());
-//        SimpleAnomalyDetector ad=(SimpleAnomalyDetector) c.newInstance();
+    public Boolean loadAnomalyDetector(String path, String nameALG) throws Exception {//String input
+
+        algName = nameALG.split("\\.")[0];
+
+        URLClassLoader urlClassLoader = URLClassLoader.newInstance(new URL[]{new URL("file:\\" + path)});
+        Class<?> c = urlClassLoader.loadClass("algo."+algName);
 
 
-        ad = new SimpleAnomalyDetector();
+        if (algName.equals("hybridAlgorithm")) {
+            hyperALG = (hybridAlgorithm) c.newInstance();
+            System.out.println(hyperALG.toString());
+            new Thread(() -> initData()).start();//needs if to init data at first time
+            hyperALG.learnNormal(ts_reg);
+            hyperALG.detect(ts_Anomal);
+
+        } else if (algName.equals("SimpleAnomalyDetector")) {
+            ad = (SimpleAnomalyDetector) c.newInstance();
+            new Thread(() -> initData()).start();
+            ad.learnNormal(ts_reg);
+            ad.detect(ts_Anomal);
+        } else if (algName.equals("ZScoreAlgorithm")) {
+            zScore = (ZScoreAlgorithm) c.newInstance();
+            new Thread(() -> initData()).start();
+            zScore.learnNormal(ts_reg);
+            zScore.detect(ts_Anomal);
+        }
+
+
+//        ad = new SimpleAnomalyDetector();
 //        ad.learnNormal(ts_reg);
 //        ad.detect(ts_Anomal);
 //        getNormal = ad.getNormalModel();
@@ -80,14 +104,11 @@ public class Model extends Observable implements SimulatorModel {
 //        zScore.detect(ts_Anomal);
 
 
-        hyperALG = new hybridAlgorithm();
-        new Thread(() -> initData()).start();//needs if to init data at first time
-        hyperALG.learnNormal(ts_reg);
-        hyperALG.detect(ts_Anomal);
+        //  hyperALG = new hybridAlgorithm();
+//        new Thread(() -> initData()).start();//needs if to init data at first time
+//        hyperALG.learnNormal(ts_reg);
+//        hyperALG.detect(ts_Anomal);
 
-
-        if (ad != null)
-            return true;
         return false;
     }
 
@@ -98,45 +119,49 @@ public class Model extends Observable implements SimulatorModel {
 
     public void setVarivablesTOALG() {//listen to timeStep and init line chart of reg
 
-        ad.timeStep.bind(timeStep);
-//
-//        zScore.timeStep.bind(timeStep);
 
-        hyperALG.timeStep.bind(timeStep);
+        if (algName.equals("SimpleAnomalyDetector"))
+            ad.timeStep.bind(timeStep);
+
+        else if (algName.equals("ZScoreAlgorithm"))
+            zScore.timeStep.bind(timeStep);
+
+        else
+            hyperALG.timeStep.bind(timeStep);
 
     }
 
     public void setVarivablesNamesTOALG() {//Listen to chosen attribute
 
-        ad.attribute1.bind(attribute1);
+        if (algName.equals("SimpleAnomalyDetector"))
+            ad.attribute1.bind(attribute1);
 
-//        zScore.Attribute.bind(attribute1);
-
-        hyperALG.attribute1.bind(attribute1);
+        else if (algName.equals("ZScoreAlgorithm"))
+            zScore.Attribute.bind(attribute1);
+        else
+            hyperALG.attribute1.bind(attribute1);
 
     }
 
     public Callable<AnchorPane> getPainter() {
-        //reg
-//        ad=new SimpleAnomalyDetector();
 
-//        APref = ad.paint();
-//
-//        return () -> ad.paint();
+             //reg
+        if (algName.equals("SimpleAnomalyDetector"))
+            return () -> ad.paint();
 
-        //zScore
-        //zScore=new ZScoreAlgorithm();
-//        return () -> zScore.paint();
+            //zScore
+        else if (algName.equals("ZScoreAlgorithm"))
+            return () -> zScore.paint();
 
-        //HyperALG
-        return () -> hyperALG.paint();
-
+            //HyperALG
+        else
+            return () -> hyperALG.paint();
     }
 
     public void setTimeSeries(TimeSeries ts, String tsType) {
-        if(tsType.equals("Train"))
+        if (tsType.equals("Train"))
             this.ts_reg = ts;
-        else if(tsType.equals("Test"))
+        else if (tsType.equals("Test"))
             this.ts_Anomal = ts;
     }
 
@@ -197,7 +222,6 @@ public class Model extends Observable implements SimulatorModel {
                     }
 
                     if (op.forward) {
-                        System.out.println("blabla after forward");
                         if (i < sizeTS - 151)
                             i += 150;
                         else
@@ -205,7 +229,6 @@ public class Model extends Observable implements SimulatorModel {
                         op.forward = false;
                     }
                     if (op.rewind) {
-                        System.out.println("blabla after rewind");
                         if ((i - 150) > 0)
                             i -= 150;
                         else

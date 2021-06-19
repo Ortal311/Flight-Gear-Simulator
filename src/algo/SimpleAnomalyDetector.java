@@ -179,9 +179,7 @@ public class SimpleAnomalyDetector implements AnomalyDetector {
                     initDataForGraphTimeChange();
                     Platform.runLater(() -> {
                         if (!anomalyAndTimeStep.containsKey(attribute1.getValue())) {
-//                        if (nv.doubleValue() > ov.doubleValue() + 30) {
-//                            series1.getData().remove(0);
-//                        }
+
                             pointsNormal.getData().add(new XYChart.Data(valPointX.doubleValue(), valPointY.doubleValue()));//points
                             regLine.getData().add(new XYChart.Data(valAtt1X.doubleValue(), valAtt2Y.doubleValue()));//reg first point
                             regLine.getData().add(new XYChart.Data(vaAtt1Xend.doubleValue(), vaAtt2Yend.doubleValue()));//reg sec point
