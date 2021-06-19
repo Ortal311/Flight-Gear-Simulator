@@ -1,4 +1,4 @@
-package algo;
+package algorithms;
 
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;

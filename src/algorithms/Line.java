@@ -1,4 +1,4 @@
-package algo;
+package algorithms;
 
 public class Line {
 

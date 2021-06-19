@@ -1,4 +1,4 @@
-package algo;
+package algorithms;
 
 public class CorrelatedFeatures {
 	public  String feature1, feature2;

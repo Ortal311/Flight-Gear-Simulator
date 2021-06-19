@@ -1,6 +1,6 @@
 package model;
 
-import algo.*;
+import algorithms.*;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -217,7 +217,7 @@ public class Model extends Observable implements SimulatorModel {
     public Boolean loadAnomalyDetector(String path, String nameALG) throws Exception {//String input
         algName = nameALG.split("\\.")[0];
         URLClassLoader urlClassLoader = URLClassLoader.newInstance(new URL[]{new URL("file:\\" + path)});
-        Class<?> c = urlClassLoader.loadClass("algo."+algName);
+        Class<?> c = urlClassLoader.loadClass("algorithms."+algName);
 
         if (algName.equals("hybridAlgorithm")) {
             hyperALG = (hybridAlgorithm) c.newInstance();

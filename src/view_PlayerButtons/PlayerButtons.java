@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class PlayerButtons extends AnchorPane {
     public DoubleProperty sliderTime, choiceSpeed;
-    public  StringProperty timeFlight, miliSec, seconds, minutes;
+            public  StringProperty timeFlight, miliSec, seconds, minutes;
     public BooleanProperty onOpenCSVTrain, onOpenCSVTest, onOpenXML, onPlay, onPause, onSpeed, onStop,
             onRewind, onForward,onAnomalyDetector;
 

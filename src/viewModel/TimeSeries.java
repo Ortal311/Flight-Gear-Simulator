@@ -1,9 +1,9 @@
 package viewModel;
 
-import algo.CorrelatedFeatures;
-import algo.Line;
-import algo.Point;
-import algo.StatLib;
+import algorithms.CorrelatedFeatures;
+import algorithms.Line;
+import algorithms.Point;
+import algorithms.StatLib;
 import javafx.beans.property.ListProperty;
 import javafx.beans.property.SimpleListProperty;
 

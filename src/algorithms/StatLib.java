@@ -1,4 +1,4 @@
-package algo;
+package algorithms;
 
 import java.lang.Math;
 
