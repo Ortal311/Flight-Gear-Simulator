@@ -19,23 +19,23 @@
          <font>
             <Font name="Tahoma Bold" size="13.0" />
          </font></Button>
-      <Button layoutX="7.0" layoutY="82.0" mnemonicParsing="false" onAction="#onPlay" prefHeight="35.0" prefWidth="38.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 7px;" text="▶" textAlignment="CENTER" textFill="#123e9e">
+      <Button layoutX="8.0" layoutY="82.0" mnemonicParsing="false" onAction="#onPlay" prefHeight="35.0" prefWidth="40.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 7px;" text="▶" textAlignment="CENTER" textFill="#123e9e">
          <font>
-            <Font size="16.0" />
+            <Font size="15.0" />
          </font></Button>
       <Button layoutX="59.0" layoutY="82.0" mnemonicParsing="false" onAction="#onStop" prefHeight="35.0" prefWidth="40.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 7px;" text="■" textFill="#123e9e">
          <font>
-            <Font size="16.0" />
+            <Font size="15.0" />
          </font></Button>
-      <Button layoutX="113.0" layoutY="82.0" mnemonicParsing="false" onAction="#onPause" prefHeight="35.0" prefWidth="40.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 7px;" text="||" textFill="#123e9e">
+      <Button layoutX="112.0" layoutY="82.0" mnemonicParsing="false" onAction="#onPause" prefHeight="35.0" prefWidth="40.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 7px;" text="||" textFill="#123e9e">
          <font>
             <Font name="System Bold" size="15.0" />
          </font></Button>
-      <Button layoutX="221.0" layoutY="82.0" mnemonicParsing="false" onAction="#onForward" prefHeight="35.0" prefWidth="40.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 7px;" text="▶▶" textFill="#123e9e">
+      <Button layoutX="220.0" layoutY="82.0" mnemonicParsing="false" onAction="#onForward" prefHeight="35.0" prefWidth="40.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 7px;" text="▶▶" textFill="#123e9e">
          <font>
             <Font size="12.0" />
          </font></Button>
-      <Button layoutX="167.0" layoutY="82.0" mnemonicParsing="false" onAction="#onRewind" prefHeight="35.0" prefWidth="40.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 7px;" text="◀◀" textFill="#123e9e">
+      <Button layoutX="166.0" layoutY="82.0" mnemonicParsing="false" onAction="#onRewind" prefHeight="35.0" prefWidth="40.0" style="-fx-background-color: #fff; -fx-border-color: #123e9e#123e9e; -fx-border-radius: 7px;" text="◀◀" textFill="#123e9e">
          <font>
             <Font size="12.0" />
          </font></Button>
