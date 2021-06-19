@@ -9,6 +9,8 @@ import javafx.stage.FileChooser;
 import model.Model;
 
 import java.io.File;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.concurrent.Callable;
@@ -18,10 +20,13 @@ public class ViewModelController extends Observable implements Observer {
     Model m;
     public Clock clock;
     public TimeSeries ts_reg, ts_Anomal;    //ts-reg
-    public DoubleProperty timeStamp, throttle, rudder, aileron,
-            elevators, sliderTime, choiceSpeed, pitch, pitchMax, pitchMin, roll, rollMax, rollMin, yaw, yawMax, yawMin, timeStampGraph;
-    public DoubleProperty valueAxis, valueCorrelate;
-    public StringProperty timeFlight, chosenAttribute, correlateFeature, altimeter, airSpeed, fd,choiceALG;
+    public DoubleProperty timeStamp, timeStampGraph;
+    public DoubleProperty throttle, rudder, aileron, elevators;     // Joystick
+    public DoubleProperty sliderTime, choiceSpeed;  // Player buttons
+    public DoubleProperty pitch, pitchMax, pitchMin, roll, rollMax, rollMin, yaw, yawMax, yawMin;   //Time board
+    public StringProperty altimeter, airSpeed, fd;  // Time board
+    public DoubleProperty valueAxis, valueCorrelate;    // Graphs
+    public StringProperty timeFlight, chosenAttribute, correlateFeature;
     public IntegerProperty sizeTS;
 
     public ObservableList<String> attributeList;
@@ -33,20 +38,24 @@ public class ViewModelController extends Observable implements Observer {
         this.m = m;
         clock = new Clock();
         m.addObserver(this);    //add Model as Observable
+
         xmlFile = false;
         csvTestFile = false;
         csvTrainFile = false;
         algoFile = false;
 
         timeStamp = new SimpleDoubleProperty();
+        timeStampGraph = new SimpleDoubleProperty();
+
+        //Joystick:
         aileron = new SimpleDoubleProperty();
         elevators = new SimpleDoubleProperty();
         rudder = new SimpleDoubleProperty();
         throttle = new SimpleDoubleProperty();
         sliderTime = new SimpleDoubleProperty();
         choiceSpeed = new SimpleDoubleProperty();
-        choiceALG=new SimpleStringProperty();
 
+        // Time board:
         pitch = new SimpleDoubleProperty();
         pitchMax = new SimpleDoubleProperty();
         pitchMin = new SimpleDoubleProperty();
@@ -56,21 +65,19 @@ public class ViewModelController extends Observable implements Observer {
         yaw = new SimpleDoubleProperty();
         yawMax = new SimpleDoubleProperty();
         yawMin = new SimpleDoubleProperty();
-
-        valueAxis = new SimpleDoubleProperty();
-        valueCorrelate = new SimpleDoubleProperty();
-
-        timeStampGraph = new SimpleDoubleProperty();
-
-        timeFlight = new SimpleStringProperty();
         altimeter = new SimpleStringProperty();
         airSpeed = new SimpleStringProperty();
         fd = new SimpleStringProperty();
 
+        // Graphs:
+        valueAxis = new SimpleDoubleProperty();
+        valueCorrelate = new SimpleDoubleProperty();
         chosenAttribute = new SimpleStringProperty();
         correlateFeature = new SimpleStringProperty();
         chosenAttribute.setValue("0");
         correlateFeature.setValue("0");
+
+        timeFlight = new SimpleStringProperty();
 
         sizeTS = new SimpleIntegerProperty();
 
@@ -100,15 +107,18 @@ public class ViewModelController extends Observable implements Observer {
     }
 
     public void updateDisplayVariables(int time) {
+        DecimalFormat df = new DecimalFormat("0.0##");
+        df.setRoundingMode(RoundingMode.DOWN);
+
         sliderTime.setValue(time);
         timeFlight.setValue(String.valueOf(time));
         aileron.setValue(ts_Anomal.getValueByTime(m.attributeMap.get("aileron").associativeName, time));
         elevators.setValue(ts_Anomal.getValueByTime(m.attributeMap.get("elevators").associativeName, time));
         rudder.setValue(ts_Anomal.getValueByTime(m.attributeMap.get("rudder").associativeName, time));
         throttle.setValue(ts_Anomal.getValueByTime(m.attributeMap.get("throttle").associativeName, time));
-        altimeter.setValue(String.valueOf(ts_Anomal.getValueByTime(m.attributeMap.get("altimeter").associativeName, time)));
-        airSpeed.setValue(String.valueOf(ts_Anomal.getValueByTime(m.attributeMap.get("airSpeed").associativeName, time)));
-        fd.setValue(String.valueOf(ts_Anomal.getValueByTime(m.attributeMap.get("fd").associativeName, time)));
+        altimeter.setValue(String.valueOf(df.format(ts_Anomal.getValueByTime(m.attributeMap.get("altimeter").associativeName, time))));
+        airSpeed.setValue(String.valueOf(df.format(ts_Anomal.getValueByTime(m.attributeMap.get("airSpeed").associativeName, time))));
+        fd.setValue(String.valueOf(df.format(ts_Anomal.getValueByTime(m.attributeMap.get("fd").associativeName, time))));
         pitch.setValue(ts_Anomal.getValueByTime(m.attributeMap.get("pitch").associativeName, time));
         roll.setValue(ts_Anomal.getValueByTime(m.attributeMap.get("roll").associativeName, time));
         yaw.setValue(ts_Anomal.getValueByTime(m.attributeMap.get("yaw").associativeName, time));
@@ -138,31 +148,26 @@ public class ViewModelController extends Observable implements Observer {
         return correlateFeature;
     }
 
-    //  Basic Functions- Buttons
     public void openCSVTrainFile() {
-        System.out.println("trainFile");
         FileChooser fc = new FileChooser();
         fc.setTitle("open CSV train file");
         fc.setInitialDirectory(new File("./"));
         File chosen = fc.showOpenDialog(null);
 
-        if (!chosen.getName().contains(".csv"))  //checking the file
-        {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Wrong file chosen");
-            alert.setContentText("Please choose a CSV file");
-            alert.showAndWait();
+        if(chosen == null) {
+            m.fileNotFoundAlert("train");
         } else {
-            ts_reg = new TimeSeries(chosen.getName());
-            ts_reg.checkCorrelate(ts_reg);
-            if (ts_reg.atts.size() != 42)
-                    System.err.println("wrong amount of columns - should be 42");
-            else {
-                    m.setTimeSeries(ts_reg, "Train");
+            if (!chosen.getName().contains(".csv"))  // Checking the file
+            {
+                m.wrongFileAlert("CSV");
+            } else {
+                ts_reg = new TimeSeries(chosen.getName());
+                ts_reg.checkCorrelate(ts_reg);
+                m.setTimeSeries(ts_reg, "Train");   // Set timeSeries
+                this.csvTrainFile = true;
+                m.fileUpdateAlert("Train");
             }
         }
-        this.csvTrainFile = true;
     }
 
     public void openCSVTestFile() {
@@ -172,38 +177,38 @@ public class ViewModelController extends Observable implements Observer {
         fc.setInitialDirectory(new File("./"));
         File chosen = fc.showOpenDialog(null);
 
-        if (!chosen.getName().contains(".csv"))  //checking the file
-        {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Wrong file chosen");
-            alert.setContentText("Please choose a CSV file");
-            alert.showAndWait();
+        if(chosen == null) {
+            m.fileNotFoundAlert("test");
         } else {
-            ts_Anomal = new TimeSeries(chosen.getName());
-            if (ts_Anomal.atts.size() != 42)
-                System.err.println("wrong amount of columns - should be 42");
-            else {
+            if (!chosen.getName().contains(".csv")) {  //checking the file
+                m.wrongFileAlert("CSV");
+            } else {
+                ts_Anomal = new TimeSeries(chosen.getName());
                 m.setTimeSeries(ts_Anomal, "Test");
+
+                attributeList.addAll(ts_Anomal.getAttributes());    // Init attributes list
+                sizeTS.setValue(ts_Anomal.getSize());
+                altimeter.setValue("0");
+                airSpeed.setValue("0");
+                fd.setValue("0");
+
+                m.fileUpdateAlert("Test");
+                this.csvTestFile = true;
             }
         }
-
-        attributeList.addAll(ts_Anomal.getAttributes());
-        sizeTS.setValue(ts_Anomal.getSize());
-        altimeter.setValue("0");
-        airSpeed.setValue("0");
-        fd.setValue("0");
-        this.csvTestFile = true;
     }
 
     public void openXMLFile() {
         xmlFile = m.openXML();
-        pitchMax.setValue(m.attributeMap.get("pitch").getMax());
-        pitchMin.setValue(m.attributeMap.get("pitch").getMin());
-        rollMax.setValue(m.attributeMap.get("roll").getMax());
-        rollMin.setValue(m.attributeMap.get("roll").getMin());
-        yawMax.setValue(m.attributeMap.get("yaw").getMax());
-        yawMin.setValue(m.attributeMap.get("yaw").getMin());
+        if(xmlFile) {
+            m.fileUpdateAlert("XML");
+            pitchMax.setValue(m.attributeMap.get("pitch").getMax());
+            pitchMin.setValue(m.attributeMap.get("pitch").getMin());
+            rollMax.setValue(m.attributeMap.get("roll").getMax());
+            rollMin.setValue(m.attributeMap.get("roll").getMin());
+            yawMax.setValue(m.attributeMap.get("yaw").getMax());
+            yawMin.setValue(m.attributeMap.get("yaw").getMin());
+        }
     }
 
     public void play() {
@@ -213,7 +218,7 @@ public class ViewModelController extends Observable implements Observer {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("File is missing");
-            alert.setContentText("Please upload csv file and xml file");
+            alert.setContentText("Please upload csv files and xml file");
             alert.showAndWait();
         }
     }
@@ -234,28 +239,39 @@ public class ViewModelController extends Observable implements Observer {
         this.m.forwardFile();
     }
 
-    public void loadAnomalyDetector() {
-
+    public boolean loadAnomalyDetector() {
         FileChooser fc = new FileChooser();
         fc.setTitle("open ALG");
         fc.setInitialDirectory(new File("./"));
         File chosen = fc.showOpenDialog(null);
 
-        if (!chosen.getName().contains(".class"))  //checking the file
-        {
+        if(!csvTestFile || !csvTrainFile) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Wrong file chosen");
-            alert.setContentText("Please choose algorithm file");
+            alert.setContentText("Please upload csv files first");
             alert.showAndWait();
+            return false;
         }
 
-        try {
-           m.loadAnomalyDetector(chosen.getPath(),chosen.getName().toString());
-        } catch (Exception e) {
-            e.printStackTrace();
+        if(chosen == null) {
+            m.fileNotFoundAlert("algorithm");
+            return false;
+        } else {
+            if (!chosen.getName().contains(".class"))  //checking the file
+            {
+                m.wrongFileAlert("CLASS");
+                return false;
+            }
+            try {
+                m.loadAnomalyDetector(chosen.getPath(),chosen.getName().toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            algoFile = true;
+            m.fileUpdateAlert("Algorithm");
+            return true;
         }
-        algoFile = true;
     }
 
     public void speedPlay() {

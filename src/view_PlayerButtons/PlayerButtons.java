@@ -18,11 +18,13 @@ public class PlayerButtons extends AnchorPane {
         sliderTime = new SimpleDoubleProperty();
         choiceSpeed = new SimpleDoubleProperty();
 
+        // Clock:
         miliSec = new SimpleStringProperty();
         seconds = new SimpleStringProperty();
         minutes = new SimpleStringProperty();
         timeFlight = new SimpleStringProperty();
 
+        // Buttons:
         onOpenCSVTrain = new SimpleBooleanProperty();
         onOpenCSVTest = new SimpleBooleanProperty();
         onOpenXML = new SimpleBooleanProperty();

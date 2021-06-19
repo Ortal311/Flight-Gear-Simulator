@@ -44,7 +44,7 @@ public class ControllerView extends Pane implements Observer {
         attributesList.setLayoutY(25);
         playerButtons.setLayoutY(470);
         playerButtons.setLayoutX(9);
-        timeBoard.setLayoutX(455);
+        timeBoard.setLayoutX(470);
         timeBoard.setLayoutY(285);
         graphs.setLayoutX(250);
         graphs.setLayoutY(15);
@@ -93,14 +93,14 @@ public class ControllerView extends Pane implements Observer {
         playerButtons.onRewind.addListener((o, ov, nv) -> vmc.rewind());
         playerButtons.onForward.addListener((o, ov, nv) -> vmc.forward());
         playerButtons.onAnomalyDetector.addListener((o, ov, nv)-> {
-            vmc.loadAnomalyDetector();
-            try {
-                adAnchorePane.getChildren().setAll(vmc.getPainter().call());
-            } catch (Exception e) {
-                System.err.println("alg painter is null");
-                e.printStackTrace();
+            if(vmc.loadAnomalyDetector()) {
+                try {
+                    adAnchorePane.getChildren().setAll(vmc.getPainter().call());
+                } catch (Exception e) {
+                    System.err.println("alg painter is null");
+                    e.printStackTrace();
+                }
             }
-
         });
 
         attributesList.alc.lv.setItems(vmc.attributeList);

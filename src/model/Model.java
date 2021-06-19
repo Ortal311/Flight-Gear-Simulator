@@ -269,27 +269,51 @@ public class Model extends Observable implements SimulatorModel {
         // new Thread(() -> displayFlight(true)).start();
     }
 
+    public void fileNotFoundAlert(String type) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText("File not found");
+        alert.setContentText("Choose " + type + " file");
+        alert.showAndWait();
+    }
+
+    public void wrongFileAlert(String type) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText("Wrong file chosen");
+        alert.setContentText("Please choose a " + type + " file");
+        alert.showAndWait();
+    }
+
+    public void fileUpdateAlert(String type) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setHeaderText("File has been updated");
+        alert.setContentText(type + " file has been updated");
+        alert.showAndWait();
+    }
+
     public boolean openXML() {
         FileChooser fc = new FileChooser();
         fc.setTitle("open XML file");
         fc.setInitialDirectory(new File("./"));
         File chosen = fc.showOpenDialog(null);
-        if (!chosen.getName().contains(".xml"))  //checking the file
-        {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Wrong file chosen");
-            alert.setContentText("Please choose a xml file");
-            alert.showAndWait();
+
+        if(chosen == null) {
+            fileNotFoundAlert("XML");
         } else {
-            try {
-                this.properties = readFromXML(chosen.getName());
-                if (this.properties != null) {
-                    createMapAttribute();
-                    return true;
+            if (!chosen.getName().contains(".xml"))  //checking the file
+            {
+                wrongFileAlert("XML");
+            } else {
+                try {
+                    this.properties = readFromXML(chosen.getName());
+                    if (this.properties != null) {
+                        createMapAttribute();
+                        return true;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
         return false;

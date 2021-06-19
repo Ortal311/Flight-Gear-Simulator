@@ -25,10 +25,10 @@ public class MyJoystickController {
     public MyJoystickController() {
         jx = new SimpleDoubleProperty();
         jy = new SimpleDoubleProperty();
-        jx.setValue(0); //70
-        jy.setValue(0); //80
-        jy.addListener(v->paint());
-        jx.addListener(v->paint());
+        jx.setValue(0);
+        jy.setValue(0);
+        jy.addListener(v -> paint());
+        jx.addListener(v -> paint());
     }
 
     public void paint()
