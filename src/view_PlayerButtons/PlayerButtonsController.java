@@ -16,9 +16,6 @@ public class PlayerButtonsController {
     ChoiceBox choiceSpeed;
 
     @FXML
-    ChoiceBox choiceAlgo;
-
-    @FXML
     TextField miliSec;
 
     @FXML
@@ -58,8 +55,6 @@ public class PlayerButtonsController {
     public void init() {
         ObservableList<Double> speedList = FXCollections.observableArrayList(0.5, 1.0, 1.5, 2.0, 2.5);
         choiceSpeed.setItems(speedList);
-        ObservableList<String> algoList = FXCollections.observableArrayList("Linear regression", "Z Score", "Hybrid");
-        choiceAlgo.setItems(algoList);
     }
 
     public void onOpenCSVTrain() {
