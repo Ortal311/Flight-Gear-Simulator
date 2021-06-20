@@ -11,14 +11,6 @@ import viewModel.ViewModelController;
 public class Main extends Application {
 
 
-//    @Override
-//    public void start(Stage primaryStage) throws Exception{
-//        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-//        primaryStage.setTitle("Hello World");
-//        primaryStage.setScene(new Scene(root, 300, 275));
-//        primaryStage.show();
-//    }
-
     @Override
     public void start(Stage primaryStage) throws Exception {
         //added
@@ -26,15 +18,12 @@ public class Main extends Application {
         m.writeToXML(m.properties);
         ViewModelController vmc = new ViewModelController(m);
 
-
         FXMLLoader fxl = new FXMLLoader();
         Parent root = fxl.load(getClass().getResource("sample.fxml").openStream());
         primaryStage.setTitle("Flight Gear Simulator");
         ControllerView controllerView = fxl.getController();
         controllerView.init(vmc);
 
-
-        //controllerView.setRoot(root);
         primaryStage.setScene(new Scene(root, 970, 630));
         primaryStage.show();
 
