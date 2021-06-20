@@ -161,7 +161,7 @@ public class ViewModelController extends Observable implements Observer {
             {
                 m.wrongFileAlert("CSV");
             } else {
-                ts_reg = new TimeSeries(chosen.getName());
+                ts_reg = new TimeSeries(chosen.getPath());
                 ts_reg.checkCorrelate(ts_reg);
                 m.setTimeSeries(ts_reg, "Train");   // Set timeSeries
                 this.csvTrainFile = true;
@@ -182,7 +182,7 @@ public class ViewModelController extends Observable implements Observer {
             if (!chosen.getName().contains(".csv")) {  //checking the file
                 m.wrongFileAlert("CSV");
             } else {
-                ts_Anomal = new TimeSeries(chosen.getName());
+                ts_Anomal = new TimeSeries(chosen.getPath());
                 m.setTimeSeries(ts_Anomal, "Test");
 
                 attributeList.addAll(ts_Anomal.getAttributes());    // Init attributes list
