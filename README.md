@@ -14,7 +14,7 @@ The regression line for correlation above 0.95 , Welzl algorithm for correlation
 In our Data We have a table with attributes and its values according to the timeline.
 We are also Displaying the Data of the selected attribute with its most correlated attribute in the graph nearby.
 
-Link to YouTube video that explain the project shortly: https://youtu.be/tJouSFBe4Qo
+Link to YouTube video that explain the project shortly(3:20): https://youtu.be/tJouSFBe4Qo 
 
 <img width="923" alt="Capture11" src="https://user-images.githubusercontent.com/74242238/125206698-43c43700-e291-11eb-9d8b-9396b855acc7.PNG">
 
