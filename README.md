@@ -1,4 +1,4 @@
-## Flight Gear Simulator Player
+## Flight Gear Simulator, Anomaly Detector and Player
 
 
 In this project We’ve created a GUI application for the Flight Gear Simulator,
